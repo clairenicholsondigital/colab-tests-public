@@ -1,0 +1,970 @@
+{
+  "generatedAt": "2026-06-24T19:40:17.558198+00:00",
+  "runnerPath": "/tmp/tmp.mTqACtebXR/colab_experiment_runner.py",
+  "runnerLabel": "HEAD:685308e colab_experiment_runner.py",
+  "fixtureRoot": "/root/.openclaw/workspace/colab-tests-public/fixtures/microsoft-teams-minutes",
+  "summary": {
+    "caseCount": 10,
+    "passed": 0,
+    "failed": 10,
+    "averageScore": 0.571
+  },
+  "cases": [
+    {
+      "id": "001_status_review",
+      "meetingType": "project_status_review",
+      "overallScore": 0.378,
+      "pass": false,
+      "scores": {
+        "topics": 0.5,
+        "action_count": 0.0,
+        "owners": 0.0,
+        "due_status": 0.0,
+        "decisions": 1.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 0.4
+      },
+      "expected": {
+        "topics": [
+          "stage gate templates",
+          "sales dependency",
+          "vendor strategy",
+          "intake workflow"
+        ],
+        "topicHits": [
+          "vendor strategy",
+          "intake workflow"
+        ],
+        "actionCount": 5,
+        "decisionCount": 0,
+        "owners": [
+          "Ciara / Conor",
+          "Conor",
+          "Conor",
+          "Emma",
+          "Conor"
+        ],
+        "dueStatus": [
+          "Before next week",
+          "Before next week",
+          "Before next week",
+          "This week",
+          "Before next week"
+        ]
+      },
+      "generated": {
+        "actionCount": 1,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "discussion points",
+          "follow-up"
+        ],
+        "teamsHeadingsMissing": [
+          "summary",
+          "decisions",
+          "action items"
+        ]
+      },
+      "notes": [
+        "Missed topics: stage gate templates, sales dependency",
+        "Action count expected 5, generated 1",
+        "Missing Teams headings: summary, decisions, action items"
+      ],
+      "generatedMinutes": "# Polished generated minutes\n\n_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._\n\n## Discussion points\n\n### AI adoption, change management and process improvement\n\n#### Discussion points\n\n- The discussion covered AI adoption, process improvement and how to choose useful starting points. _(Sources: responsibility#1, question#1, question#2, question#3)_\n\n#### Responsibilities\n\n- AI opportunities need to solve a real process problem and keep responsible people in the decision loop. _(Sources: responsibility#1)_\n\n#### Evidence required\n\n- Process maps, opportunity registers, roadmaps and improvement criteria are supporting evidence. _(Sources: responsibility#1)_\n\n#### Risks\n\n- AI work may fail to land if it is built on top of poor workflows or does not solve a real problem. _(Sources: responsibility#1)_\n\n#### Open questions\n\n- Open questions remain around opportunity fit, adoption barriers or how the process should change. _(Sources: question#1, question#2, question#3)_\n\n### Strategy, And, Document\n\n#### Discussion points\n\n- The discussion also covered strategy, and, document, draft. _(Sources: evidence_request#3, action#1, action#2, evidence_request#1, question#1)_\n\n## Actions\n\n| Action | Owner | Deadline/status | Sources |\n|---|---|---|---|\n| Schedule or hold the follow-up calls needed to close open items. | Ciara/Conor | This week | action#1, action#2 |\n\n## Source excerpts\n\n- responsibility#1 Unknown: Daily AI Programme Check-in Date: 2 June 2026 Location: Microsoft Teams\n- question#1 Ciara Griffin: The intake workflow and request funnel?\n- question#2 Ciara Griffin: Stage gate review process?\n- question#3 Ciara Griffin: AI pipeline strategy?\n- evidence_request#3 Ciara Griffin: Draft the vendor strategy document.\n- action#1 Conor Flynn: Emma is chasing and said she would follow up this week.\n- action#2 Ciara Griffin: Follow up innovation grant feedback.\n- evidence_request#1 Conor Flynn: The strategy document itself does not exist yet.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 1,
+            "evidence_artifact": 0,
+            "evidence_request": 3,
+            "action": 2,
+            "risk": 1,
+            "question": 6,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 7,
+          "unique_source_anchor_count": 8,
+          "allowed_bucket_source_total": 13,
+          "transcript_chars": 1527,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "002_decision_only_validation",
+      "meetingType": "decision_review",
+      "overallScore": 0.467,
+      "pass": false,
+      "scores": {
+        "topics": 0.5,
+        "action_count": 0.5,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 0.0,
+        "no_false_actions": 0.0,
+        "teams_structure": 0.2
+      },
+      "expected": {
+        "topics": [
+          "validation positioning",
+          "broader applications"
+        ],
+        "topicHits": [
+          "broader applications"
+        ],
+        "actionCount": 0,
+        "decisionCount": 2,
+        "owners": [],
+        "dueStatus": []
+      },
+      "generated": {
+        "actionCount": 1,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "discussion points"
+        ],
+        "teamsHeadingsMissing": [
+          "summary",
+          "decisions",
+          "action items",
+          "follow-up"
+        ]
+      },
+      "notes": [
+        "Missed topics: validation positioning",
+        "Action count expected 0, generated 1",
+        "Decision count expected 2, generated 0",
+        "Missing Teams headings: summary, decisions, action items, follow-up"
+      ],
+      "generatedMinutes": "# Polished generated minutes\n\n_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._\n\n## Discussion points\n\n## Actions\n\n| Action | Owner | Deadline/status | Sources |\n|---|---|---|---|\n| we could keep the title validation-specific but mention broader applications in the middle section. | Owner not specified | Not specified | action#1 |\n\n## Source excerpts\n\n- action#1 Nadia: So we could keep the title validation-specific but mention broader applications in the middle section.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 1,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 1,
+            "risk": 0,
+            "question": 0,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 1,
+          "unique_source_anchor_count": 1,
+          "allowed_bucket_source_total": 2,
+          "transcript_chars": 630,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "003_bug_triage",
+      "meetingType": "incident_bug_triage",
+      "overallScore": 0.133,
+      "pass": false,
+      "scores": {
+        "topics": 0.0,
+        "action_count": 0.0,
+        "owners": 0.0,
+        "due_status": 0.0,
+        "decisions": 0.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 0.2
+      },
+      "expected": {
+        "topics": [
+          "checkout bug",
+          "Safari logs",
+          "hotfix branch"
+        ],
+        "topicHits": [],
+        "actionCount": 2,
+        "decisionCount": 1,
+        "owners": [
+          "Priya",
+          "Marco"
+        ],
+        "dueStatus": [
+          "By 3pm",
+          "Conditional"
+        ]
+      },
+      "generated": {
+        "actionCount": 0,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "discussion points"
+        ],
+        "teamsHeadingsMissing": [
+          "summary",
+          "decisions",
+          "action items",
+          "follow-up"
+        ]
+      },
+      "notes": [
+        "Missed topics: checkout bug, Safari logs, hotfix branch",
+        "Action count expected 2, generated 0",
+        "Decision count expected 1, generated 0",
+        "Missing Teams headings: summary, decisions, action items, follow-up"
+      ],
+      "generatedMinutes": "# Polished generated minutes\n\n_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._\n\n## Discussion points\n\n## Actions\n\nNo actions detected from the allowed buckets.\n\n## Source excerpts\n\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 0,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 1,
+            "risk": 1,
+            "question": 0,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 0,
+          "unique_source_anchor_count": 0,
+          "allowed_bucket_source_total": 2,
+          "transcript_chars": 389,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "004_webinar_rehearsal",
+      "meetingType": "webinar_rehearsal",
+      "overallScore": 0.3,
+      "pass": false,
+      "scores": {
+        "topics": 0.75,
+        "action_count": 0.0,
+        "owners": 0.0,
+        "due_status": 0.0,
+        "decisions": 0.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 0.2
+      },
+      "expected": {
+        "topics": [
+          "webinar flow",
+          "slides and visuals",
+          "demo framing",
+          "responsible AI adoption"
+        ],
+        "topicHits": [
+          "webinar flow",
+          "slides and visuals",
+          "responsible AI adoption"
+        ],
+        "actionCount": 6,
+        "decisionCount": 2,
+        "owners": [
+          "Ciara Griffin",
+          "Ciara Griffin",
+          "Jack Cunningham",
+          "Jack Cunningham",
+          "Conor Flynn",
+          "All"
+        ],
+        "dueStatus": [
+          "Before live webinar",
+          "Before live webinar",
+          "Before live webinar",
+          "Before live webinar",
+          "Before live webinar",
+          "Before live webinar"
+        ]
+      },
+      "generated": {
+        "actionCount": 4,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "discussion points"
+        ],
+        "teamsHeadingsMissing": [
+          "summary",
+          "decisions",
+          "action items",
+          "follow-up"
+        ]
+      },
+      "notes": [
+        "Missed topics: demo framing",
+        "Action count expected 6, generated 4",
+        "Decision count expected 2, generated 0",
+        "Missing Teams headings: summary, decisions, action items, follow-up"
+      ],
+      "generatedMinutes": "# Polished generated minutes\n\n_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._\n\n## Discussion points\n\n### Meeting agenda, structure and flow\n\n#### Discussion points\n\n- The discussion covered the intended structure, running order and flow of the session. _(Sources: responsibility#5, question#1)_\n\n#### Responsibilities\n\n- The team needs to keep the session structure clear and easy to follow. _(Sources: responsibility#5)_\n\n#### Evidence required\n\n- Agenda notes, running-order comments and presenter handover points are supporting evidence. _(Sources: responsibility#5)_\n\n#### Risks\n\n- If the structure is unclear, the session may feel rushed or difficult to follow. _(Sources: responsibility#5)_\n\n#### Open questions\n\n- Open questions remain around flow, handovers or what should be covered in each part. _(Sources: question#1)_\n\n### AI adoption, change management and process improvement\n\n#### Discussion points\n\n- The discussion covered AI adoption, process improvement and how to choose useful starting points. _(Sources: responsibility#1, responsibility#5, question#1, responsibility#2)_\n\n#### Responsibilities\n\n- AI opportunities need to solve a real process problem and keep responsible people in the decision loop. _(Sources: responsibility#1, responsibility#5, responsibility#2)_\n\n#### Evidence required\n\n- Process maps, opportunity registers, roadmaps and improvement criteria are supporting evidence. _(Sources: responsibility#1, responsibility#5, responsibility#2)_\n\n#### Risks\n\n- AI work may fail to land if it is built on top of poor workflows or does not solve a real problem. _(Sources: responsibility#1, responsibility#5, responsibility#2)_\n\n#### Open questions\n\n- Open questions remain around opportunity fit, adoption barriers or how the process should change. _(Sources: question#1)_\n\n### Timing, rehearsal and delivery readiness\n\n#### Discussion points\n\n- The discussion covered timing, practice, delivery readiness and how presenters should prepare. _(Sources: responsibility#3, responsibility#4, responsibility#5, action#2)_\n\n#### Responsibilities\n\n- Presenters need to practise, manage timing and keep clear notes for their sections. _(Sources: responsibility#3, responsibility#4, responsibility#5, action#2)_\n\n#### Evidence required\n\n- Timing estimates, practice comments and presenter-preparation notes are supporting evidence. _(Sources: responsibility#3, responsibility#4, responsibility#5, action#2)_\n\n#### Risks\n\n- Without rehearsal, sections may run too long, finish too quickly or lose clarity. _(Sources: responsibility#3, responsibility#4, responsibility#5)_\n\n#### Open questions\n\n- Open questions remain around section lengths, practice needs or delivery order. _(Sources: action#2)_\n\n## Actions\n\n| Action | Owner | Deadline/status | Sources |\n|---|---|---|---|\n| Use clearer webinar wording around responsible adoption of AI in a GXP setting. | Conor | Not specified | responsibility#1 |\n| Keep the webinar educational and avoid making the offering feel too sales-led. | Ciara | Not specified | responsibility#3 |\n| Practise the presenter sections and keep each section within the agreed timing. | Jack/Ciara | Not specified | action#2, responsibility#5 |\n| I can simplify the workshop methodology slide and rely more on narration. | Jack | Not specified | action#1 |\n\n## Source excerpts\n\n- responsibility#5 Ciara Griffin: Actions: reduce the text-heavy slides, add workshop visuals, add the responsible AI wording, simplify the methodology slide, refine the demo introduction, and practise the delivery before the live session.\n- question#1 Jack Cunningham: The key message is that AI work should start with a defined business problem.\n- responsibility#1 Conor Flynn: Use the phrase responsible adoption of AI in a GXP setting.\n- responsibility#2 Conor Flynn: For the demo, I should explain the complaints triage problem before opening the tool.\n- responsibility#3 Ciara Griffin: This is the first time we mention the offering, but it should not feel salesy.\n- responsibility#4 Jack Cunningham: Seven to ten minutes should be fine.\n- action#2 Jack Cunningham: I will practise my section again.\n- action#1 Jack Cunningham: I can simplify the workshop methodology slide and rely more on narration.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 5,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 2,
+            "risk": 0,
+            "question": 1,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 19,
+          "unique_source_anchor_count": 8,
+          "allowed_bucket_source_total": 8,
+          "transcript_chars": 1342,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "005_finance_budget",
+      "meetingType": "finance_budget_review",
+      "overallScore": 0.578,
+      "pass": false,
+      "scores": {
+        "topics": 0.0,
+        "action_count": 1.0,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 0.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 0.2
+      },
+      "expected": {
+        "topics": [
+          "support costs",
+          "analytics hire",
+          "contractor spend"
+        ],
+        "topicHits": [],
+        "actionCount": 1,
+        "decisionCount": 1,
+        "owners": [
+          "Omar"
+        ],
+        "dueStatus": [
+          "Monday"
+        ]
+      },
+      "generated": {
+        "actionCount": 1,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "discussion points"
+        ],
+        "teamsHeadingsMissing": [
+          "summary",
+          "decisions",
+          "action items",
+          "follow-up"
+        ]
+      },
+      "notes": [
+        "Missed topics: support costs, analytics hire, contractor spend",
+        "Decision count expected 1, generated 0",
+        "Missing Teams headings: summary, decisions, action items, follow-up"
+      ],
+      "generatedMinutes": "# Polished generated minutes\n\n_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._\n\n## Discussion points\n\n## Actions\n\n| Action | Owner | Deadline/status | Sources |\n|---|---|---|---|\n| I will send the revised forecast on Monday. | Owner not specified | Not specified | action#1 |\n\n## Source excerpts\n\n- action#1 Omar: I will send the revised forecast on Monday.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 0,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 1,
+            "risk": 0,
+            "question": 0,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 1,
+          "unique_source_anchor_count": 1,
+          "allowed_bucket_source_total": 1,
+          "transcript_chars": 514,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "006_client_onboarding",
+      "meetingType": "client_onboarding",
+      "overallScore": 0.8,
+      "pass": false,
+      "scores": {
+        "topics": 1.0,
+        "action_count": 1.0,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 0.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 0.2
+      },
+      "expected": {
+        "topics": [
+          "finance rollout",
+          "warehouse delay",
+          "data mapping"
+        ],
+        "topicHits": [
+          "finance rollout",
+          "warehouse delay",
+          "data mapping"
+        ],
+        "actionCount": 1,
+        "decisionCount": 2,
+        "owners": [
+          "Noah"
+        ],
+        "dueStatus": [
+          "Friday"
+        ]
+      },
+      "generated": {
+        "actionCount": 1,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "discussion points"
+        ],
+        "teamsHeadingsMissing": [
+          "summary",
+          "decisions",
+          "action items",
+          "follow-up"
+        ]
+      },
+      "notes": [
+        "Decision count expected 2, generated 0",
+        "Missing Teams headings: summary, decisions, action items, follow-up"
+      ],
+      "generatedMinutes": "# Polished generated minutes\n\n_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._\n\n## Discussion points\n\n### Supply chain, warehousing and order fulfilment\n\n#### Discussion points\n\n- The discussion covered product flow, warehousing, picking, packing, labelling and dispatch. _(Sources: process_flow#1, process_flow#2, process_flow#3, process_flow#4)_\n\n## Actions\n\n| Action | Owner | Deadline/status | Sources |\n|---|---|---|---|\n| I will confirm the finance workshop dates with the client by Friday. | Owner not specified | Not specified | action#1 |\n\n## Source excerpts\n\n- process_flow#1 Maya: Finance can start next Monday, but the warehouse data mapping is not ready.\n- process_flow#2 Noah: If we include warehouse now, the first rollout gets messy.\n- process_flow#3 Maya: Then we start with finance first and delay warehouse until the data mapping is complete.\n- process_flow#4 Maya: Warehouse stays out of phase one.\n- action#1 Noah: I will confirm the finance workshop dates with the client by Friday.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 0,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 1,
+            "risk": 0,
+            "question": 0,
+            "process_flow": 4
+          },
+          "polished_bullet_count": 2,
+          "unique_source_anchor_count": 5,
+          "allowed_bucket_source_total": 5,
+          "transcript_chars": 469,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "007_support_metrics",
+      "meetingType": "support_metrics_review",
+      "overallScore": 0.726,
+      "pass": false,
+      "scores": {
+        "topics": 0.667,
+        "action_count": 0.5,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 1.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 0.2
+      },
+      "expected": {
+        "topics": [
+          "support metrics",
+          "complex cases",
+          "onboarding guide"
+        ],
+        "topicHits": [
+          "complex cases",
+          "onboarding guide"
+        ],
+        "actionCount": 3,
+        "decisionCount": 0,
+        "owners": [
+          "Rachel",
+          "Mark",
+          "James"
+        ],
+        "dueStatus": [
+          "Wednesday",
+          "Friday",
+          "Next week"
+        ]
+      },
+      "generated": {
+        "actionCount": 4,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "discussion points"
+        ],
+        "teamsHeadingsMissing": [
+          "summary",
+          "decisions",
+          "action items",
+          "follow-up"
+        ]
+      },
+      "notes": [
+        "Missed topics: support metrics",
+        "Action count expected 3, generated 4",
+        "Missing Teams headings: summary, decisions, action items, follow-up"
+      ],
+      "generatedMinutes": "# Polished generated minutes\n\n_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._\n\n## Discussion points\n\n### Complex, The, Will\n\n#### Discussion points\n\n- The discussion also covered complex, the, will, cases. _(Sources: action#4, risk#1, action#2, action#1, action#3)_\n\n## Actions\n\n| Action | Owner | Deadline/status | Sources |\n|---|---|---|---|\n| I will update the onboarding guide by Wednesday. | Owner not specified | Not specified | action#1 |\n| Mark, please review the complex case handoff checklist. | Mark | Not specified | action#2 |\n| Yes, I will do that by Friday. | Mark | Not specified | action#3 |\n| I will add a split between simple and complex cases to next week's metrics pack. | Owner not specified | Next week | action#4 |\n\n## Source excerpts\n\n- action#4 James: I will add a split between simple and complex cases to next week's metrics pack.\n- risk#1 Rachel: The issue is handoff quality on complex cases.\n- action#2 James: Mark, please review the complex case handoff checklist.\n- action#1 Rachel: I will update the onboarding guide by Wednesday.\n- action#3 Mark: Yes, I will do that by Friday.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 0,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 4,
+            "risk": 1,
+            "question": 0,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 5,
+          "unique_source_anchor_count": 5,
+          "allowed_bucket_source_total": 5,
+          "transcript_chars": 629,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "008_action_free_briefing",
+      "meetingType": "information_briefing",
+      "overallScore": 0.689,
+      "pass": false,
+      "scores": {
+        "topics": 0.0,
+        "action_count": 1.0,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 1.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 0.2
+      },
+      "expected": {
+        "topics": [
+          "market update",
+          "policy timing"
+        ],
+        "topicHits": [],
+        "actionCount": 0,
+        "decisionCount": 0,
+        "owners": [],
+        "dueStatus": []
+      },
+      "generated": {
+        "actionCount": 0,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "discussion points"
+        ],
+        "teamsHeadingsMissing": [
+          "summary",
+          "decisions",
+          "action items",
+          "follow-up"
+        ]
+      },
+      "notes": [
+        "Missed topics: market update, policy timing",
+        "Missing Teams headings: summary, decisions, action items, follow-up"
+      ],
+      "generatedMinutes": "# Polished generated minutes\n\n_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._\n\n## Discussion points\n\n## Actions\n\nNo actions detected from the allowed buckets.\n\n## Source excerpts\n\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 0,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 0,
+            "risk": 0,
+            "question": 1,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 0,
+          "unique_source_anchor_count": 0,
+          "allowed_bucket_source_total": 1,
+          "transcript_chars": 419,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "009_noisy_low_substance",
+      "meetingType": "low_substance",
+      "overallScore": 0.911,
+      "pass": false,
+      "scores": {
+        "topics": 1.0,
+        "action_count": 1.0,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 1.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 0.2
+      },
+      "expected": {
+        "topics": [],
+        "topicHits": [],
+        "actionCount": 0,
+        "decisionCount": 0,
+        "owners": [],
+        "dueStatus": []
+      },
+      "generated": {
+        "actionCount": 0,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "discussion points"
+        ],
+        "teamsHeadingsMissing": [
+          "summary",
+          "decisions",
+          "action items",
+          "follow-up"
+        ]
+      },
+      "notes": [
+        "Missing Teams headings: summary, decisions, action items, follow-up"
+      ],
+      "generatedMinutes": "# Polished generated minutes\n\n_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._\n\n## Discussion points\n\n## Actions\n\nNo actions detected from the allowed buckets.\n\n## Source excerpts\n\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 0,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 0,
+            "risk": 0,
+            "question": 1,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 0,
+          "unique_source_anchor_count": 0,
+          "allowed_bucket_source_total": 1,
+          "transcript_chars": 215,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "010_supplier_risk",
+      "meetingType": "supplier_risk_review",
+      "overallScore": 0.726,
+      "pass": false,
+      "scores": {
+        "topics": 0.667,
+        "action_count": 1.0,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 0.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 0.2
+      },
+      "expected": {
+        "topics": [
+          "late shipments",
+          "buffer stock",
+          "SLA update"
+        ],
+        "topicHits": [
+          "late shipments",
+          "buffer stock"
+        ],
+        "actionCount": 1,
+        "decisionCount": 2,
+        "owners": [
+          "Daniel"
+        ],
+        "dueStatus": [
+          "This afternoon"
+        ]
+      },
+      "generated": {
+        "actionCount": 1,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "discussion points"
+        ],
+        "teamsHeadingsMissing": [
+          "summary",
+          "decisions",
+          "action items",
+          "follow-up"
+        ]
+      },
+      "notes": [
+        "Missed topics: SLA update",
+        "Decision count expected 2, generated 0",
+        "Missing Teams headings: summary, decisions, action items, follow-up"
+      ],
+      "generatedMinutes": "# Polished generated minutes\n\n_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._\n\n## Discussion points\n\n### The, Supplier, But\n\n#### Discussion points\n\n- The discussion also covered the, supplier, but, risk. _(Sources: responsibility#1, risk#1, process_flow#1, process_flow#2, action#1)_\n\n## Actions\n\n| Action | Owner | Deadline/status | Sources |\n|---|---|---|---|\n| I will send the revised SLA notes this afternoon. | Owner not specified | Not specified | action#1 |\n\n## Source excerpts\n\n- responsibility#1 Priya: We should keep the supplier for Q1 but add two weeks of buffer stock.\n- risk#1 Daniel: The quality scores are still acceptable, but the delivery risk is getting worse.\n- process_flow#1 Unknown: Supplier Risk Review Date: 25 July 2026 Location: Microsoft Teams\n- process_flow#2 Priya: The current supplier has had three late shipments this month.\n- action#1 Daniel: I will send the revised SLA notes this afternoon.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 1,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 1,
+            "risk": 1,
+            "question": 0,
+            "process_flow": 2
+          },
+          "polished_bullet_count": 2,
+          "unique_source_anchor_count": 5,
+          "allowed_bucket_source_total": 5,
+          "transcript_chars": 478,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    }
+  ]
+}
