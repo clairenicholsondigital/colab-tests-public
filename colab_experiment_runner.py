@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import sys
 import tempfile
 import urllib.request
 from collections import Counter
@@ -243,6 +244,7 @@ def _load_module_from_path(path: Path) -> Any:
     if spec is None or spec.loader is None:
         raise RuntimeError(f"Could not load module from {path}")
     module = importlib.util.module_from_spec(spec)
+    sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     return module
 
