@@ -993,7 +993,7 @@ def _add_profile_section(
 def _generic_action_entries(
     report: dict[str, Any],
     active_topic_names: list[str],
-    limit: int = 12,
+    limit: int = 10,
 ) -> list[dict[str, Any]]:
     entries: list[dict[str, Any]] = []
     seen: set[str] = set()
@@ -1011,6 +1011,8 @@ def _generic_action_entries(
         )
         if entry is None:
             continue
+        if len({source["anchor"] for source in entry["sources"]}) < action.get("min_sources", 1):
+            continue
         key = entry["text"].lower()
         if key in seen:
             continue
@@ -1018,34 +1020,6 @@ def _generic_action_entries(
         entries.append(entry)
         if len(entries) >= limit:
             return entries
-
-    blocked_fragments = [
-        "share my screen",
-        "play this",
-        "thank you",
-        "i can see",
-        "got your update",
-        "if not, i'll send",
-        "one, i know",
-    ]
-    for source in _indexed_bucket(report, "action"):
-        text = _shorten_source_text(source["text"], 24)
-        lowered = text.lower()
-        if any(fragment in lowered for fragment in blocked_fragments):
-            continue
-        key = text.lower()
-        if not text or key in seen:
-            continue
-        seen.add(key)
-        entries.append(
-            {
-                "text": text,
-                "sources": [source],
-                "source_anchors": [source["anchor"]],
-            }
-        )
-        if len(entries) >= limit:
-            break
     return entries
 
 
@@ -1061,14 +1035,17 @@ ACTION_PROFILES: list[dict[str, Any]] = [
     {
         "text": "Review barcode, UDI or registration questions with the relevant internal team.",
         "terms": ["barcode", "udi", "upc", "sku", "registration", "us team", "bring that"],
+        "requires_topic": ["UDI"],
     },
     {
         "text": "Follow up with Cody/Med Envoy on process, information needs and timelines.",
         "terms": ["cody", "med envoy", "timelines", "project plan", "task list"],
+        "requires_topic": ["UDI", "Project tracking"],
     },
     {
         "text": "Review scope and documentation implications for PPE/sunglasses.",
         "terms": ["ppe", "sunglasses", "scope", "doc", "declaration"],
+        "requires_topic": ["Labelling"],
     },
     {
         "text": "Follow up on language or translation requirements.",
