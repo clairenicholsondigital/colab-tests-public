@@ -990,9 +990,35 @@ def _add_profile_section(
         topic["sections"].setdefault(section, []).append(entry)
 
 
-def _generic_action_entries(report: dict[str, Any], limit: int = 12) -> list[dict[str, Any]]:
+def _generic_action_entries(
+    report: dict[str, Any],
+    active_topic_names: list[str],
+    limit: int = 12,
+) -> list[dict[str, Any]]:
     entries: list[dict[str, Any]] = []
     seen: set[str] = set()
+    active_topics = " | ".join(active_topic_names).lower()
+    for action in ACTION_PROFILES:
+        required_topics = action.get("requires_topic", [])
+        if required_topics and not any(topic.lower() in active_topics for topic in required_topics):
+            continue
+        entry = _profile_topic_entry(
+            action["text"],
+            report,
+            ["action", "evidence_request", "responsibility"],
+            action["terms"],
+            limit=3,
+        )
+        if entry is None:
+            continue
+        key = entry["text"].lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        entries.append(entry)
+        if len(entries) >= limit:
+            return entries
+
     blocked_fragments = [
         "share my screen",
         "play this",
@@ -1021,6 +1047,79 @@ def _generic_action_entries(report: dict[str, Any], limit: int = 12) -> list[dic
         if len(entries) >= limit:
             break
     return entries
+
+
+ACTION_PROFILES: list[dict[str, Any]] = [
+    {
+        "text": "Provide or review the QMS/manual/procedure documentation.",
+        "terms": ["qms", "quality manual", "procedure", "manual", "review that document"],
+    },
+    {
+        "text": "Provide a written overview of the relevant business/process structure.",
+        "terms": ["written formally", "intercompany structure", "business works", "process overview"],
+    },
+    {
+        "text": "Review barcode, UDI or registration questions with the relevant internal team.",
+        "terms": ["barcode", "udi", "upc", "sku", "registration", "us team", "bring that"],
+    },
+    {
+        "text": "Follow up with Cody/Med Envoy on process, information needs and timelines.",
+        "terms": ["cody", "med envoy", "timelines", "project plan", "task list"],
+    },
+    {
+        "text": "Review scope and documentation implications for PPE/sunglasses.",
+        "terms": ["ppe", "sunglasses", "scope", "doc", "declaration"],
+    },
+    {
+        "text": "Follow up on language or translation requirements.",
+        "terms": ["translation", "language", "languages", "doc", "competent authority"],
+        "requires_topic": ["Labelling"],
+    },
+    {
+        "text": "Review the alarm mute/flash behaviour and confirm the updated alarm setup.",
+        "terms": ["mute", "alarm", "flash", "low", "medium", "high"],
+        "requires_topic": ["Software"],
+    },
+    {
+        "text": "Complete clinical or usability review of the relevant changes.",
+        "terms": ["clinical", "clinician", "usability", "formative", "summative", "study"],
+        "requires_topic": ["Clinical"],
+    },
+    {
+        "text": "Review debug commands or scripts and confirm what appears on the device.",
+        "terms": ["debug", "command", "commands", "script", "screen"],
+        "requires_topic": ["Software"],
+    },
+    {
+        "text": "Trace software version changes and generate supporting test evidence if needed.",
+        "terms": ["version", "v1.01", "v1.02", "trace", "test data", "retrospective"],
+        "requires_topic": ["Software"],
+    },
+    {
+        "text": "Review language-file or graphics-driver issues for the additional translations.",
+        "terms": ["language", "languages", "arabic", "vietnamese", "greek", "driver", "font"],
+        "requires_topic": ["Software"],
+    },
+    {
+        "text": "Complete or review electrical compliance testing and related outputs.",
+        "terms": ["electrical", "60601", "testing", "test reports", "test report"],
+        "requires_topic": ["Electrical"],
+    },
+    {
+        "text": "Update risk management for cybersecurity, USB access and related controls.",
+        "terms": ["cybersecurity", "usb", "risk management", "port lock", "password", "controls"],
+        "requires_topic": ["Cybersecurity"],
+    },
+    {
+        "text": "Review applicability of the relevant standards.",
+        "terms": ["standard", "standards", "81001", "27427", "applicable"],
+        "requires_topic": ["Electrical", "Cybersecurity"],
+    },
+    {
+        "text": "Schedule or hold the follow-up calls needed to close open items.",
+        "terms": ["schedule", "call", "follow up", "follow-up", "working session", "weekly"],
+    },
+]
 
 
 TOPIC_PROFILES: list[dict[str, Any]] = [
@@ -1166,7 +1265,7 @@ def _polished_minutes_topic_groups(report: dict[str, Any]) -> dict[str, Any]:
         if topic["sections"] and len(unique_topic_anchors) >= 2:
             topics.append(topic)
 
-    actions = _generic_action_entries(report)
+    actions = _generic_action_entries(report, [topic["topic"] for topic in topics])
     return {"topics": topics, "actions": actions}
 
 def _iter_topic_entries(topic_groups: dict[str, Any]) -> list[dict[str, Any]]:
