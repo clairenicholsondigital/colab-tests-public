@@ -1,0 +1,41 @@
+# Colab tests public
+
+Public Python entry points for Colab experiments that need to be fetched by URL.
+
+This repo is intentionally small and public so a Colab runtime can use `execute_python_url`
+without GitHub authentication.
+
+## MiniLM evidence graph experiment
+
+Runner URL:
+
+```text
+https://raw.githubusercontent.com/clairenicholsondigital/colab-tests-public/main/colab_experiment_runner.py
+```
+
+Classifier dependency URL:
+
+```text
+https://raw.githubusercontent.com/clairenicholsondigital/colab-tests-public/main/minilm_evidence_graph.py
+```
+
+Example `/process` payload:
+
+```json
+{
+  "task": "execute_python_url",
+  "text": "",
+  "options": {
+    "url": "https://raw.githubusercontent.com/clairenicholsondigital/colab-tests-public/main/colab_experiment_runner.py",
+    "function": "run_analysis",
+    "args": [],
+    "kwargs": {
+      "transcript_text": "PASTE TRANSCRIPT HERE",
+      "discussion_sample_limit": 40
+    }
+  }
+}
+```
+
+The canonical working repo remains `clairenicholsondigital/google-colab-mini-lm`.
+This public repo is the unauthenticated URL mirror for Colab execution.
