@@ -739,13 +739,13 @@ def _polished_minutes_sections(report: dict[str, Any]) -> dict[str, list[dict[st
             "Responsibilities",
             "The legal manufacturer is responsible for putting data into Udimed; the importer and authorised representative need to check that it is there.",
             ["responsibility"],
-            ["legal manufacturer", "responsible", "importer", "authorised rep", "check"],
+            ["legal manufacturer", "responsible", "authorised rep", "udimed"],
         ),
         (
             "Responsibilities",
             "DITA needs a lot-number process so product can be picked, labelled and stored by lot number.",
             ["responsibility", "action", "evidence_artifact"],
-            ["lot number", "pick", "store", "label"],
+            ["lot number", "pick", "store"],
         ),
         (
             "Evidence required",
