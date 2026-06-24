@@ -18,7 +18,7 @@ from typing import Any
 
 RAW_CLASSIFIER_URL = (
     "https://raw.githubusercontent.com/clairenicholsondigital/"
-    "colab-tests-public/main/minilm_evidence_graph.py"
+    "colab-tests-public/main/minilm_evidence_graph.py?v=classifier-layer-2"
 )
 
 DEFAULT_TRANSCRIPT_CANDIDATES = [
