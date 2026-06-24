@@ -1,0 +1,493 @@
+{
+  "summary": {
+    "runner": "/root/.openclaw/workspace/colab-tests-public/colab_experiment_runner.py",
+    "packDir": "/root/.openclaw/workspace/trinzo-upload/scripts/meeting-minutes-final-golden",
+    "generatedAt": "2026-06-24T20:08:13.685203+00:00",
+    "caseCount": 20,
+    "passed": 0,
+    "failed": 20,
+    "averageScore": 0.6712,
+    "categoryAverages": {
+      "abstention": 0.7495,
+      "actions": 0.4167,
+      "decisions": 0.7333,
+      "hallucinations": 0.8775
+    },
+    "failureThemes": [
+      [
+        "action capture/count",
+        25
+      ],
+      [
+        "abstention/count discipline",
+        19
+      ],
+      [
+        "decision capture/count",
+        10
+      ],
+      [
+        "forbidden/hallucinated content",
+        8
+      ],
+      [
+        "visible output contains first-person wording",
+        5
+      ],
+      [
+        "visible output contains timestamp/timecode",
+        1
+      ]
+    ]
+  },
+  "cases": [
+    {
+      "case": "001_decision_heavy_no_actions",
+      "score": 0.9,
+      "passThreshold": 0.9,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 0.6666666666666666,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [
+        "decisions: missing 'legacy portal read-only for four weeks'"
+      ],
+      "counts": {
+        "decisions": 2,
+        "actions": 0,
+        "discussionPoints": 0
+      }
+    },
+    {
+      "case": "002_incident_actions_decision",
+      "score": 0.7667,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 0.3333333333333333,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [
+        "actions: missing {'text': 'patch the mapper', 'owner': 'Liam', 'deadline': 'Today'}",
+        "actions: missing {'text': 'notify customer success', 'owner': 'Noah'}",
+        "quality: visible output contains first-person wording"
+      ],
+      "counts": {
+        "decisions": 1,
+        "actions": 2,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "case": "003_low_substance_noise_abstention",
+      "score": 0.54,
+      "passThreshold": 1.0,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 0.0,
+        "hallucinations": 0.8,
+        "abstention": 0.3333333333333333
+      },
+      "failures": [
+        "actions: expected at most 0 items, got 1",
+        "hallucinations: forbidden content present 'red light'",
+        "abstention: expected actions <= 0, got 1",
+        "abstention: expected discussion <= 0, got 1",
+        "quality: visible output contains first-person wording"
+      ],
+      "counts": {
+        "decisions": 0,
+        "actions": 1,
+        "discussionPoints": 1
+      }
+    },
+    {
+      "case": "004_action_free_information_briefing",
+      "score": 0.7667,
+      "passThreshold": 0.9,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 0.3333333333333333
+      },
+      "failures": [
+        "abstention: expected discussion >= 1, got 0",
+        "abstention: missing discussion topic concepts ['travel', 'policy']",
+        "abstention: missing discussion topic concepts ['mileage', 'July']",
+        "abstention: missing discussion topic concepts ['guidance', 'intranet']"
+      ],
+      "counts": {
+        "decisions": 0,
+        "actions": 0,
+        "discussionPoints": 0
+      }
+    },
+    {
+      "case": "005_project_status_pending_leadership",
+      "score": 0.65,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 0.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [
+        "actions: expected at least 4 items, got 1",
+        "actions: missing 'review stage gate templates'",
+        "actions: missing 'confirm AI pipeline dependencies with sales'",
+        "actions: missing 'draft vendor strategy document'",
+        "actions: missing 'follow up innovation grant feedback'"
+      ],
+      "counts": {
+        "decisions": 0,
+        "actions": 1,
+        "discussionPoints": 6
+      }
+    },
+    {
+      "case": "006_client_onboarding_split_rollout",
+      "score": 0.85,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 0.5,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [
+        "actions: missing {'text': 'send the missing-field list', 'owner': 'Mina', 'deadline': 'Today'}"
+      ],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "case": "007_operations_review_internal_cover",
+      "score": 0.9167,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 0.6666666666666666,
+        "abstention": 1.0
+      },
+      "failures": [
+        "hallucinations: forbidden content present 'hire temporary cover'",
+        "quality: visible output contains first-person wording"
+      ],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "case": "008_sales_pipeline_review",
+      "score": 0.4167,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 0.0,
+        "actions": 0.5,
+        "hallucinations": 0.6666666666666666,
+        "abstention": 0.6666666666666666
+      },
+      "failures": [
+        "decisions: expected at least 1 items, got 0",
+        "decisions: missing 'focus on the retail and logistics accounts'",
+        "actions: missing {'text': 'update the forecast', 'owner': 'Omar', 'deadline': 'Tuesday'}",
+        "hallucinations: forbidden content present 'healthcare prospect this quarter'",
+        "abstention: missing discussion topic concepts ['retail', 'logistics']"
+      ],
+      "counts": {
+        "decisions": 0,
+        "actions": 2,
+        "discussionPoints": 5
+      }
+    },
+    {
+      "case": "009_board_launch_delay",
+      "score": 0.5667,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 0.5,
+        "actions": 0.5,
+        "hallucinations": 0.6666666666666666,
+        "abstention": 0.6666666666666666
+      },
+      "failures": [
+        "decisions: missing 'move the Spain launch to September'",
+        "actions: missing {'text': 'update the board pack', 'owner': 'Leah', 'deadline': 'Tonight'}",
+        "hallucinations: forbidden content present 'announce the Spain launch in July'",
+        "abstention: missing discussion topic concepts ['partner paperwork']"
+      ],
+      "counts": {
+        "decisions": 1,
+        "actions": 2,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "case": "010_webinar_rehearsal_trim",
+      "score": 0.6833,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 0.0,
+        "hallucinations": 1.0,
+        "abstention": 0.6666666666666666
+      },
+      "failures": [
+        "actions: expected at least 1 items, got 0",
+        "actions: missing {'text': 'remove two bullets from the registration slide', 'owner': 'Jack'}",
+        "abstention: missing discussion topic concepts ['live demo', 'seven minutes']"
+      ],
+      "counts": {
+        "decisions": 1,
+        "actions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "case": "011_finance_budget_review",
+      "score": 0.85,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 0.5,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [
+        "actions: missing {'text': 'send the revised forecast', 'owner': 'Hannah', 'deadline': 'Before lunch'}",
+        "quality: visible output contains first-person wording"
+      ],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "case": "012_hiring_interview_debrief",
+      "score": 0.3833,
+      "passThreshold": 0.9,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 0.0,
+        "actions": 0.0,
+        "hallucinations": 1.0,
+        "abstention": 0.6666666666666666
+      },
+      "failures": [
+        "decisions: expected at least 1 items, got 0",
+        "decisions: missing 'invite Maya to the final interview'",
+        "actions: expected at most 0 items, got 1",
+        "abstention: expected actions <= 0, got 1"
+      ],
+      "counts": {
+        "decisions": 0,
+        "actions": 1,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "case": "013_messy_speaker_timestamp_formats",
+      "score": 0.7875,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 0.5,
+        "hallucinations": 0.75,
+        "abstention": 1.0
+      },
+      "failures": [
+        "actions: missing {'text': 'request the insurance certificate', 'owner': 'Ravi', 'deadline': 'Friday'}",
+        "hallucinations: forbidden content present '09:00'",
+        "quality: visible output contains timestamp/timecode",
+        "quality: visible output contains first-person wording"
+      ],
+      "counts": {
+        "decisions": 1,
+        "actions": 2,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "case": "014_status_update_discussion_only",
+      "score": 0.75,
+      "passThreshold": 0.9,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 0.0,
+        "hallucinations": 1.0,
+        "abstention": 0.8571428571428571
+      },
+      "failures": [
+        "actions: expected at most 0 items, got 1",
+        "abstention: expected actions <= 0, got 1"
+      ],
+      "counts": {
+        "decisions": 0,
+        "actions": 1,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "case": "015_hidden_decision_meeting",
+      "score": 0.7167,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 0.5,
+        "hallucinations": 0.6666666666666666,
+        "abstention": 0.6666666666666666
+      },
+      "failures": [
+        "actions: missing {'text': 'reschedule the weekly check-in', 'owner': 'David', 'deadline': 'Today'}",
+        "hallucinations: forbidden content present 'Grace will attend the usual check-in'",
+        "abstention: missing discussion topic concepts ['Grace', 'offsite']"
+      ],
+      "counts": {
+        "decisions": 1,
+        "actions": 2,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "case": "016_document_review_discussion_only",
+      "score": 0.7417,
+      "passThreshold": 0.9,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 0.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 0.8333333333333334
+      },
+      "failures": [
+        "decisions: expected at most 0 items, got 1",
+        "abstention: expected decisions <= 0, got 1"
+      ],
+      "counts": {
+        "decisions": 1,
+        "actions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "case": "017_dependency_risk_discussion_only",
+      "score": 0.73,
+      "passThreshold": 0.9,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 0.0,
+        "hallucinations": 1.0,
+        "abstention": 0.8
+      },
+      "failures": [
+        "actions: expected at most 0 items, got 1",
+        "abstention: expected actions <= 0, got 1"
+      ],
+      "counts": {
+        "decisions": 0,
+        "actions": 1,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "case": "018_support_metrics_action_heavy",
+      "score": 0.4,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 0.0,
+        "hallucinations": 1.0,
+        "abstention": 0.0
+      },
+      "failures": [
+        "actions: expected at least 3 items, got 0",
+        "actions: missing 'separate triage categories'",
+        "actions: missing 'monitor the results weekly'",
+        "actions: missing 'set up a dashboard'",
+        "abstention: expected discussion >= 2, got 1",
+        "abstention: missing discussion topic concepts ['support metrics']",
+        "abstention: missing discussion topic concepts ['complex cases', 'simple requests']",
+        "abstention: missing discussion topic concepts ['onboarding guide']"
+      ],
+      "counts": {
+        "decisions": 0,
+        "actions": 0,
+        "discussionPoints": 1
+      }
+    },
+    {
+      "case": "019_contract_negotiation_review",
+      "score": 0.4583,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 0.5,
+        "actions": 0.5,
+        "hallucinations": 0.3333333333333333,
+        "abstention": 0.5
+      },
+      "failures": [
+        "decisions: missing 'sign the one-year extension'",
+        "actions: missing {'text': 'redline the exit clause', 'owner': 'Jon', 'deadline': 'Friday'}",
+        "hallucinations: forbidden content present 'three-year commitment'",
+        "hallucinations: forbidden content present 'exit clause unchanged'",
+        "abstention: missing discussion topic concepts ['contract term length']"
+      ],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "case": "020_customer_complaint_review",
+      "score": 0.55,
+      "passThreshold": 0.85,
+      "passed": false,
+      "categoryScores": {
+        "decisions": 0.0,
+        "actions": 0.5,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [
+        "decisions: expected at least 1 items, got 0",
+        "decisions: missing 'refund the last invoice'",
+        "actions: missing {'text': 'call the customer', 'owner': 'Dan', 'deadline': 'Noon'}"
+      ],
+      "counts": {
+        "decisions": 0,
+        "actions": 2,
+        "discussionPoints": 2
+      }
+    }
+  ]
+}
