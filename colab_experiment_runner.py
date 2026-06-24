@@ -1021,7 +1021,10 @@ def _generic_action_entries(
         if key in seen:
             continue
         seen.add(key)
-        combined_source_text = " ".join(source.get("text", "") for source in entry["sources"])
+        combined_source_text = " ".join(
+            f"{source.get('speaker', '')} {source.get('text', '')}"
+            for source in entry["sources"]
+        )
         entry["owner"] = _infer_action_owner(combined_source_text, action)
         deadline_source = _action_deadline_source(report, action, entry)
         if deadline_source is not None:
@@ -1039,6 +1042,9 @@ def _generic_action_entries(
 
 
 OWNER_PATTERNS: list[tuple[str, str]] = [
+    ("Jack", r"\bjack\b"),
+    ("Ciara", r"\bciara\b"),
+    ("Conor", r"\bconor\b"),
     ("Jacqui", r"\bjacqui\b"),
     ("Orla", r"\borla\b|\bo['’]?reilly\b"),
     ("Colm", r"\bcolm\b"),
@@ -1184,10 +1190,12 @@ ACTION_PROFILES: list[dict[str, Any]] = [
     {
         "text": "Provide or review the QMS/manual/procedure documentation.",
         "terms": ["qms", "quality manual", "procedure", "manual", "review that document"],
+        "requires_topic": ["QMS"],
     },
     {
         "text": "Provide a written overview of the relevant business/process structure.",
         "terms": ["written formally", "intercompany structure", "business works", "process overview"],
+        "requires_topic": ["QMS"],
     },
     {
         "text": "Review barcode, UDI or registration questions with the relevant internal team.",
@@ -1270,6 +1278,36 @@ ACTION_PROFILES: list[dict[str, Any]] = [
         "terms": ["schedule", "call", "follow up", "follow-up", "working session", "weekly"],
         "deadline_lookup": False,
     },
+    {
+        "text": "Review and simplify the slide content and visual support.",
+        "terms": ["slide", "picture", "image", "visual", "text", "content", "simple", "simplify"],
+        "requires_topic": ["Slides"],
+    },
+    {
+        "text": "Use clearer webinar wording around responsible adoption of AI in a GXP setting.",
+        "terms": ["responsible adoption", "gxp", "regulated", "regulatory", "phrase"],
+        "requires_topic": ["AI adoption"],
+    },
+    {
+        "text": "Frame the demo before opening it and connect it to the low-hanging-fruit use case.",
+        "terms": ["demo", "explain", "low hanging fruit", "complaints", "triage", "jump into"],
+        "requires_topic": ["Demo"],
+    },
+    {
+        "text": "Keep the webinar educational and avoid making the offering feel too sales-led.",
+        "terms": ["salesy", "educational", "offering", "process", "roi"],
+        "requires_topic": ["Meeting agenda"],
+    },
+    {
+        "text": "Practise the presenter sections and keep each section within the agreed timing.",
+        "terms": ["practice", "practise", "7 to 10 minutes", "bullet points", "presenting", "tomorrow"],
+        "requires_topic": ["Timing"],
+    },
+    {
+        "text": "Clarify client scope, available engineers and next-week onsite needs.",
+        "terms": ["client", "engineers", "scope", "onsite", "on site", "next week"],
+        "requires_topic": ["Client scope"],
+    },
 ]
 
 
@@ -1282,6 +1320,7 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
         "risk": "If procedures are not aligned with day-to-day work, they may be difficult to use or maintain.",
         "questions": "Open questions remain around how current processes, systems or records work in practice.",
         "terms": ["qms", "quality manual", "procedure", "process", "business works", "tracker", "summary document", "technical file"],
+        "required_any": ["qms", "quality manual", "technical file", "tracker", "summary document"],
     },
     {
         "topic": "Supply chain, warehousing and order fulfilment",
@@ -1291,6 +1330,7 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
         "risk": "Weak process understanding could leave gaps in procedure definition or operational controls.",
         "questions": "Open questions remain around storage, automation, order flow or third-party involvement.",
         "terms": ["warehouse", "warehousing", "japan", "netherlands", "ireland", "park west", "picking", "packing", "shipping", "courier", "sales order"],
+        "required_any": ["warehouse", "warehousing", "japan", "netherlands", "park west", "sales order"],
     },
     {
         "topic": "UDI, EUDAMED and registration responsibilities",
@@ -1300,6 +1340,7 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
         "risk": "There is a risk that registration activity is assumed to sit elsewhere and is missed.",
         "questions": "Open questions remain around registration level, barcode format, data ownership or timelines.",
         "terms": ["udimed", "eudamed", "udi", "upc", "sku", "registration", "registered", "importer", "authorised rep", "med envoy"],
+        "required_any": ["udimed", "eudamed", "udi", "upc", "sku", "importer", "authorised rep", "med envoy"],
     },
     {
         "topic": "Labelling, IFU, DoC and product documentation",
@@ -1309,6 +1350,7 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
         "risk": "Documentation gaps may create audit findings or market-specific follow-up actions.",
         "questions": "Open questions remain around documentation content, translation, label symbols or applicable documents.",
         "terms": ["label", "barcode", "ifu", "doc", "declaration", "warranty booklet", "manufacturer information", "translation", "language", "languages", "sunglasses", "ppe"],
+        "required_any": ["label", "barcode", "ifu", "declaration", "warranty booklet", "manufacturer information", "sunglasses", "ppe", "translation", "language", "languages"],
     },
     {
         "topic": "Software changes, alarms and versioning",
@@ -1318,6 +1360,7 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
         "risk": "If software changes cannot be traced or evidenced, retrospective test data or justification may be needed.",
         "questions": "Open questions remain around alarm behaviour, debug commands, version differences or implementation evidence.",
         "terms": ["software", "alarm", "mute", "debug", "version", "v1.01", "v1.02", "code", "firmware", "language", "languages", "driver", "font"],
+        "required_any": ["software", "alarm", "mute", "debug", "version", "firmware", "driver"],
     },
     {
         "topic": "Clinical, usability and study timing",
@@ -1327,6 +1370,7 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
         "risk": "Misaligned study dates could affect submission readiness or notified-body review.",
         "questions": "Open questions remain around study dates, review ownership or whether changes are acceptable clinically.",
         "terms": ["clinical", "clinician", "usability", "formative", "summative", "study", "task analysis", "submission", "review date"],
+        "required_any": ["clinical", "clinician", "usability", "formative", "summative", "task analysis"],
     },
     {
         "topic": "Electrical compliance and standards assessment",
@@ -1336,6 +1380,7 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
         "risk": "Testing or standards gaps could delay deliverables or require additional justification.",
         "questions": "Open questions remain around test completion, applicable standards or remaining compliance gaps.",
         "terms": ["electrical", "iec60601", "60601", "testing", "test report", "standards", "standard", "gap assessment", "mdd"],
+        "required_any": ["electrical", "iec60601", "60601", "test report", "gap assessment", "mdd"],
     },
     {
         "topic": "Cybersecurity, risk management and access controls",
@@ -1345,6 +1390,7 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
         "risk": "Uncontrolled access or unresolved residual risk may require further controls or benefit-risk justification.",
         "questions": "Open questions remain around control effectiveness, password protection, port locks or standard applicability.",
         "terms": ["cybersecurity", "usb", "port", "password", "risk management", "benefit-risk", "controls", "81001", "27427", "unauthorized"],
+        "required_any": ["cybersecurity", "usb", "port lock", "password", "81001", "27427", "unauthorized"],
     },
     {
         "topic": "Project tracking, document control and submission readiness",
@@ -1354,69 +1400,344 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
         "risk": "Open document or tracker gaps may delay review, approval or submission readiness.",
         "questions": "Open questions remain around status, ownership, deadlines or what needs to be closed before submission.",
         "terms": ["tracker", "change request", "document", "documents", "approval", "submission", "deadline", "sign off", "status", "tf24", "technical file"],
+        "required_any": ["tracker", "change request", "submission", "deadline", "sign off", "tf24", "technical file"],
     },
 ]
 
 
+GENERIC_TOPIC_PROFILES: list[dict[str, Any]] = [
+    {
+        "topic": "Meeting agenda, structure and flow",
+        "summary": "The discussion covered the intended structure, running order and flow of the session.",
+        "responsibility": "The team needs to keep the session structure clear and easy to follow.",
+        "evidence": "Agenda notes, running-order comments and presenter handover points are supporting evidence.",
+        "risk": "If the structure is unclear, the session may feel rushed or difficult to follow.",
+        "questions": "Open questions remain around flow, handovers or what should be covered in each part.",
+        "terms": ["agenda", "welcome", "kick off", "flow", "wrap", "session", "webinar", "presentation", "handover", "start"],
+    },
+    {
+        "topic": "Slides, visuals and supporting material",
+        "summary": "The discussion covered slides, images, visual support and how much detail should appear on screen.",
+        "responsibility": "Slides and visuals need to support the spoken explanation without overloading the audience.",
+        "evidence": "Slide comments, image references and content-editing notes are supporting evidence.",
+        "risk": "Dense or mismatched visuals may weaken the message or distract from the presenter.",
+        "questions": "Open questions remain around which image, layout or level of slide detail should be used.",
+        "terms": ["slide", "slides", "picture", "image", "visual", "photo", "gamma", "content", "text", "screen", "layout"],
+    },
+    {
+        "topic": "Demo, example workflow and practical use case",
+        "summary": "The discussion covered the demo, example workflow and practical use case being shown.",
+        "responsibility": "The demo needs to be introduced clearly and tied back to the problem it solves.",
+        "evidence": "Demo framing, example workflow notes and use-case descriptions are supporting evidence.",
+        "risk": "If the demo is not framed, the audience may miss why it matters or how it connects to the process.",
+        "questions": "Open questions remain around what the demo should show and how much context it needs.",
+        "terms": ["demo", "demonstration", "example", "workflow", "use case", "complaints", "triage", "tool", "copilot", "email"],
+    },
+    {
+        "topic": "AI adoption, change management and process improvement",
+        "summary": "The discussion covered AI adoption, process improvement and how to choose useful starting points.",
+        "responsibility": "AI opportunities need to solve a real process problem and keep responsible people in the decision loop.",
+        "evidence": "Process maps, opportunity registers, roadmaps and improvement criteria are supporting evidence.",
+        "risk": "AI work may fail to land if it is built on top of poor workflows or does not solve a real problem.",
+        "questions": "Open questions remain around opportunity fit, adoption barriers or how the process should change.",
+        "terms": ["ai", "adoption", "process", "improvement", "opportunity", "roadmap", "responsible", "gxp", "workflow", "change", "problem"],
+    },
+    {
+        "topic": "Timing, rehearsal and delivery readiness",
+        "summary": "The discussion covered timing, practice, delivery readiness and how presenters should prepare.",
+        "responsibility": "Presenters need to practise, manage timing and keep clear notes for their sections.",
+        "evidence": "Timing estimates, practice comments and presenter-preparation notes are supporting evidence.",
+        "risk": "Without rehearsal, sections may run too long, finish too quickly or lose clarity.",
+        "questions": "Open questions remain around section lengths, practice needs or delivery order.",
+        "terms": ["practice", "practise", "minutes", "time", "timing", "tomorrow", "presenting", "bullet points", "rehearsal", "ready"],
+    },
+    {
+        "topic": "Client scope, staffing and follow-up work",
+        "summary": "The discussion covered client scope, staffing, follow-up work and related project opportunities.",
+        "responsibility": "Client follow-up needs clear scope, available people and next-step ownership.",
+        "evidence": "Client comments, staffing notes and scope discussions are supporting evidence.",
+        "risk": "Unclear scope or staffing may make follow-up work difficult to plan.",
+        "questions": "Open questions remain around client needs, staffing availability or what should happen next.",
+        "terms": ["client", "scope", "engineers", "site", "onsite", "on-site", "galway", "gsk", "glaxosmithkline", "next week", "staff"],
+    },
+]
+
+
+TOPIC_STOPWORDS = {
+    "about", "actually", "again", "also", "around", "because", "being", "could", "doing",
+    "everything", "from", "going", "gonna", "have", "here", "just", "kind", "know", "like",
+    "little", "maybe", "mean", "need", "okay", "really", "right", "should", "some", "something",
+    "stuff", "that's", "that", "their", "there", "these", "they", "thing", "think", "this",
+    "those", "through", "want", "we're", "were", "what", "when", "where", "which", "with",
+    "would", "yeah", "your",
+}
+
+
+def _all_indexed_sources(report: dict[str, Any], buckets: list[str] | None = None) -> list[dict[str, Any]]:
+    selected_buckets = buckets or MINUTES_BUCKETS
+    sources: list[dict[str, Any]] = []
+    for bucket in selected_buckets:
+        sources.extend(_indexed_bucket(report, bucket))
+    return sources
+
+
+def _source_words(text: str) -> list[str]:
+    words = re.findall(r"[a-z][a-z0-9'’-]{2,}", text.lower())
+    cleaned: list[str] = []
+    for word in words:
+        word = word.strip("'’-")
+        if len(word) < 3 or word in TOPIC_STOPWORDS:
+            continue
+        cleaned.append(word)
+    return cleaned
+
+
+def _topic_terms_from_sources(sources: list[dict[str, Any]], limit: int = 6) -> list[str]:
+    counts: dict[str, int] = {}
+    for source in sources:
+        for word in _source_words(source["text"]):
+            counts[word] = counts.get(word, 0) + 1
+    ranked = sorted(counts.items(), key=lambda row: (-row[1], row[0]))
+    return [word for word, _ in ranked[:limit]]
+
+
+def _generic_topic_label(terms: list[str]) -> str:
+    preferred = [term for term in terms if term not in {"process", "project", "work", "team", "people"}]
+    chosen = (preferred or terms)[:3]
+    if not chosen:
+        return "Other supported discussion points"
+    return ", ".join(term.title() for term in chosen)
+
+
+def _dynamic_topic_from_remaining_sources(
+    report: dict[str, Any],
+    used_anchors: set[str],
+) -> dict[str, Any] | None:
+    candidate_sources = [
+        source
+        for source in _all_indexed_sources(report, ["action", "responsibility", "evidence_request", "question", "risk", "process_flow"])
+        if source["anchor"] not in used_anchors
+    ]
+    if len(candidate_sources) < 3:
+        return None
+    terms = _topic_terms_from_sources(candidate_sources)
+    if not terms:
+        return None
+    sources = _source_candidates(
+        report,
+        ["action", "responsibility", "evidence_request", "question", "risk", "process_flow"],
+        terms,
+        limit=5,
+    )
+    if len({source["anchor"] for source in sources}) < 3:
+        return None
+    label = _generic_topic_label(terms)
+    return {
+        "topic": label,
+        "sections": {
+            "Discussion points": [
+                {
+                    "text": f"The discussion also covered {', '.join(terms[:4])}.",
+                    "sources": sources,
+                    "source_anchors": [source["anchor"] for source in sources],
+                }
+            ],
+        },
+    }
+
+
+def _profile_topic(
+    profile: dict[str, Any],
+    report: dict[str, Any],
+    generic: bool = False,
+) -> dict[str, Any] | None:
+    if not generic and profile.get("required_any"):
+        searchable = " ".join(
+            source["text"].lower()
+            for source in _all_indexed_sources(report, ["responsibility", "evidence_request", "evidence_artifact", "process_flow", "question", "risk", "action"])
+        )
+        if not any(_term_matches(searchable, term.lower()) for term in profile["required_any"]):
+            return None
+
+    topic = {"topic": profile["topic"], "sections": {}}
+    terms = profile["terms"]
+    summary_buckets = ["responsibility", "evidence_request", "evidence_artifact", "process_flow", "question", "risk", "action"]
+    _add_profile_section(
+        topic,
+        "Discussion points",
+        profile["summary"],
+        report,
+        summary_buckets,
+        terms,
+    )
+    _add_profile_section(
+        topic,
+        "Responsibilities",
+        profile["responsibility"],
+        report,
+        ["responsibility", "action"],
+        terms,
+    )
+    _add_profile_section(
+        topic,
+        "Evidence required",
+        profile["evidence"],
+        report,
+        ["evidence_artifact", "evidence_request", "responsibility", "action"],
+        terms,
+    )
+    _add_profile_section(
+        topic,
+        "Risks",
+        profile["risk"],
+        report,
+        ["risk", "responsibility", "evidence_request", "action"],
+        terms,
+        limit=3,
+    )
+    _add_profile_section(
+        topic,
+        "Open questions",
+        profile["questions"],
+        report,
+        ["question", "evidence_request", "action"],
+        terms,
+        limit=3,
+    )
+    unique_topic_anchors = {
+        anchor
+        for entries in topic["sections"].values()
+        for entry in entries
+        for anchor in entry["source_anchors"]
+    }
+    min_anchors = 2 if generic else 2
+    if topic["sections"] and len(unique_topic_anchors) >= min_anchors:
+        return topic
+    return None
+
+
+def _normalise_action_text(text: str) -> str:
+    text = _clean_source_text(text)
+    text = re.sub(r"^(?:so|yeah|okay|and|but|then|maybe|i suppose|i think)\s+", "", text, flags=re.IGNORECASE)
+    text = text.strip(" ,.;:")
+    if text and text[-1] not in ".?!":
+        text += "."
+    return text
+
+
+def _is_useful_generic_action(text: str) -> bool:
+    lowered = text.lower()
+    if len(text.split()) < 6:
+        return False
+    if lowered.endswith("?"):
+        return False
+    weak_fragments = [
+        "i don't know",
+        "i suppose",
+        "go to the next one",
+        "let's see if we can do something",
+        "like that type of stuff",
+        "if you have any questions",
+        "i can come back",
+        "i don't mind",
+        "same color background",
+        "final discovery report",
+        "you know what i mean",
+        "like and subscribe",
+        "wonderful to work here",
+    ]
+    if any(fragment in lowered for fragment in weak_fragments):
+        return False
+    return bool(
+        re.search(
+            r"\b(i|we|you|he|she|they|team|jack|ciara|conor|colm|orla|jacqui|andrew|rebecca|david|kevin|mark)\s+(?:can|will|should|need|needs|have to|has to|going to|want to|could)\b",
+            lowered,
+        )
+        or re.search(r"\b(?:follow up|review|send|share|add|remove|update|practi[cs]e|prepare|schedule|bring|explain|keep|make sure|figure out)\b", lowered)
+    )
+
+
+def _extractive_action_entries(
+    report: dict[str, Any],
+    existing_action_texts: set[str],
+    used_action_anchors: set[str] | None = None,
+    limit: int = 12,
+) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    blocked_anchors = used_action_anchors or set()
+    seen_anchors: set[str] = set()
+    for source in _indexed_bucket(report, "action"):
+        if source["anchor"] in seen_anchors or source["anchor"] in blocked_anchors:
+            continue
+        text = _normalise_action_text(source["text"])
+        key = text.lower()
+        if key in existing_action_texts or not _is_useful_generic_action(text):
+            continue
+        entry = {
+            "text": text,
+            "sources": [source],
+            "source_anchors": [source["anchor"]],
+            "owner": _infer_action_owner(f"{source['speaker']} {source['text']}", {}),
+            "deadline": _infer_action_deadline(source["text"]),
+        }
+        entries.append(entry)
+        existing_action_texts.add(key)
+        seen_anchors.add(source["anchor"])
+        if len(entries) >= limit:
+            break
+    return entries
+
+
 def _polished_minutes_topic_groups(report: dict[str, Any]) -> dict[str, Any]:
-    """Build polished minutes grouped by evidence-driven topic profiles."""
+    """Build polished minutes from profile matches plus transfer-friendly generic topics."""
 
     topics: list[dict[str, Any]] = []
     for profile in TOPIC_PROFILES:
-        topic = {"topic": profile["topic"], "sections": {}}
-        terms = profile["terms"]
-        _add_profile_section(
-            topic,
-            "Discussion points",
-            profile["summary"],
-            report,
-            ["responsibility", "evidence_request", "evidence_artifact", "process_flow", "question", "risk"],
-            terms,
-        )
-        _add_profile_section(
-            topic,
-            "Responsibilities",
-            profile["responsibility"],
-            report,
-            ["responsibility", "action"],
-            terms,
-        )
-        _add_profile_section(
-            topic,
-            "Evidence required",
-            profile["evidence"],
-            report,
-            ["evidence_artifact", "evidence_request", "responsibility"],
-            terms,
-        )
-        _add_profile_section(
-            topic,
-            "Risks",
-            profile["risk"],
-            report,
-            ["risk", "responsibility", "evidence_request"],
-            terms,
-            limit=3,
-        )
-        _add_profile_section(
-            topic,
-            "Open questions",
-            profile["questions"],
-            report,
-            ["question", "evidence_request"],
-            terms,
-            limit=3,
-        )
+        topic = _profile_topic(profile, report)
+        if topic is not None:
+            topics.append(topic)
+
+    seen_topic_anchors = {
+        anchor
+        for topic in topics
+        for entries in topic["sections"].values()
+        for entry in entries
+        for anchor in entry["source_anchors"]
+    }
+    for profile in GENERIC_TOPIC_PROFILES:
+        topic = _profile_topic(profile, report, generic=True)
+        if topic is None:
+            continue
         unique_topic_anchors = {
             anchor
             for entries in topic["sections"].values()
             for entry in entries
             for anchor in entry["source_anchors"]
         }
-        if topic["sections"] and len(unique_topic_anchors) >= 2:
+        # Keep generic topics that add real coverage rather than merely
+        # restating the same anchors already claimed by domain profiles.
+        if len(unique_topic_anchors - seen_topic_anchors) >= 2 or not topics:
             topics.append(topic)
+            seen_topic_anchors.update(unique_topic_anchors)
 
-    actions = _generic_action_entries(report, [topic["topic"] for topic in topics])
+    dynamic_topic = _dynamic_topic_from_remaining_sources(report, seen_topic_anchors) if len(topics) < 3 else None
+    if dynamic_topic is not None:
+        topics.append(dynamic_topic)
+
+    profile_actions = _generic_action_entries(report, [topic["topic"] for topic in topics])
+    seen_action_texts = {entry["text"].lower() for entry in profile_actions}
+    used_action_anchors = {
+        anchor
+        for entry in profile_actions
+        for anchor in entry.get("source_anchors", [])
+        if anchor.startswith("action#")
+    }
+    actions = profile_actions + _extractive_action_entries(
+        report,
+        seen_action_texts,
+        used_action_anchors,
+        limit=max(0, 12 - len(profile_actions)),
+    )
     return {"topics": topics, "actions": actions}
 
 def _iter_topic_entries(topic_groups: dict[str, Any]) -> list[dict[str, Any]]:
