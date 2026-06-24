@@ -39,3 +39,16 @@ Example `/process` payload:
 
 The canonical working repo remains `clairenicholsondigital/google-colab-mini-lm`.
 This public repo is the unauthenticated URL mirror for Colab execution.
+
+## Current classifier layer
+
+The default `trial4_best` config is now fixed. The classifier adds a second
+layer based on audited examples:
+
+- `noise`
+- `process_flow`
+- `evidence_request`
+- `evidence_artifact`
+- stricter `action`
+
+Responsibilities still take priority over action/evidence wording.

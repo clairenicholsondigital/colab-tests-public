@@ -175,30 +175,7 @@ DEFAULT_TRIALS = [
         "name": "trial4_best",
         "description": "Current best balance from endpoint testing.",
         "options": TRIAL4_BEST_OPTIONS,
-    },
-    {
-        "name": "trial4_plus_process_flow",
-        "description": "Adds operating-model phrases for analysing discussion misses.",
-        "options": {
-            **TRIAL4_BEST_OPTIONS,
-            "process_flow_words": [
-                "supplier",
-                "suppliers",
-                "comes from",
-                "comes in",
-                "lands in",
-                "netherlands",
-                "ireland",
-                "warehouse",
-                "warehousing",
-                "storage",
-                "transportation",
-                "financial clearinghouse",
-                "clearinghouse",
-                "final storage",
-            ],
-        },
-    },
+    }
 ]
 
 MISS_PATTERNS = {
@@ -295,11 +272,14 @@ def _snapshot_words(classifier: Any) -> dict[str, list[str]]:
         "OPEN_QUESTION_WORDS",
         "RESPONSIBILITY_WORDS",
         "ACTION_WORDS",
+        "EVIDENCE_REQUEST_WORDS",
+        "EVIDENCE_ARTIFACT_WORDS",
         "EVIDENCE_WORDS",
+        "PROCESS_FLOW_WORDS",
         "RISK_WORDS",
         "DECISION_WORDS",
     ]
-    return {name: getattr(classifier, name)[:] for name in names}
+    return {name: getattr(classifier, name)[:] for name in names if hasattr(classifier, name)}
 
 
 def _restore_words(classifier: Any, original: dict[str, list[str]]) -> None:
@@ -312,16 +292,32 @@ def _apply_options(classifier: Any, options: dict[str, Any]) -> None:
         "open_question_words": "OPEN_QUESTION_WORDS",
         "responsibility_words": "RESPONSIBILITY_WORDS",
         "action_words": "ACTION_WORDS",
-        "evidence_words": "EVIDENCE_WORDS",
         "risk_words": "RISK_WORDS",
         "decision_words": "DECISION_WORDS",
+        "process_flow_words": "PROCESS_FLOW_WORDS",
     }
     for option_name, global_name in mapping.items():
+        if not hasattr(classifier, global_name):
+            continue
         setattr(
             classifier,
             global_name,
             _merge_unique(getattr(classifier, global_name), options.get(option_name, [])),
         )
+    if hasattr(classifier, "EVIDENCE_REQUEST_WORDS"):
+        classifier.EVIDENCE_REQUEST_WORDS = _merge_unique(
+            classifier.EVIDENCE_REQUEST_WORDS,
+            options.get("evidence_request_words", options.get("evidence_words", [])),
+        )
+    if hasattr(classifier, "EVIDENCE_ARTIFACT_WORDS"):
+        classifier.EVIDENCE_ARTIFACT_WORDS = _merge_unique(
+            classifier.EVIDENCE_ARTIFACT_WORDS,
+            options.get("evidence_artifact_words", options.get("evidence_words", [])),
+        )
+    if hasattr(classifier, "EVIDENCE_WORDS"):
+        request_words = getattr(classifier, "EVIDENCE_REQUEST_WORDS", [])
+        artifact_words = getattr(classifier, "EVIDENCE_ARTIFACT_WORDS", [])
+        classifier.EVIDENCE_WORDS = _merge_unique(request_words, artifact_words)
 
 
 def _read_transcript(transcript_text: str | None, transcript_path: str | None) -> str:
@@ -403,7 +399,10 @@ def _run_trial(
                 scorecard.get(bucket, 0)
                 for bucket in [
                     "action",
+                    "evidence_request",
+                    "evidence_artifact",
                     "evidence_needed",
+                    "process_flow",
                     "question",
                     "responsibility",
                     "risk",
@@ -416,7 +415,10 @@ def _run_trial(
                 "open_question_words": len(classifier.OPEN_QUESTION_WORDS),
                 "responsibility_words": len(classifier.RESPONSIBILITY_WORDS),
                 "action_words": len(classifier.ACTION_WORDS),
-                "evidence_words": len(classifier.EVIDENCE_WORDS),
+                "evidence_request_words": len(getattr(classifier, "EVIDENCE_REQUEST_WORDS", [])),
+                "evidence_artifact_words": len(getattr(classifier, "EVIDENCE_ARTIFACT_WORDS", [])),
+                "evidence_words": len(getattr(classifier, "EVIDENCE_WORDS", [])),
+                "process_flow_words": len(getattr(classifier, "PROCESS_FLOW_WORDS", [])),
                 "risk_words": len(classifier.RISK_WORDS),
                 "decision_words": len(classifier.DECISION_WORDS),
             },

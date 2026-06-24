@@ -7,6 +7,7 @@ structured evidence graph that can later be rewritten into polished minutes.
 The important classifier changes in this version are:
 - responsibility statements always beat action wording
 - open questions are separated from risks
+- discussion is split into noise, process flow and evidence subtypes
 """
 
 from __future__ import annotations
@@ -73,17 +74,31 @@ ACTION_WORDS = [
     "submit",
 ]
 
-EVIDENCE_WORDS = [
+EVIDENCE_REQUEST_WORDS = [
     "evidence",
-    "document",
-    "documents",
-    "record",
-    "records",
     "status",
     "timeline",
     "plan",
     "task list",
     "project plan",
+    "confirmation",
+    "proof",
+    "show",
+    "demonstrate",
+    "audit trail",
+    "registration status",
+    "preparation",
+    "collecting the data",
+    "have the data",
+    "in place",
+]
+
+EVIDENCE_ARTIFACT_WORDS = [
+    "document",
+    "documents",
+    "documentation",
+    "record",
+    "records",
     "invoice",
     "email",
     "registration",
@@ -92,7 +107,23 @@ EVIDENCE_WORDS = [
     "labels",
     "translation",
     "translations",
+    "certificate",
+    "srn",
+    "eudamed",
+    "udemed",
+    "medenvoy",
+    "med envoy",
+    "ifu",
+    "ifus",
+    "quality manual",
+    "procedure",
+    "rationale",
+    "file",
+    "warranty booklet",
+    "manufacturer information note",
 ]
+
+EVIDENCE_WORDS = EVIDENCE_REQUEST_WORDS + EVIDENCE_ARTIFACT_WORDS
 
 RISK_WORDS = [
     "risk",
@@ -129,7 +160,71 @@ NOISE_WORDS = {
     "right",
     "thanks",
     "thank you",
+    "sorry",
+    "haha",
+    "mmh",
+    "hmm",
+    "ohh",
+    "ah",
+    "nope",
+    "all right",
+    "not at all",
+    "see you",
 }
+
+NOISE_PHRASES = [
+    "don't worry",
+    "doggy",
+    "dog people",
+    "google, google",
+]
+
+PROCESS_FLOW_WORDS = [
+    "supplier",
+    "suppliers",
+    "comes from",
+    "comes in",
+    "lands in",
+    "netherlands",
+    "ireland",
+    "warehouse",
+    "warehousing",
+    "storage",
+    "transportation",
+    "financial clearinghouse",
+    "clearinghouse",
+    "final storage",
+    "buy-sell",
+    "third party",
+    "shipped from",
+    "fiscally cleared",
+    "ports of arrival",
+    "barcoded",
+    "factory",
+]
+
+ACTION_COMMITMENT_WORDS = [
+    "i can",
+    "we can",
+    "i will",
+    "we will",
+    "i'll",
+    "we'll",
+    "i could",
+    "we could",
+    "i need to",
+    "we need to",
+    "i have to",
+    "we have to",
+    "send it",
+    "send that",
+    "send on",
+    "follow up",
+    "come back",
+    "share that",
+    "provide that",
+    "confirm that",
+]
 
 
 @dataclass
@@ -153,7 +248,29 @@ def is_noise(sentence: str) -> bool:
         return True
     if lowered in NOISE_WORDS:
         return True
+    if any(phrase in lowered for phrase in NOISE_PHRASES):
+        return True
     return len(lowered.split()) <= 2 and all(word in NOISE_WORDS for word in lowered.split())
+
+
+def is_actionable(sentence: str, text: str) -> bool:
+    if text in {"task", "tasks", "action", "actions", "to do"}:
+        return False
+    if has_any(text, ACTION_COMMITMENT_WORDS):
+        return True
+    if not has_any(text, ACTION_WORDS):
+        return False
+    if has_any(text, PROCESS_FLOW_WORDS):
+        return False
+    # Avoid treating loose conversational mentions such as "get clarity" or
+    # "feel free to elaborate" as concrete actions.
+    return bool(
+        re.search(
+            r"\b(i|we|you|they|orla|jacqui|mark|jenny|colm)\b.{0,40}\b"
+            r"(send|share|provide|obtain|request|review|update|confirm|prepare|collect|upload|submit|follow up|come back)\b",
+            text,
+        )
+    )
 
 
 def classify_sentence(sentence: str) -> str:
@@ -171,10 +288,12 @@ def classify_sentence(sentence: str) -> str:
 
     question = "?" in sentence or has_any(text, OPEN_QUESTION_WORDS)
     responsibility = has_any(text, RESPONSIBILITY_WORDS)
-    evidence = has_any(text, EVIDENCE_WORDS)
+    evidence_request = has_any(text, EVIDENCE_REQUEST_WORDS)
+    evidence_artifact = has_any(text, EVIDENCE_ARTIFACT_WORDS)
     decision = has_any(text, DECISION_WORDS)
     risk = has_any(text, RISK_WORDS)
-    strong_action = has_any(text, ACTION_WORDS)
+    process_flow = has_any(text, PROCESS_FLOW_WORDS)
+    strong_action = is_actionable(sentence, text)
 
     if question:
         return "question"
@@ -182,10 +301,14 @@ def classify_sentence(sentence: str) -> str:
         return "responsibility"
     if decision:
         return "decision"
-    if evidence:
-        return "evidence_needed"
+    if process_flow:
+        return "process_flow"
     if risk:
         return "risk"
+    if evidence_request:
+        return "evidence_request"
+    if evidence_artifact:
+        return "evidence_artifact"
     if strong_action:
         return "action"
     return "discussion"
@@ -226,8 +349,7 @@ def extract_items(transcript: str) -> list[EvidenceItem]:
     for speaker, turn_text in parse_turns(transcript):
         for sentence in split_sentences(turn_text):
             bucket = classify_sentence(sentence)
-            if bucket != "noise":
-                items.append(EvidenceItem(bucket=bucket, speaker=speaker, text=sentence))
+            items.append(EvidenceItem(bucket=bucket, speaker=speaker, text=sentence))
     return items
 
 
@@ -294,11 +416,14 @@ def render_markdown(report: dict) -> str:
 
     preferred_order = [
         "responsibility",
-        "evidence_needed",
+        "evidence_request",
+        "evidence_artifact",
         "action",
         "risk",
         "question",
         "decision",
+        "process_flow",
+        "noise",
         "discussion",
     ]
 
