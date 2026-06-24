@@ -176,6 +176,13 @@ def human_minutes_body(text: str) -> str:
 
 
 def human_next_steps(text: str) -> str:
+    action_table = re.search(r"\bActions?\s+Owner\s+Deadline\b", text, re.I)
+    if action_table:
+        before_table = text[: action_table.start()]
+        headings = list(re.finditer(r"\bNext steps\b", before_table, re.I))
+        if headings:
+            return text[headings[-1].end() :]
+        return text[action_table.start() :]
     match = re.search(r"\bNext steps\b", text, re.I)
     return text[match.end() :] if match else ""
 
@@ -185,7 +192,7 @@ def looks_like_heading(line: str) -> bool:
     if not clean or clean.startswith(("•", "o ")):
         return False
     lowered = clean.lower()
-    if re.search(r"\b(?:will|forward|implementing|confirmed|purchased|reviewing|working|hoping)\b", lowered):
+    if re.search(r"\b(?:will|forward|implementing|confirmed|approved|purchased|reviewing|working|hoping)\b", lowered):
         return False
     if re.search(r"\bby\s+(?:\d|third)\b", lowered):
         return False
@@ -217,6 +224,14 @@ def extract_human_topics(text: str) -> list[str]:
         match = re.match(r"^([A-Z][A-Za-z0-9/&' -]{2,45}?)(?=\s+[A-Z][a-z]+\b)", line)
         if match:
             heading = match.group(1).strip()
+            lowered_heading = heading.lower()
+            if (
+                re.search(r"\b(?:will|followup|follow up|forward|implementing|currently|approved)\b", lowered_heading)
+                or re.search(r"\b(?:and|with|to|by|from|for|-)$", lowered_heading)
+                or re.search(r"\bby\s+(?:\d|third)\b", lowered_heading)
+                or lowered_heading.startswith("as an fyi")
+            ):
+                continue
             if 1 <= len(heading.split()) <= 6:
                 if pending:
                     topics.append(pending)

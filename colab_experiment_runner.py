@@ -1013,7 +1013,7 @@ def _generic_action_entries(
         entry = _profile_topic_entry(
             action["text"],
             report,
-            ["action", "evidence_request", "responsibility"],
+            action.get("buckets", ["action", "evidence_request", "responsibility"]),
             action["terms"],
             limit=3,
         )
@@ -1029,6 +1029,20 @@ def _generic_action_entries(
             f"{source.get('speaker', '')} {source.get('text', '')}"
             for source in entry["sources"]
         )
+        lowered_source_text = combined_source_text.lower()
+        required_any_terms = action.get("required_any_terms", [])
+        if required_any_terms and not any(
+            _term_matches(lowered_source_text, term.lower()) for term in required_any_terms
+        ):
+            continue
+        required_all_terms = action.get("required_all_terms", [])
+        if required_all_terms and not all(
+            _term_matches(lowered_source_text, term.lower()) for term in required_all_terms
+        ):
+            continue
+        blocked_terms = action.get("blocked_terms", [])
+        if blocked_terms and any(_term_matches(lowered_source_text, term.lower()) for term in blocked_terms):
+            continue
         entry["owner"] = _infer_action_owner(combined_source_text, action)
         deadline_source = _action_deadline_source(report, action, entry)
         if deadline_source is not None:
@@ -1293,10 +1307,15 @@ ACTION_PROFILES: list[dict[str, Any]] = [
         "owner": "Jacqui",
     },
     {
-        "text": "Follow up on language or translation requirements and share the relevant country/language list.",
-        "terms": ["translation", "language", "languages", "doc", "competent authority"],
+        "text": "Follow up on DoC language-publication requirements and share the relevant country/language list.",
+        "terms": ["translation", "language", "languages", "doc", "competent authority", "declaration"],
         "requires_topic": ["Labelling"],
-        "owner": "Jacqui",
+    },
+    {
+        "text": "Share the new label with the relevant reviewer for review.",
+        "terms": ["new label", "label", "jenny", "share", "review"],
+        "required_all_terms": ["label", "jenny"],
+        "requires_topic": ["Labelling"],
     },
     {
         "text": "Review invoice, annual fee or HPRA fee questions with the relevant internal contact.",
@@ -1311,41 +1330,46 @@ ACTION_PROFILES: list[dict[str, Any]] = [
         "owner": "Andrew",
     },
     {
-        "text": "Complete clinical or usability review of the relevant changes.",
-        "terms": ["clinical", "clinician", "usability", "formative", "summative", "study"],
+        "text": "Complete clinical/usability review of the alarm sound, flash, colour or code changes.",
+        "terms": ["clinical", "clinician", "usability", "formative", "summative", "study", "alarm", "flash", "colour", "color"],
         "deadline_terms": ["review team", "signed off", "change request", "acceptable"],
         "requires_topic": ["Clinical"],
         "owner": "Rebecca",
     },
     {
-        "text": "Review debug commands or scripts and confirm what appears on the device.",
-        "terms": ["debug", "command", "commands", "script", "screen"],
+        "text": "Sign off the change request and review debug commands or screens on the device.",
+        "terms": ["debug", "command", "commands", "script", "screen", "change request", "sign off"],
+        "required_any_terms": ["debug", "commands", "screen"],
         "requires_topic": ["Software"],
         "owner": "Andrew/David",
     },
     {
-        "text": "Trace software version changes and generate supporting test evidence if needed.",
+        "text": "Trace SW changes between v1.01 and v1.02, document the change and generate retrospective test data if needed.",
         "terms": ["version", "v1.01", "v1.02", "trace", "test data", "retrospective"],
+        "required_any_terms": ["v1.01", "v1.02", "version one", "102"],
         "deadline_terms": ["17 changes", "code", "test scenarios"],
         "requires_topic": ["Software"],
         "owner": "David/Andrew",
     },
     {
-        "text": "Review language-file or graphics-driver issues for the additional translations.",
-        "terms": ["language", "languages", "arabic", "vietnamese", "greek", "driver", "font"],
+        "text": "Review the graphics driver as a possible solution for uploading additional language symbols.",
+        "terms": ["language", "languages", "arabic", "vietnamese", "greek", "graphics", "driver", "font", "symbol"],
+        "buckets": ["action", "evidence_request", "responsibility", "question", "discussion"],
+        "required_any_terms": ["graphics", "driver", "font"],
         "requires_topic": ["Software"],
         "owner": "Andrew",
     },
     {
-        "text": "Complete or review electrical compliance testing and related outputs.",
-        "terms": ["electrical", "60601", "testing", "test reports", "test report"],
+        "text": "Review IEC60601-1 against MDD documentation and outline the electrical compliance testing needed.",
+        "terms": ["electrical", "60601", "iec60601", "mdd", "testing", "test reports", "test report"],
+        "required_any_terms": ["60601", "iec60601", "mdd"],
         "deadline_terms": ["23rd", "july", "final piece", "compliance testing"],
         "requires_topic": ["Electrical"],
         "owner": "Andrew",
     },
     {
-        "text": "Update risk management for cybersecurity, USB access and related controls.",
-        "terms": ["cybersecurity", "usb", "risk management", "port lock", "password", "controls"],
+        "text": "Update the risk management file for USB port lock, GUI security controls and competitor-control review.",
+        "terms": ["cybersecurity", "usb", "risk management", "port lock", "password", "controls", "gui", "competitor"],
         "deadline_terms": ["risk", "risk management file", "wednesday", "share back"],
         "requires_topic": ["Cybersecurity"],
         "owner": "Rebecca",
@@ -1363,22 +1387,11 @@ ACTION_PROFILES: list[dict[str, Any]] = [
         "owner": "Rebecca",
     },
     {
-        "text": "Review risk-management updates, including Rebecca's updates and any competitor controls.",
-        "terms": ["risk management", "risk management plan", "rebecca", "comments", "competitor", "controls"],
-        "requires_topic": ["Cybersecurity"],
-        "owner": "Rebecca",
-    },
-    {
         "text": "Complete subcontractor spreadsheet justifications and address any high-risk gaps.",
         "terms": ["subcontractor", "spreadsheet", "justifications", "missing", "high risk"],
+        "buckets": ["action", "evidence_request", "responsibility", "risk", "discussion", "process_flow"],
         "requires_topic": ["Project tracking"],
         "owner": "Rebecca",
-    },
-    {
-        "text": "Schedule or hold the follow-up calls needed to close open items.",
-        "terms": ["schedule", "call", "follow up", "follow-up", "working session", "weekly"],
-        "requires_topic": ["QMS"],
-        "deadline_lookup": False,
     },
     {
         "text": "Schedule client working calls and the regular weekly client connect.",
@@ -1388,8 +1401,9 @@ ACTION_PROFILES: list[dict[str, Any]] = [
         "deadline_lookup": False,
     },
     {
-        "text": "Follow up with the client on scope, SOW questions, sunglasses and any site-visit coordination.",
-        "terms": ["sow", "site visit", "coordinate a site visit", "co-ordinate a site visit", "scope of the sow"],
+        "text": "Follow up with the client contact on SOW scope, sunglasses and site-visit coordination.",
+        "terms": ["sow", "site visit", "coordinate a site visit", "co-ordinate a site visit", "scope of the sow", "orla"],
+        "required_any_terms": ["site visit", "coordinate a site visit", "co-ordinate a site visit"],
         "requires_topic": ["QMS"],
         "owner": "Jacqui",
         "deadline_lookup": False,
@@ -1442,8 +1456,8 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
         "evidence": "Quality manuals, procedures, trackers or summary documents are supporting evidence for this topic.",
         "risk": "If procedures are not aligned with day-to-day work, they may be difficult to use or maintain.",
         "questions": "Open questions remain around how current processes, systems or records work in practice.",
-        "terms": ["qms", "quality manual", "procedure", "process", "business works", "tracker", "summary document", "technical file"],
-        "required_any": ["qms", "quality manual", "technical file", "tracker", "summary document"],
+        "terms": ["qms", "quality manual", "procedure", "process", "business works", "tracker", "summary document"],
+        "required_any": ["qms", "quality manual", "tracker", "summary document"],
     },
     {
         "topic": "Supply chain, warehousing and order fulfilment",
@@ -1557,8 +1571,8 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
     },
     {
         "topic": "Project tracking, document control and submission readiness",
-        "summary": "The discussion covered project status, document tracking, change requests and submission readiness.",
-        "responsibility": "Owners need to keep project documents, change requests and submission materials moving.",
+        "summary": "The discussion covered technical-file project status, key risk/software priorities, document tracking, change requests and submission readiness.",
+        "responsibility": "Owners need to keep technical-file documents, risk/software priorities, change requests and submission materials moving.",
         "evidence": "Trackers, change requests, document-control records and submission packages are supporting evidence.",
         "risk": "Open document or tracker gaps may delay review, approval or submission readiness.",
         "questions": "Open questions remain around status, ownership, deadlines or what needs to be closed before submission.",
