@@ -2013,8 +2013,13 @@ def _apply_raw_transcript_fallback(topic_groups: dict[str, Any], report: dict[st
         for entry in entries
         for anchor in entry["source_anchors"]
     }
-    if len(topic_groups["topics"]) < 2:
-        raw_entries = _raw_discussion_entries(transcript, used_topic_anchors, limit=6)
+    existing_discussion_count = sum(
+        len(topic["sections"].get("Discussion points", []))
+        for topic in topic_groups["topics"]
+    )
+    raw_limit = 6 if len(topic_groups["topics"]) < 2 else max(0, 8 - existing_discussion_count)
+    if raw_limit:
+        raw_entries = _raw_discussion_entries(transcript, used_topic_anchors, limit=raw_limit)
         if raw_entries:
             topic_groups["topics"].append(
                 {

@@ -1,0 +1,957 @@
+{
+  "generatedAt": "2026-06-24T20:02:48.898462+00:00",
+  "runnerPath": "/root/.openclaw/workspace/colab-tests-public/colab_experiment_runner.py",
+  "runnerLabel": "/root/.openclaw/workspace/colab-tests-public/colab_experiment_runner.py",
+  "fixtureRoot": "/root/.openclaw/workspace/colab-tests-public/fixtures/microsoft-teams-minutes",
+  "summary": {
+    "caseCount": 10,
+    "passed": 6,
+    "failed": 4,
+    "averageScore": 0.83
+  },
+  "cases": [
+    {
+      "id": "001_status_review",
+      "meetingType": "project_status_review",
+      "overallScore": 0.5,
+      "pass": false,
+      "scores": {
+        "topics": 0.75,
+        "action_count": 0.0,
+        "owners": 0.0,
+        "due_status": 0.0,
+        "decisions": 1.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 1.0
+      },
+      "expected": {
+        "topics": [
+          "stage gate templates",
+          "sales dependency",
+          "vendor strategy",
+          "intake workflow"
+        ],
+        "topicHits": [
+          "stage gate templates",
+          "vendor strategy",
+          "intake workflow"
+        ],
+        "actionCount": 5,
+        "decisionCount": 0,
+        "owners": [
+          "Ciara / Conor",
+          "Conor",
+          "Conor",
+          "Emma",
+          "Conor"
+        ],
+        "dueStatus": [
+          "Before next week",
+          "Before next week",
+          "Before next week",
+          "This week",
+          "Before next week"
+        ]
+      },
+      "generated": {
+        "actionCount": 7,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "summary",
+          "discussion points",
+          "decisions",
+          "action items",
+          "follow-up"
+        ],
+        "teamsHeadingsMissing": []
+      },
+      "notes": [
+        "Missed topics: sales dependency",
+        "Action count expected 5, generated 7"
+      ],
+      "generatedMinutes": "# Microsoft Teams-style generated minutes\n\n_Generated from transcript-supported evidence. Each substantive line keeps source anchors back to bucketed or raw transcript lines._\n\n## Summary\n\n- The discussion covered AI adoption, process improvement and how to choose useful starting points.\n- The discussion also covered strategy, and, document, draft.\n- Right, let's run through the AI programme items quickly.\n\n## Discussion Points\n\n### AI adoption, change management and process improvement\n\n#### Discussion points\n\n- The discussion covered AI adoption, process improvement and how to choose useful starting points. _(Sources: responsibility#1, question#1, question#2, question#3)_\n\n#### Responsibilities\n\n- AI opportunities need to solve a real process problem and keep responsible people in the decision loop. _(Sources: responsibility#1)_\n\n#### Evidence required\n\n- Process maps, opportunity registers, roadmaps and improvement criteria are supporting evidence. _(Sources: responsibility#1)_\n\n#### Risks\n\n- AI work may fail to land if it is built on top of poor workflows or does not solve a real problem. _(Sources: responsibility#1)_\n\n#### Open questions\n\n- Open questions remain around opportunity fit, adoption barriers or how the process should change. _(Sources: question#1, question#2, question#3)_\n\n### Strategy, And, Document\n\n#### Discussion points\n\n- The discussion also covered strategy, and, document, draft. _(Sources: evidence_request#3, action#1, action#2, evidence_request#1, question#1)_\n\n### Additional transcript-supported discussion points\n\n#### Discussion points\n\n- Right, let's run through the AI programme items quickly. _(Sources: raw#1)_\n- The repeatable AI use case library can be marked complete now because use cases one and two are live and documented. _(Sources: raw#2)_\n- There is polish work left, but the deliverable exists. _(Sources: raw#3)_\n- The intake workflow and request funnel? _(Sources: raw#4)_\n- The form exists but routing is not working properly yet, so it is not operational. _(Sources: raw#5)_\n- Two reviews have gone through it, but the templates are not final. _(Sources: raw#6)_\n\n## Decisions\n\n- No decisions detected.\n\n## Action Items\n\n| Action | Owner | Due / Status | Sources |\n|---|---|---|---|\n| Schedule or hold the follow-up calls needed to close open items. | Ciara/Conor | This week | action#1, action#2 |\n| review stage gate templates. | Ciara | Not specified | raw_action#1 |\n| Confirm AI pipeline dependencies with sales. | Ciara | Not specified | raw_action#2 |\n| Draft the vendor strategy document. | Ciara | Not specified | raw_action#3 |\n| Follow up innovation grant feedback. | Ciara | Not specified | raw_action#4 |\n| Validate intake workflow routing. | Ciara | Not specified | raw_action#5 |\n| Emma is chasing and said she would follow up this week. | Conor | This week | raw_action#8 |\n\n## Follow-up / Open Questions\n\n- Open questions remain around opportunity fit, adoption barriers or how the process should change. _(Sources: question#1, question#2, question#3)_\n\n## Source excerpts\n\n- responsibility#1 Unknown: Daily AI Programme Check-in Date: 2 June 2026 Location: Microsoft Teams\n- question#1 Ciara Griffin: The intake workflow and request funnel?\n- question#2 Ciara Griffin: Stage gate review process?\n- question#3 Ciara Griffin: AI pipeline strategy?\n- evidence_request#3 Ciara Griffin: Draft the vendor strategy document.\n- action#1 Conor Flynn: Emma is chasing and said she would follow up this week.\n- action#2 Ciara Griffin: Follow up innovation grant feedback.\n- evidence_request#1 Conor Flynn: The strategy document itself does not exist yet.\n- raw#1 Ciara Griffin: Right, let's run through the AI programme items quickly.\n- raw#2 Ciara Griffin: The repeatable AI use case library can be marked complete now because use cases one and two are live and documented.\n- raw#3 Conor Flynn: There is polish work left, but the deliverable exists.\n- raw#4 Ciara Griffin: The intake workflow and request funnel?\n- raw#5 Conor Flynn: The form exists but routing is not working properly yet, so it is not operational.\n- raw#6 Conor Flynn: Two reviews have gone through it, but the templates are not final.\n- raw_action#1 Ciara Griffin: review stage gate templates.\n- raw_action#2 Ciara Griffin: Confirm AI pipeline dependencies with sales.\n- raw_action#3 Ciara Griffin: Draft the vendor strategy document.\n- raw_action#4 Ciara Griffin: Follow up innovation grant feedback.\n- raw_action#5 Ciara Griffin: Validate intake workflow routing.\n- raw_action#8 Conor Flynn: Emma is chasing and said she would follow up this week.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 1,
+            "evidence_artifact": 0,
+            "evidence_request": 3,
+            "action": 2,
+            "risk": 1,
+            "question": 6,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 19,
+          "unique_source_anchor_count": 20,
+          "allowed_bucket_source_total": 13,
+          "transcript_chars": 1527,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "002_decision_only_validation",
+      "meetingType": "decision_review",
+      "overallScore": 0.778,
+      "pass": false,
+      "scores": {
+        "topics": 0.5,
+        "action_count": 1.0,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 0.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 1.0
+      },
+      "expected": {
+        "topics": [
+          "validation positioning",
+          "broader applications"
+        ],
+        "topicHits": [
+          "broader applications"
+        ],
+        "actionCount": 0,
+        "decisionCount": 2,
+        "owners": [],
+        "dueStatus": []
+      },
+      "generated": {
+        "actionCount": 0,
+        "decisionCount": 1,
+        "teamsHeadingsPresent": [
+          "summary",
+          "discussion points",
+          "decisions",
+          "action items",
+          "follow-up"
+        ],
+        "teamsHeadingsMissing": []
+      },
+      "notes": [
+        "Missed topics: validation positioning",
+        "Decision count expected 2, generated 1"
+      ],
+      "generatedMinutes": "# Microsoft Teams-style generated minutes\n\n_Generated from transcript-supported evidence. Each substantive line keeps source anchors back to bucketed or raw transcript lines._\n\n## Summary\n\n- The question is whether the webinar should stay validation-specific or talk about broader applications too.\n\n## Discussion Points\n\n### Additional transcript-supported discussion points\n\n#### Discussion points\n\n- The question is whether the webinar should stay validation-specific or talk about broader applications too. _(Sources: raw#1)_\n- Validation is the hook, but if we only talk about validation, the operations team may assume it is not relevant to them. _(Sources: raw#2)_\n- So we could keep the title validation-specific but mention broader applications in the middle section. _(Sources: raw#3)_\n- Yes, that is the right balance. _(Sources: raw#4)_\n- Keep the validation title and include broader applications as examples. _(Sources: raw#5)_\n\n## Decisions\n\n- Keep the validation title and include broader applications as examples. _(Sources: raw_decision#1)_\n\n## Action Items\n\nNo action items were recorded.\n\n## Follow-up / Open Questions\n\n- None recorded.\n\n## Source excerpts\n\n- raw#1 Nadia: The question is whether the webinar should stay validation-specific or talk about broader applications too.\n- raw#2 Owen: Validation is the hook, but if we only talk about validation, the operations team may assume it is not relevant to them.\n- raw#3 Nadia: So we could keep the title validation-specific but mention broader applications in the middle section.\n- raw#4 Owen: Yes, that is the right balance.\n- raw#5 Nadia: Keep the validation title and include broader applications as examples.\n- raw_decision#1 Nadia: Keep the validation title and include broader applications as examples.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 1,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 1,
+            "risk": 0,
+            "question": 0,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 6,
+          "unique_source_anchor_count": 6,
+          "allowed_bucket_source_total": 2,
+          "transcript_chars": 630,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "003_bug_triage",
+      "meetingType": "incident_bug_triage",
+      "overallScore": 0.889,
+      "pass": true,
+      "scores": {
+        "topics": 1.0,
+        "action_count": 1.0,
+        "owners": 1.0,
+        "due_status": 0.0,
+        "decisions": 1.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 1.0
+      },
+      "expected": {
+        "topics": [
+          "checkout bug",
+          "Safari logs",
+          "hotfix branch"
+        ],
+        "topicHits": [
+          "checkout bug",
+          "Safari logs",
+          "hotfix branch"
+        ],
+        "actionCount": 2,
+        "decisionCount": 1,
+        "owners": [
+          "Priya",
+          "Marco"
+        ],
+        "dueStatus": [
+          "By 3pm",
+          "Conditional"
+        ]
+      },
+      "generated": {
+        "actionCount": 2,
+        "decisionCount": 1,
+        "teamsHeadingsPresent": [
+          "summary",
+          "discussion points",
+          "decisions",
+          "action items",
+          "follow-up"
+        ],
+        "teamsHeadingsMissing": []
+      },
+      "notes": [
+        "Core checks passed."
+      ],
+      "generatedMinutes": "# Microsoft Teams-style generated minutes\n\n_Generated from transcript-supported evidence. Each substantive line keeps source anchors back to bucketed or raw transcript lines._\n\n## Summary\n\n- The checkout bug is blocking card payments for some mobile users.\n\n## Discussion Points\n\n### Additional transcript-supported discussion points\n\n#### Discussion points\n\n- The checkout bug is blocking card payments for some mobile users. _(Sources: raw#1)_\n- Priya to reproduce it on Safari and capture logs by 3pm. _(Sources: raw#2)_\n- Marco to prepare a hotfix branch if the logs confirm the token issue. _(Sources: raw#3)_\n\n## Decisions\n\n- No release decision until we see the logs. _(Sources: decision#1)_\n\n## Action Items\n\n| Action | Owner | Due / Status | Sources |\n|---|---|---|---|\n| Priya to reproduce it on Safari and capture logs by 3pm. | Liam | Not specified | raw_action#1 |\n| Marco to prepare a hotfix branch if the logs confirm the token issue. | Owner not specified | Not specified | raw_action#2 |\n\n## Follow-up / Open Questions\n\n- None recorded.\n\n## Source excerpts\n\n- raw#1 Ava: The checkout bug is blocking card payments for some mobile users.\n- raw#2 Liam: Priya to reproduce it on Safari and capture logs by 3pm.\n- raw#3 Ava: Marco to prepare a hotfix branch if the logs confirm the token issue.\n- decision#1 Liam: No release decision until we see the logs.\n- raw_action#1 Liam: Priya to reproduce it on Safari and capture logs by 3pm.\n- raw_action#2 Ava: Marco to prepare a hotfix branch if the logs confirm the token issue.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 0,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 1,
+            "risk": 1,
+            "question": 0,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 6,
+          "unique_source_anchor_count": 6,
+          "allowed_bucket_source_total": 2,
+          "transcript_chars": 389,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "004_webinar_rehearsal",
+      "meetingType": "webinar_rehearsal",
+      "overallScore": 0.5,
+      "pass": false,
+      "scores": {
+        "topics": 0.75,
+        "action_count": 0.0,
+        "owners": 0.0,
+        "due_status": 0.0,
+        "decisions": 1.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 1.0
+      },
+      "expected": {
+        "topics": [
+          "webinar flow",
+          "slides and visuals",
+          "demo framing",
+          "responsible AI adoption"
+        ],
+        "topicHits": [
+          "webinar flow",
+          "slides and visuals",
+          "responsible AI adoption"
+        ],
+        "actionCount": 6,
+        "decisionCount": 2,
+        "owners": [
+          "Ciara Griffin",
+          "Ciara Griffin",
+          "Jack Cunningham",
+          "Jack Cunningham",
+          "Conor Flynn",
+          "All"
+        ],
+        "dueStatus": [
+          "Before live webinar",
+          "Before live webinar",
+          "Before live webinar",
+          "Before live webinar",
+          "Before live webinar",
+          "Before live webinar"
+        ]
+      },
+      "generated": {
+        "actionCount": 10,
+        "decisionCount": 2,
+        "teamsHeadingsPresent": [
+          "summary",
+          "discussion points",
+          "decisions",
+          "action items",
+          "follow-up"
+        ],
+        "teamsHeadingsMissing": []
+      },
+      "notes": [
+        "Missed topics: demo framing",
+        "Action count expected 6, generated 10"
+      ],
+      "generatedMinutes": "# Microsoft Teams-style generated minutes\n\n_Generated from transcript-supported evidence. Each substantive line keeps source anchors back to bucketed or raw transcript lines._\n\n## Summary\n\n- The discussion covered the intended structure, running order and flow of the session.\n- The discussion covered AI adoption, process improvement and how to choose useful starting points.\n- The discussion covered timing, practice, delivery readiness and how presenters should prepare.\n\n## Discussion Points\n\n### Meeting agenda, structure and flow\n\n#### Discussion points\n\n- The discussion covered the intended structure, running order and flow of the session. _(Sources: responsibility#5, question#1)_\n\n#### Responsibilities\n\n- The team needs to keep the session structure clear and easy to follow. _(Sources: responsibility#5)_\n\n#### Evidence required\n\n- Agenda notes, running-order comments and presenter handover points are supporting evidence. _(Sources: responsibility#5)_\n\n#### Risks\n\n- If the structure is unclear, the session may feel rushed or difficult to follow. _(Sources: responsibility#5)_\n\n#### Open questions\n\n- Open questions remain around flow, handovers or what should be covered in each part. _(Sources: question#1)_\n\n### AI adoption, change management and process improvement\n\n#### Discussion points\n\n- The discussion covered AI adoption, process improvement and how to choose useful starting points. _(Sources: responsibility#1, responsibility#5, question#1, responsibility#2)_\n\n#### Responsibilities\n\n- AI opportunities need to solve a real process problem and keep responsible people in the decision loop. _(Sources: responsibility#1, responsibility#5, responsibility#2)_\n\n#### Evidence required\n\n- Process maps, opportunity registers, roadmaps and improvement criteria are supporting evidence. _(Sources: responsibility#1, responsibility#5, responsibility#2)_\n\n#### Risks\n\n- AI work may fail to land if it is built on top of poor workflows or does not solve a real problem. _(Sources: responsibility#1, responsibility#5, responsibility#2)_\n\n#### Open questions\n\n- Open questions remain around opportunity fit, adoption barriers or how the process should change. _(Sources: question#1)_\n\n### Timing, rehearsal and delivery readiness\n\n#### Discussion points\n\n- The discussion covered timing, practice, delivery readiness and how presenters should prepare. _(Sources: responsibility#3, responsibility#4, responsibility#5, action#2)_\n\n#### Responsibilities\n\n- Presenters need to practise, manage timing and keep clear notes for their sections. _(Sources: responsibility#3, responsibility#4, responsibility#5, action#2)_\n\n#### Evidence required\n\n- Timing estimates, practice comments and presenter-preparation notes are supporting evidence. _(Sources: responsibility#3, responsibility#4, responsibility#5, action#2)_\n\n#### Risks\n\n- Without rehearsal, sections may run too long, finish too quickly or lose clarity. _(Sources: responsibility#3, responsibility#4, responsibility#5)_\n\n#### Open questions\n\n- Open questions remain around section lengths, practice needs or delivery order. _(Sources: action#2)_\n\n### Additional transcript-supported discussion points\n\n#### Discussion points\n\n- Let's walk through the webinar flow. _(Sources: raw#1)_\n- We open with the welcome, then Jack explains the AI discovery workshop, then Conor shows the complaints triage demo. _(Sources: raw#2)_\n- The key message is that AI work should start with a defined business problem. _(Sources: raw#3)_\n- Otherwise people build tools that nobody uses. _(Sources: raw#4)_\n- Use the phrase responsible adoption of AI in a GXP setting. _(Sources: raw#5)_\n\n## Decisions\n\n- Use the phrase responsible adoption of AI in a GXP setting. _(Sources: raw_decision#1)_\n- Keep the tone educational. _(Sources: raw_decision#2)_\n\n## Action Items\n\n| Action | Owner | Due / Status | Sources |\n|---|---|---|---|\n| Use clearer webinar wording around responsible adoption of AI in a GXP setting. | Conor | Not specified | responsibility#1 |\n| Keep the webinar educational and avoid making the offering feel too sales-led. | Ciara | Not specified | responsibility#3 |\n| Practise the presenter sections and keep each section within the agreed timing. | Jack Cunningham | Not specified | action#2, responsibility#5 |\n| I can simplify the workshop methodology slide and rely more on narration. | Jack Cunningham | Not specified | action#1 |\n| reduce the text-heavy slides. | Ciara | Not specified | raw_action#1 |\n| add workshop visuals. | Ciara | Not specified | raw_action#2 |\n| add the responsible AI wording. | Ciara | Not specified | raw_action#3 |\n| simplify the methodology slide. | Ciara | Not specified | raw_action#4 |\n| refine the demo introduction. | Ciara | Not specified | raw_action#5 |\n| practise the delivery before the live session. | Ciara | Not specified | raw_action#6 |\n\n## Follow-up / Open Questions\n\n- Open questions remain around flow, handovers or what should be covered in each part. _(Sources: question#1)_\n- Open questions remain around opportunity fit, adoption barriers or how the process should change. _(Sources: question#1)_\n- Open questions remain around section lengths, practice needs or delivery order. _(Sources: action#2)_\n\n## Source excerpts\n\n- responsibility#5 Ciara Griffin: Actions: reduce the text-heavy slides, add workshop visuals, add the responsible AI wording, simplify the methodology slide, refine the demo introduction, and practise the delivery before the live session.\n- question#1 Jack Cunningham: The key message is that AI work should start with a defined business problem.\n- responsibility#1 Conor Flynn: Use the phrase responsible adoption of AI in a GXP setting.\n- responsibility#2 Conor Flynn: For the demo, I should explain the complaints triage problem before opening the tool.\n- responsibility#3 Ciara Griffin: This is the first time we mention the offering, but it should not feel salesy.\n- responsibility#4 Jack Cunningham: Seven to ten minutes should be fine.\n- action#2 Jack Cunningham: I will practise my section again.\n- raw#1 Ciara Griffin: Let's walk through the webinar flow.\n- raw#2 Ciara Griffin: We open with the welcome, then Jack explains the AI discovery workshop, then Conor shows the complaints triage demo.\n- raw#3 Jack Cunningham: The key message is that AI work should start with a defined business problem.\n- raw#4 Jack Cunningham: Otherwise people build tools that nobody uses.\n- raw#5 Conor Flynn: Use the phrase responsible adoption of AI in a GXP setting.\n- raw_decision#1 Conor Flynn: Use the phrase responsible adoption of AI in a GXP setting.\n- raw_decision#2 Ciara Griffin: Keep the tone educational.\n- action#1 Jack Cunningham: I can simplify the workshop methodology slide and rely more on narration.\n- raw_action#1 Ciara Griffin: reduce the text-heavy slides.\n- raw_action#2 Ciara Griffin: add workshop visuals.\n- raw_action#3 Ciara Griffin: add the responsible AI wording.\n- raw_action#4 Ciara Griffin: simplify the methodology slide.\n- raw_action#5 Ciara Griffin: refine the demo introduction.\n- raw_action#6 Ciara Griffin: practise the delivery before the live session.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 5,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 2,
+            "risk": 0,
+            "question": 1,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 32,
+          "unique_source_anchor_count": 21,
+          "allowed_bucket_source_total": 8,
+          "transcript_chars": 1342,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "005_finance_budget",
+      "meetingType": "finance_budget_review",
+      "overallScore": 0.926,
+      "pass": true,
+      "scores": {
+        "topics": 0.667,
+        "action_count": 1.0,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 1.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 1.0
+      },
+      "expected": {
+        "topics": [
+          "support costs",
+          "analytics hire",
+          "contractor spend"
+        ],
+        "topicHits": [
+          "support costs",
+          "analytics hire"
+        ],
+        "actionCount": 1,
+        "decisionCount": 1,
+        "owners": [
+          "Omar"
+        ],
+        "dueStatus": [
+          "Monday"
+        ]
+      },
+      "generated": {
+        "actionCount": 1,
+        "decisionCount": 1,
+        "teamsHeadingsPresent": [
+          "summary",
+          "discussion points",
+          "decisions",
+          "action items",
+          "follow-up"
+        ],
+        "teamsHeadingsMissing": []
+      },
+      "notes": [
+        "Missed topics: contractor spend"
+      ],
+      "generatedMinutes": "# Microsoft Teams-style generated minutes\n\n_Generated from transcript-supported evidence. Each substantive line keeps source anchors back to bucketed or raw transcript lines._\n\n## Summary\n\n- Support costs are higher than forecast because contractor cover continued for two extra weeks.\n\n## Discussion Points\n\n### Additional transcript-supported discussion points\n\n#### Discussion points\n\n- Support costs are higher than forecast because contractor cover continued for two extra weeks. _(Sources: raw#1)_\n- The analytics hire is the only flexible item left this quarter. _(Sources: raw#2)_\n- Then the recommendation is to defer the analytics hire until Q4 and keep contractor cover in the current month. _(Sources: raw#3)_\n\n## Decisions\n\n- defer the analytics hire until Q4. _(Sources: decision#2)_\n\n## Action Items\n\n| Action | Owner | Due / Status | Sources |\n|---|---|---|---|\n| I will send the revised forecast on Monday. | Omar | On Monday | action#1 |\n\n## Follow-up / Open Questions\n\n- None recorded.\n\n## Source excerpts\n\n- raw#1 Rachel: Support costs are higher than forecast because contractor cover continued for two extra weeks.\n- raw#2 Omar: The analytics hire is the only flexible item left this quarter.\n- raw#3 Rachel: Then the recommendation is to defer the analytics hire until Q4 and keep contractor cover in the current month.\n- decision#2 Rachel: That is the decision then: defer the analytics hire until Q4.\n- action#1 Omar: I will send the revised forecast on Monday.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 0,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 1,
+            "risk": 0,
+            "question": 0,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 5,
+          "unique_source_anchor_count": 5,
+          "allowed_bucket_source_total": 1,
+          "transcript_chars": 514,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "006_client_onboarding",
+      "meetingType": "client_onboarding",
+      "overallScore": 1.0,
+      "pass": true,
+      "scores": {
+        "topics": 1.0,
+        "action_count": 1.0,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 1.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 1.0
+      },
+      "expected": {
+        "topics": [
+          "finance rollout",
+          "warehouse delay",
+          "data mapping"
+        ],
+        "topicHits": [
+          "finance rollout",
+          "warehouse delay",
+          "data mapping"
+        ],
+        "actionCount": 1,
+        "decisionCount": 2,
+        "owners": [
+          "Noah"
+        ],
+        "dueStatus": [
+          "Friday"
+        ]
+      },
+      "generated": {
+        "actionCount": 1,
+        "decisionCount": 2,
+        "teamsHeadingsPresent": [
+          "summary",
+          "discussion points",
+          "decisions",
+          "action items",
+          "follow-up"
+        ],
+        "teamsHeadingsMissing": []
+      },
+      "notes": [
+        "Core checks passed."
+      ],
+      "generatedMinutes": "# Microsoft Teams-style generated minutes\n\n_Generated from transcript-supported evidence. Each substantive line keeps source anchors back to bucketed or raw transcript lines._\n\n## Summary\n\n- The discussion covered product flow, warehousing, picking, packing, labelling and dispatch.\n- Finance can start next Monday, but the warehouse data mapping is not ready.\n\n## Discussion Points\n\n### Supply chain, warehousing and order fulfilment\n\n#### Discussion points\n\n- The discussion covered product flow, warehousing, picking, packing, labelling and dispatch. _(Sources: process_flow#1, process_flow#2, process_flow#3, process_flow#4)_\n\n### Additional transcript-supported discussion points\n\n#### Discussion points\n\n- Finance can start next Monday, but the warehouse data mapping is not ready. _(Sources: raw#1)_\n- If we include warehouse now, the first rollout gets messy. _(Sources: raw#2)_\n- Then we start with finance first and delay warehouse until the data mapping is complete. _(Sources: raw#3)_\n- Warehouse stays out of phase one. _(Sources: raw#4)_\n\n## Decisions\n\n- If we include warehouse now, the first rollout gets messy. _(Sources: raw_decision#1)_\n- We start with finance first and delay warehouse until the data mapping is complete. _(Sources: raw_decision#2)_\n\n## Action Items\n\n| Action | Owner | Due / Status | Sources |\n|---|---|---|---|\n| I will confirm the finance workshop dates with the client by Friday. | Noah | By Friday | action#1 |\n\n## Follow-up / Open Questions\n\n- None recorded.\n\n## Source excerpts\n\n- process_flow#1 Maya: Finance can start next Monday, but the warehouse data mapping is not ready.\n- process_flow#2 Noah: If we include warehouse now, the first rollout gets messy.\n- process_flow#3 Maya: Then we start with finance first and delay warehouse until the data mapping is complete.\n- process_flow#4 Maya: Warehouse stays out of phase one.\n- raw#1 Maya: Finance can start next Monday, but the warehouse data mapping is not ready.\n- raw#2 Noah: If we include warehouse now, the first rollout gets messy.\n- raw#3 Maya: Then we start with finance first and delay warehouse until the data mapping is complete.\n- raw#4 Maya: Warehouse stays out of phase one.\n- raw_decision#1 Noah: If we include warehouse now, the first rollout gets messy.\n- raw_decision#2 Maya: We start with finance first and delay warehouse until the data mapping is complete.\n- action#1 Noah: I will confirm the finance workshop dates with the client by Friday.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 0,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 1,
+            "risk": 0,
+            "question": 0,
+            "process_flow": 4
+          },
+          "polished_bullet_count": 8,
+          "unique_source_anchor_count": 11,
+          "allowed_bucket_source_total": 5,
+          "transcript_chars": 469,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "007_support_metrics",
+      "meetingType": "support_metrics_review",
+      "overallScore": 0.889,
+      "pass": true,
+      "scores": {
+        "topics": 1.0,
+        "action_count": 0.5,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 1.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 1.0
+      },
+      "expected": {
+        "topics": [
+          "support metrics",
+          "complex cases",
+          "onboarding guide"
+        ],
+        "topicHits": [
+          "support metrics",
+          "complex cases",
+          "onboarding guide"
+        ],
+        "actionCount": 3,
+        "decisionCount": 0,
+        "owners": [
+          "Rachel",
+          "Mark",
+          "James"
+        ],
+        "dueStatus": [
+          "Wednesday",
+          "Friday",
+          "Next week"
+        ]
+      },
+      "generated": {
+        "actionCount": 4,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "summary",
+          "discussion points",
+          "decisions",
+          "action items",
+          "follow-up"
+        ],
+        "teamsHeadingsMissing": []
+      },
+      "notes": [
+        "Action count expected 3, generated 4"
+      ],
+      "generatedMinutes": "# Microsoft Teams-style generated minutes\n\n_Generated from transcript-supported evidence. Each substantive line keeps source anchors back to bucketed or raw transcript lines._\n\n## Summary\n\n- The discussion also covered complex, the, will, cases.\n- The support metrics look better overall, but complex cases are still taking too long.\n\n## Discussion Points\n\n### Complex, The, Will\n\n#### Discussion points\n\n- The discussion also covered complex, the, will, cases. _(Sources: action#4, risk#1, action#2, action#1, action#3)_\n\n### Additional transcript-supported discussion points\n\n#### Discussion points\n\n- The support metrics look better overall, but complex cases are still taking too long. _(Sources: raw#1)_\n- Simple requests are closing within target. _(Sources: raw#2)_\n- The issue is handoff quality on complex cases. _(Sources: raw#3)_\n- The onboarding guide is out of date, and new agents are asking the same questions. _(Sources: raw#4)_\n- Mark, please review the complex case handoff checklist. _(Sources: raw#5)_\n\n## Decisions\n\n- No decisions detected.\n\n## Action Items\n\n| Action | Owner | Due / Status | Sources |\n|---|---|---|---|\n| I will update the onboarding guide by Wednesday. | Rachel | By Wednesday | action#1 |\n| Mark, please review the complex case handoff checklist. | Mark | Not specified | action#2 |\n| Yes, I will do that by Friday. | Mark | By Friday | action#3 |\n| I will add a split between simple and complex cases to next week's metrics pack. | James | Next week | action#4 |\n\n## Follow-up / Open Questions\n\n- None recorded.\n\n## Source excerpts\n\n- action#4 James: I will add a split between simple and complex cases to next week's metrics pack.\n- risk#1 Rachel: The issue is handoff quality on complex cases.\n- action#2 James: Mark, please review the complex case handoff checklist.\n- action#1 Rachel: I will update the onboarding guide by Wednesday.\n- action#3 Mark: Yes, I will do that by Friday.\n- raw#1 James: The support metrics look better overall, but complex cases are still taking too long.\n- raw#2 Rachel: Simple requests are closing within target.\n- raw#3 Rachel: The issue is handoff quality on complex cases.\n- raw#4 Mark: The onboarding guide is out of date, and new agents are asking the same questions.\n- raw#5 James: Mark, please review the complex case handoff checklist.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 0,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 4,
+            "risk": 1,
+            "question": 0,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 10,
+          "unique_source_anchor_count": 10,
+          "allowed_bucket_source_total": 5,
+          "transcript_chars": 629,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "008_action_free_briefing",
+      "meetingType": "information_briefing",
+      "overallScore": 1.0,
+      "pass": true,
+      "scores": {
+        "topics": 1.0,
+        "action_count": 1.0,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 1.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 1.0
+      },
+      "expected": {
+        "topics": [
+          "market update",
+          "policy timing"
+        ],
+        "topicHits": [
+          "market update",
+          "policy timing"
+        ],
+        "actionCount": 0,
+        "decisionCount": 0,
+        "owners": [],
+        "dueStatus": []
+      },
+      "generated": {
+        "actionCount": 0,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "summary",
+          "discussion points",
+          "decisions",
+          "action items",
+          "follow-up"
+        ],
+        "teamsHeadingsMissing": []
+      },
+      "notes": [
+        "Core checks passed."
+      ],
+      "generatedMinutes": "# Microsoft Teams-style generated minutes\n\n_Generated from transcript-supported evidence. Each substantive line keeps source anchors back to bucketed or raw transcript lines._\n\n## Summary\n\n- This is just an information briefing.\n\n## Discussion Points\n\n### Additional transcript-supported discussion points\n\n#### Discussion points\n\n- This is just an information briefing. _(Sources: raw#1)_\n- The policy timing has moved, but there is no action for us today. _(Sources: raw#2)_\n- The market update is that the consultation window is likely to open in September. _(Sources: raw#3)_\n- That may affect planning later, but not this week. _(Sources: raw#4)_\n- So no decisions and no actions. _(Sources: raw#5)_\n- We just need everyone to be aware. _(Sources: raw#6)_\n\n## Decisions\n\n- No decisions detected.\n\n## Action Items\n\nNo action items were recorded.\n\n## Follow-up / Open Questions\n\n- None recorded.\n\n## Source excerpts\n\n- raw#1 Nadia: This is just an information briefing.\n- raw#2 Nadia: The policy timing has moved, but there is no action for us today.\n- raw#3 Owen: The market update is that the consultation window is likely to open in September.\n- raw#4 Nadia: That may affect planning later, but not this week.\n- raw#5 Owen: So no decisions and no actions.\n- raw#6 Owen: We just need everyone to be aware.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 0,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 0,
+            "risk": 0,
+            "question": 1,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 6,
+          "unique_source_anchor_count": 6,
+          "allowed_bucket_source_total": 1,
+          "transcript_chars": 419,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "009_noisy_low_substance",
+      "meetingType": "low_substance",
+      "overallScore": 1.0,
+      "pass": true,
+      "scores": {
+        "topics": 1.0,
+        "action_count": 1.0,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 1.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 1.0
+      },
+      "expected": {
+        "topics": [],
+        "topicHits": [],
+        "actionCount": 0,
+        "decisionCount": 0,
+        "owners": [],
+        "dueStatus": []
+      },
+      "generated": {
+        "actionCount": 0,
+        "decisionCount": 0,
+        "teamsHeadingsPresent": [
+          "summary",
+          "discussion points",
+          "decisions",
+          "action items",
+          "follow-up"
+        ],
+        "teamsHeadingsMissing": []
+      },
+      "notes": [
+        "Core checks passed."
+      ],
+      "generatedMinutes": "# Microsoft Teams-style generated minutes\n\n_Generated from transcript-supported evidence. Each substantive line keeps source anchors back to bucketed or raw transcript lines._\n\n## Summary\n\n- No substantive discussion points detected.\n\n## Discussion Points\n\n## Decisions\n\n- No decisions detected.\n\n## Action Items\n\nNo action items were recorded.\n\n## Follow-up / Open Questions\n\n- None recorded.\n\n## Source excerpts\n\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 0,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 0,
+            "risk": 0,
+            "question": 1,
+            "process_flow": 0
+          },
+          "polished_bullet_count": 0,
+          "unique_source_anchor_count": 0,
+          "allowed_bucket_source_total": 1,
+          "transcript_chars": 215,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    },
+    {
+      "id": "010_supplier_risk",
+      "meetingType": "supplier_risk_review",
+      "overallScore": 0.815,
+      "pass": false,
+      "scores": {
+        "topics": 0.667,
+        "action_count": 1.0,
+        "owners": 1.0,
+        "due_status": 1.0,
+        "decisions": 0.0,
+        "no_false_actions": 1.0,
+        "teams_structure": 1.0
+      },
+      "expected": {
+        "topics": [
+          "late shipments",
+          "buffer stock",
+          "SLA update"
+        ],
+        "topicHits": [
+          "late shipments",
+          "buffer stock"
+        ],
+        "actionCount": 1,
+        "decisionCount": 2,
+        "owners": [
+          "Daniel"
+        ],
+        "dueStatus": [
+          "This afternoon"
+        ]
+      },
+      "generated": {
+        "actionCount": 1,
+        "decisionCount": 1,
+        "teamsHeadingsPresent": [
+          "summary",
+          "discussion points",
+          "decisions",
+          "action items",
+          "follow-up"
+        ],
+        "teamsHeadingsMissing": []
+      },
+      "notes": [
+        "Missed topics: SLA update",
+        "Decision count expected 2, generated 1"
+      ],
+      "generatedMinutes": "# Microsoft Teams-style generated minutes\n\n_Generated from transcript-supported evidence. Each substantive line keeps source anchors back to bucketed or raw transcript lines._\n\n## Summary\n\n- The discussion also covered the, supplier, but, risk.\n- The current supplier has had three late shipments this month.\n\n## Discussion Points\n\n### The, Supplier, But\n\n#### Discussion points\n\n- The discussion also covered the, supplier, but, risk. _(Sources: responsibility#1, risk#1, process_flow#1, process_flow#2, action#1)_\n\n### Additional transcript-supported discussion points\n\n#### Discussion points\n\n- The current supplier has had three late shipments this month. _(Sources: raw#1)_\n- The quality scores are still acceptable, but the delivery risk is getting worse. _(Sources: raw#2)_\n\n## Decisions\n\n- keep the current supplier for Q1 with additional buffer stock. _(Sources: decision#2)_\n\n## Action Items\n\n| Action | Owner | Due / Status | Sources |\n|---|---|---|---|\n| I will send the revised SLA notes this afternoon. | Daniel | This afternoon | action#1 |\n\n## Follow-up / Open Questions\n\n- None recorded.\n\n## Source excerpts\n\n- responsibility#1 Priya: We should keep the supplier for Q1 but add two weeks of buffer stock.\n- risk#1 Daniel: The quality scores are still acceptable, but the delivery risk is getting worse.\n- process_flow#1 Unknown: Supplier Risk Review Date: 25 July 2026 Location: Microsoft Teams\n- process_flow#2 Priya: The current supplier has had three late shipments this month.\n- action#1 Daniel: I will send the revised SLA notes this afternoon.\n- raw#1 Priya: The current supplier has had three late shipments this month.\n- raw#2 Daniel: The quality scores are still acceptable, but the delivery risk is getting worse.\n- decision#2 Priya: Decision is to keep the current supplier for Q1 with additional buffer stock.\n",
+      "runnerEvaluation": {
+        "scores_out_of_10": {
+          "missing_important_information": 8,
+          "hallucinated_information": 9,
+          "action_quality": 7,
+          "evidence_quality": 8,
+          "responsibility_quality": 8
+        },
+        "basis": {
+          "allowed_source_buckets": [
+            "responsibility",
+            "evidence_artifact",
+            "evidence_request",
+            "action",
+            "risk",
+            "question",
+            "process_flow"
+          ],
+          "ignored_buckets": [
+            "discussion",
+            "noise",
+            "decision"
+          ],
+          "source_bucket_counts": {
+            "responsibility": 1,
+            "evidence_artifact": 0,
+            "evidence_request": 0,
+            "action": 1,
+            "risk": 1,
+            "question": 0,
+            "process_flow": 2
+          },
+          "polished_bullet_count": 5,
+          "unique_source_anchor_count": 8,
+          "allowed_bucket_source_total": 5,
+          "transcript_chars": 478,
+          "notes": [
+            "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+            "Missing-information score is limited because discussion/noise are intentionally ignored.",
+            "Action quality improves over the extractive pass, but several transcript actions remain soft commitments."
+          ]
+        }
+      }
+    }
+  ]
+}
