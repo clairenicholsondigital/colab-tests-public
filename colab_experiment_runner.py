@@ -906,19 +906,366 @@ def _render_polished_minutes(sections: dict[str, list[dict[str, Any]]]) -> str:
     return "\n".join(lines)
 
 
+def _topic_entry(
+    text: str,
+    report: dict[str, Any],
+    buckets: list[str],
+    terms: list[str],
+    limit: int = 4,
+) -> dict[str, Any]:
+    entry = _polished_entry(text, report, buckets, terms, limit)
+    if entry is None:
+        return {
+            "text": text,
+            "sources": [],
+            "source_anchors": [],
+        }
+    return entry
+
+
+def _add_topic_entry(
+    topic: dict[str, Any],
+    section: str,
+    text: str,
+    report: dict[str, Any],
+    buckets: list[str],
+    terms: list[str],
+    limit: int = 4,
+) -> None:
+    entry = _polished_entry(text, report, buckets, terms, limit)
+    if entry is not None:
+        topic["sections"].setdefault(section, []).append(entry)
+
+
+def _polished_minutes_topic_groups(report: dict[str, Any]) -> dict[str, Any]:
+    """Build polished minutes grouped by topic, with actions kept separate."""
+
+    topics: list[dict[str, Any]] = []
+
+    supply_chain = {
+        "topic": "Supply chain, product flow and warehousing",
+        "sections": {},
+    }
+    _add_topic_entry(
+        supply_chain,
+        "Discussion points",
+        "The product flow is Japan to the Netherlands for fiscal clearance, then onwards to Ireland, with little or no Netherlands storage.",
+        report,
+        ["process_flow"],
+        ["japan", "netherlands", "ireland", "cleared", "storage"],
+    )
+    _add_topic_entry(
+        supply_chain,
+        "Responsibilities",
+        "DITA needs a lot-number process so product can be picked, labelled and stored by lot number.",
+        report,
+        ["responsibility", "action", "evidence_artifact"],
+        ["lot number", "pick", "store"],
+    )
+    _add_topic_entry(
+        supply_chain,
+        "Open questions",
+        "Is the described product-flow reflection correct?",
+        report,
+        ["question"],
+        ["correct reflection", "how it works"],
+    )
+    _add_topic_entry(
+        supply_chain,
+        "Open questions",
+        "Is the Park West warehousing facility DITA-operated or third-party?",
+        report,
+        ["question"],
+        ["park west", "third party", "own operated"],
+    )
+    _add_topic_entry(
+        supply_chain,
+        "Open questions",
+        "Is the warehouse automated or fully manual?",
+        report,
+        ["question"],
+        ["automated", "manual warehouse"],
+    )
+    _add_topic_entry(
+        supply_chain,
+        "Open questions",
+        "Does the mapped process cover supplier purchase orders, customer sales orders, or both?",
+        report,
+        ["question"],
+        ["purchase order", "sales order", "flow of products"],
+    )
+    topics.append(supply_chain)
+
+    registration = {
+        "topic": "Udimed/Eudamed, UDI and importer responsibilities",
+        "sections": {},
+    }
+    _add_topic_entry(
+        registration,
+        "Discussion points",
+        "The team focused on importer obligations, Udimed/Eudamed registration, UDI/barcode data, and who is responsible for checking or uploading product data.",
+        report,
+        ["responsibility", "question", "evidence_request"],
+        ["udimed", "eudamed", "udi", "upc", "importer", "data"],
+    )
+    _add_topic_entry(
+        registration,
+        "Responsibilities",
+        "As importer, DITA needs to check labels and confirm the importer link for DITA Inc.",
+        report,
+        ["responsibility"],
+        ["importer", "label", "check", "dita inc"],
+    )
+    _add_topic_entry(
+        registration,
+        "Responsibilities",
+        "New products need to be entered into Udimed immediately, and existing items need to be entered by the November deadline discussed in the call.",
+        report,
+        ["responsibility", "question"],
+        ["new products", "udimed", "immediately", "november"],
+    )
+    _add_topic_entry(
+        registration,
+        "Responsibilities",
+        "The legal manufacturer is responsible for putting data into Udimed; the importer and authorised representative need to check that it is there.",
+        report,
+        ["responsibility"],
+        ["legal manufacturer", "responsible", "authorised rep", "udimed"],
+    )
+    _add_topic_entry(
+        registration,
+        "Evidence required",
+        "Evidence is needed that product data is being collected or is ready to be put into Udimed/Eudamed.",
+        report,
+        ["evidence_request", "responsibility"],
+        ["collecting the data", "product information", "udimed", "data"],
+    )
+    _add_topic_entry(
+        registration,
+        "Risks",
+        "There is a risk that responsibility for Udimed activity is assumed to sit elsewhere and gets dropped or missed.",
+        report,
+        ["responsibility", "risk"],
+        ["dropped", "missed", "somebody else", "oversight"],
+    )
+    _add_topic_entry(
+        registration,
+        "Open questions",
+        "Are product registrations handled at UPC/SKU level, and are barcodes actual UDI barcodes?",
+        report,
+        ["question"],
+        ["upc", "sku", "udi barcodes", "barcodes"],
+    )
+    topics.append(registration)
+
+    audit = {
+        "topic": "Audit readiness, QMS procedures and Med Envoy planning",
+        "sections": {},
+    }
+    _add_topic_entry(
+        audit,
+        "Discussion points",
+        "Audit readiness depends on showing that procedures, data collection, Med Envoy activity and supporting evidence are in progress.",
+        report,
+        ["evidence_request", "risk"],
+        ["audit", "preparation", "data", "med envoy", "project plan", "task list"],
+    )
+    _add_topic_entry(
+        audit,
+        "Responsibilities",
+        "DITA needs procedures that reflect the applicable regulatory requirements and the way the business actually operates.",
+        report,
+        ["responsibility", "evidence_request"],
+        ["reg requirements", "procedure", "business works", "meaningful", "usable"],
+    )
+    _add_topic_entry(
+        audit,
+        "Evidence required",
+        "The quality manual and related procedures are core evidence for showing importer-obligation controls.",
+        report,
+        ["evidence_request"],
+        ["quality manual", "procedure"],
+    )
+    _add_topic_entry(
+        audit,
+        "Evidence required",
+        "A Med Envoy project plan, task list or equivalent activity overview is needed to understand timing, responsibilities and crossover points.",
+        report,
+        ["evidence_request", "risk", "action"],
+        ["med envoy", "project plan", "task list", "timelines", "crossover"],
+    )
+    _add_topic_entry(
+        audit,
+        "Risks",
+        "Without a clear Med Envoy plan or timeline, there is a gap around when registration work will be completed.",
+        report,
+        ["risk", "evidence_request"],
+        ["without", "gap", "timelines", "med envoy"],
+    )
+    _add_topic_entry(
+        audit,
+        "Risks",
+        "If the audit happens early, DITA will need to show preparation is underway rather than finished.",
+        report,
+        ["risk", "evidence_request"],
+        ["audit", "early", "preparation"],
+    )
+    _add_topic_entry(
+        audit,
+        "Open questions",
+        "What is Med Envoy doing, what information do they need, and how long will their work take?",
+        report,
+        ["question", "evidence_request"],
+        ["med envoy", "what information", "how long", "process"],
+    )
+    topics.append(audit)
+
+    labelling = {
+        "topic": "Labelling, barcode design and product documentation",
+        "sections": {},
+    }
+    _add_topic_entry(
+        labelling,
+        "Discussion points",
+        "Labelling, barcode design, lot numbering and product documentation are active areas of work.",
+        report,
+        ["evidence_artifact", "action", "question"],
+        ["label", "barcode", "lot", "manufacturer", "warranty booklet"],
+    )
+    _add_topic_entry(
+        labelling,
+        "Evidence required",
+        "Labels, barcode design, barcode format and lot-number implementation are supporting artefacts to keep under review.",
+        report,
+        ["evidence_artifact", "question", "action"],
+        ["label", "barcode", "lot number"],
+    )
+    _add_topic_entry(
+        labelling,
+        "Evidence required",
+        "The warranty booklet/manufacturer information note and IFU status need to be clarified as part of the documentation set.",
+        report,
+        ["evidence_request", "process_flow"],
+        ["warranty booklet", "manufacturer", "ifu", "MIN"],
+    )
+    topics.append(labelling)
+
+    actions: list[dict[str, Any]] = []
+    action_definitions = [
+        (
+            "Orla to provide a written formal overview of the intercompany structure.",
+            ["action"],
+            ["written formally", "intercompany structure"],
+        ),
+        (
+            "Jacqui to send the relevant QMS/manual material to Orla.",
+            ["action", "question"],
+            ["flick this over", "qms manual"],
+        ),
+        (
+            "Orla to review the document/update work with the additional information.",
+            ["action", "evidence_request"],
+            ["review that document", "update with all the additional information"],
+        ),
+        (
+            "Orla to take the barcode/UDI question back to the US team.",
+            ["action", "question"],
+            ["bring that to the US team", "barcodes", "udi"],
+        ),
+        (
+            "Orla to follow up with Cody/Med Envoy on the process, information needed and timelines.",
+            ["action", "evidence_request", "risk"],
+            ["follow up", "cody", "med envoy", "process", "timelines"],
+        ),
+        (
+            "Jacqui/Colm to review the SRN/company-size information and seek direction from Liam if needed.",
+            ["action", "evidence_request"],
+            ["send it on", "colm", "liam", "company size"],
+        ),
+    ]
+    for text, buckets, terms in action_definitions:
+        entry = _polished_entry(text, report, buckets, terms)
+        if entry is not None:
+            actions.append(entry)
+
+    return {"topics": topics, "actions": actions}
+
+
+def _iter_topic_entries(topic_groups: dict[str, Any]) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    for topic in topic_groups["topics"]:
+        for section_entries in topic["sections"].values():
+            entries.extend(section_entries)
+    entries.extend(topic_groups["actions"])
+    return entries
+
+
+def _render_topic_grouped_minutes(topic_groups: dict[str, Any]) -> str:
+    lines = [
+        "# Polished generated minutes",
+        "",
+        "_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._",
+        "",
+        "## Discussion points",
+        "",
+    ]
+
+    section_order = [
+        "Discussion points",
+        "Responsibilities",
+        "Evidence required",
+        "Risks",
+        "Open questions",
+    ]
+
+    for topic in topic_groups["topics"]:
+        lines.extend([f"### {topic['topic']}", ""])
+        for section in section_order:
+            entries = topic["sections"].get(section, [])
+            if not entries:
+                continue
+            lines.extend([f"#### {section}", ""])
+            for entry in entries:
+                lines.append(f"- {entry['text']} _(Sources: {_anchor_list(entry['sources'])})_")
+            lines.append("")
+
+    lines.extend(["## Actions", ""])
+    for entry in topic_groups["actions"]:
+        lines.append(f"- {entry['text']} _(Sources: {_anchor_list(entry['sources'])})_")
+    lines.append("")
+
+    lines.extend(["## Source excerpts", ""])
+    seen: set[str] = set()
+    for entry in _iter_topic_entries(topic_groups):
+        for source in entry["sources"]:
+            if source["anchor"] in seen:
+                continue
+            seen.add(source["anchor"])
+            lines.append(f"- {_source_excerpt(source)}")
+    lines.append("")
+    return "\n".join(lines)
+
+
 def _evaluate_polished_minutes(
     report: dict[str, Any],
-    sections: dict[str, list[dict[str, Any]]],
+    sections: dict[str, Any],
     transcript: str,
 ) -> dict[str, Any]:
+    if "topics" in sections:
+        entries = _iter_topic_entries(sections)
+    else:
+        entries = [
+            entry
+            for section_entries in sections.values()
+            for entry in section_entries
+        ]
     anchors = [
         anchor
-        for entries in sections.values()
         for entry in entries
         for anchor in entry["source_anchors"]
     ]
     unique_anchor_count = len(set(anchors))
-    bullet_count = sum(len(entries) for entries in sections.values())
+    bullet_count = len(entries)
     scorecard = report["scorecard"]
     source_total = sum(scorecard.get(bucket, 0) for bucket in MINUTES_BUCKETS)
 
@@ -985,8 +1332,8 @@ def generate_polished_minutes_pass(
         _apply_options(classifier, TRIAL4_BEST_OPTIONS)
         items = classifier.extract_items(transcript)
         report = classifier.build_report(items)
-        sections = _polished_minutes_sections(report)
-        minutes = _render_polished_minutes(sections)
+        sections = _polished_minutes_topic_groups(report)
+        minutes = _render_topic_grouped_minutes(sections)
         evaluation = _evaluate_polished_minutes(report, sections, transcript)
         return {
             "success": True,
