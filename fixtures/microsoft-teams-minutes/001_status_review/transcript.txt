@@ -1,0 +1,55 @@
+Daily AI Programme Check-in
+Date: 2 June 2026
+Location: Microsoft Teams
+
+Ciara Griffin 0:03
+Right, let's run through the AI programme items quickly.
+
+Ciara Griffin 0:08
+The repeatable AI use case library can be marked complete now because use cases one and two are live and documented.
+
+Conor Flynn 0:15
+Agreed. There is polish work left, but the deliverable exists.
+
+Ciara Griffin 0:24
+The intake workflow and request funnel?
+
+Conor Flynn 0:29
+Still amber. The form exists but routing is not working properly yet, so it is not operational.
+
+Ciara Griffin 0:42
+Stage gate review process?
+
+Conor Flynn 0:48
+Two reviews have gone through it, but the templates are not final.
+
+Ciara Griffin 1:02
+AI pipeline strategy?
+
+Conor Flynn 1:08
+Blocked. We need sales input and we do not have it. Keone starts next week, but realistically it is later in June before we touch it.
+
+Ciara Griffin 1:30
+Vendor strategy rollout?
+
+Conor Flynn 1:35
+The interviews are complete. The strategy document itself does not exist yet.
+
+Ciara Griffin 1:49
+Innovation grant feedback?
+
+Conor Flynn 1:55
+Emma is chasing and said she would follow up this week.
+
+Ciara Griffin 2:08
+AI governance framework draft?
+
+Conor Flynn 2:12
+Version one was completed yesterday. Status is pending leadership review.
+
+Ciara Griffin 2:30
+Actions before next week: review stage gate templates. Confirm AI pipeline dependencies with sales. Draft the vendor strategy document. Follow up innovation grant feedback. Validate intake workflow routing.
+
+Conor Flynn 2:48
+Perfect.
+

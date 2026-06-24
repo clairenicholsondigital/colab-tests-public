@@ -1,0 +1,19 @@
+Client Onboarding Planning
+Date: 13 July 2026
+Location: Microsoft Teams
+
+Maya 0:01
+Finance can start next Monday, but the warehouse data mapping is not ready.
+
+Noah 0:12
+If we include warehouse now, the first rollout gets messy.
+
+Maya 0:20
+Then we start with finance first and delay warehouse until the data mapping is complete.
+
+Noah 0:30
+Agreed. I will confirm the finance workshop dates with the client by Friday.
+
+Maya 0:38
+Good. Warehouse stays out of phase one.
+

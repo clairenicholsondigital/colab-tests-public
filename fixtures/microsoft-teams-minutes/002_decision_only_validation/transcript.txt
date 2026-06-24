@@ -1,0 +1,19 @@
+Validation Positioning Review
+Date: 8 June 2026
+Location: Microsoft Teams
+
+Nadia 0:01
+The question is whether the webinar should stay validation-specific or talk about broader applications too.
+
+Owen 0:12
+Validation is the hook, but if we only talk about validation, the operations team may assume it is not relevant to them.
+
+Nadia 0:25
+So we could keep the title validation-specific but mention broader applications in the middle section.
+
+Owen 0:36
+Yes, that is the right balance. No action from this call, just record that decision.
+
+Nadia 0:45
+Agreed. Keep the validation title and include broader applications as examples.
+

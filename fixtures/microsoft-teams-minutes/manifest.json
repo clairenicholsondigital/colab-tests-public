@@ -1,0 +1,80 @@
+{
+  "name": "microsoft-teams-minutes",
+  "description": "Transfer-focused transcript fixtures with Microsoft Teams-style expected minutes.",
+  "format": {
+    "transcript": "Teams-style speaker/timestamp transcript",
+    "expected": "Markdown minutes in Microsoft Teams meeting notes style"
+  },
+  "cases": [
+    {
+      "id": "001_status_review",
+      "meetingType": "project_status_review",
+      "expectedTopics": ["stage gate templates", "sales dependency", "vendor strategy", "intake workflow"],
+      "expectedActionCount": 5,
+      "expectedDecisionCount": 0
+    },
+    {
+      "id": "002_decision_only_validation",
+      "meetingType": "decision_review",
+      "expectedTopics": ["validation positioning", "broader applications"],
+      "expectedActionCount": 0,
+      "expectedDecisionCount": 2
+    },
+    {
+      "id": "003_bug_triage",
+      "meetingType": "incident_bug_triage",
+      "expectedTopics": ["checkout bug", "Safari logs", "hotfix branch"],
+      "expectedActionCount": 2,
+      "expectedDecisionCount": 1
+    },
+    {
+      "id": "004_webinar_rehearsal",
+      "meetingType": "webinar_rehearsal",
+      "expectedTopics": ["webinar flow", "slides and visuals", "demo framing", "responsible AI adoption"],
+      "expectedActionCount": 6,
+      "expectedDecisionCount": 2
+    },
+    {
+      "id": "005_finance_budget",
+      "meetingType": "finance_budget_review",
+      "expectedTopics": ["support costs", "analytics hire", "contractor spend"],
+      "expectedActionCount": 1,
+      "expectedDecisionCount": 1
+    },
+    {
+      "id": "006_client_onboarding",
+      "meetingType": "client_onboarding",
+      "expectedTopics": ["finance rollout", "warehouse delay", "data mapping"],
+      "expectedActionCount": 1,
+      "expectedDecisionCount": 2
+    },
+    {
+      "id": "007_support_metrics",
+      "meetingType": "support_metrics_review",
+      "expectedTopics": ["support metrics", "complex cases", "onboarding guide"],
+      "expectedActionCount": 3,
+      "expectedDecisionCount": 0
+    },
+    {
+      "id": "008_action_free_briefing",
+      "meetingType": "information_briefing",
+      "expectedTopics": ["market update", "policy timing"],
+      "expectedActionCount": 0,
+      "expectedDecisionCount": 0
+    },
+    {
+      "id": "009_noisy_low_substance",
+      "meetingType": "low_substance",
+      "expectedTopics": [],
+      "expectedActionCount": 0,
+      "expectedDecisionCount": 0
+    },
+    {
+      "id": "010_supplier_risk",
+      "meetingType": "supplier_risk_review",
+      "expectedTopics": ["late shipments", "buffer stock", "SLA update"],
+      "expectedActionCount": 1,
+      "expectedDecisionCount": 2
+    }
+  ]
+}

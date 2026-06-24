@@ -1,0 +1,19 @@
+Supplier Risk Review
+Date: 25 July 2026
+Location: Microsoft Teams
+
+Priya 0:01
+The current supplier has had three late shipments this month.
+
+Daniel 0:10
+The quality scores are still acceptable, but the delivery risk is getting worse.
+
+Priya 0:22
+We should keep the supplier for Q1 but add two weeks of buffer stock.
+
+Daniel 0:32
+Agreed. I will send the revised SLA notes this afternoon.
+
+Priya 0:40
+Decision is to keep the current supplier for Q1 with additional buffer stock.
+

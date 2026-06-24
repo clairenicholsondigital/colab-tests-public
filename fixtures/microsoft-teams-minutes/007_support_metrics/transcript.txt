@@ -1,0 +1,25 @@
+Support Metrics Review
+Date: 18 July 2026
+Location: Microsoft Teams
+
+James 0:01
+The support metrics look better overall, but complex cases are still taking too long.
+
+Rachel 0:10
+Simple requests are closing within target. The issue is handoff quality on complex cases.
+
+Mark 0:22
+The onboarding guide is out of date, and new agents are asking the same questions.
+
+Rachel 0:34
+I will update the onboarding guide by Wednesday.
+
+James 0:42
+Mark, please review the complex case handoff checklist.
+
+Mark 0:48
+Yes, I will do that by Friday.
+
+James 0:55
+I will add a split between simple and complex cases to next week's metrics pack.
+

@@ -1,0 +1,31 @@
+AI Discovery Webinar Rehearsal
+Date: 29 April 2026
+Location: Microsoft Teams
+
+Ciara Griffin 0:03
+Let's walk through the webinar flow. We open with the welcome, then Jack explains the AI discovery workshop, then Conor shows the complaints triage demo.
+
+Jack Cunningham 0:18
+The key message is that AI work should start with a defined business problem. Otherwise people build tools that nobody uses.
+
+Conor Flynn 0:30
+Use the phrase responsible adoption of AI in a GXP setting. That is clearer than saying regulatory input.
+
+Ciara Griffin 0:44
+The slides are still too text-heavy. We need more people-focused workshop visuals and fewer blocks of text.
+
+Jack Cunningham 0:58
+I can simplify the workshop methodology slide and rely more on narration.
+
+Conor Flynn 1:08
+For the demo, I should explain the complaints triage problem before opening the tool. Otherwise I jump too quickly into the screen.
+
+Ciara Griffin 1:22
+Keep the tone educational. This is the first time we mention the offering, but it should not feel salesy.
+
+Jack Cunningham 1:38
+I will practise my section again. Seven to ten minutes should be fine.
+
+Ciara Griffin 1:50
+Actions: reduce the text-heavy slides, add workshop visuals, add the responsible AI wording, simplify the methodology slide, refine the demo introduction, and practise the delivery before the live session.
+
