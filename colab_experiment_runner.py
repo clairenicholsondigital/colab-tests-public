@@ -1023,7 +1023,15 @@ def _generic_action_entries(
         seen.add(key)
         combined_source_text = " ".join(source.get("text", "") for source in entry["sources"])
         entry["owner"] = _infer_action_owner(combined_source_text, action)
-        entry["deadline"] = _infer_action_deadline(combined_source_text)
+        deadline_source = _action_deadline_source(report, action, entry)
+        if deadline_source is not None:
+            entry["deadline"] = deadline_source["deadline"]
+            entry["deadline_source"] = deadline_source
+            if deadline_source["anchor"] not in {source["anchor"] for source in entry["sources"]}:
+                entry["sources"].append(deadline_source)
+                entry["source_anchors"].append(deadline_source["anchor"])
+        else:
+            entry["deadline"] = _infer_action_deadline(combined_source_text)
         entries.append(entry)
         if len(entries) >= limit:
             return entries
@@ -1067,11 +1075,9 @@ def _infer_action_owner(source_text: str, action: dict[str, Any]) -> str:
 def _infer_action_deadline(source_text: str) -> str:
     cleaned = _clean_source_text(source_text)
     lowered = cleaned.lower()
-    if re.search(r"\bdone\b|\bclosed\b", lowered):
-        return "Done"
 
     date_patterns = [
-        r"\b\d{1,2}(?:st|nd|rd|th)?\s+(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)(?:\s+['’]?\d{2,4})?\b",
+        r"\b\d{1,2}(?:st|nd|rd|th)?(?:\s+of)?\s+(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)(?:\s+['’]?\d{2,4})?\b",
         r"\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?(?:\s+['’]?\d{2,4})?\b",
         r"\b\d{4}-\d{2}-\d{2}\b",
     ]
@@ -1080,19 +1086,98 @@ def _infer_action_deadline(source_text: str) -> str:
         if match:
             return match.group(0)
 
+    if re.search(r"\b(action|item|task)\s+(?:is\s+)?(?:done|closed)\b|\bclosed\s+(?:out|off)\b", lowered):
+        return "Done"
+
     relative_patterns = [
         (r"\bearly\s+(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b", None),
         (r"\bmid\s+(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b", None),
+        (r"\bsecond last week of (?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b", None),
+        (r"\bend of next week\b", "End of next week"),
         (r"\bend of (?:the )?week\b", "End of week"),
         (r"\bthis week\b", "This week"),
         (r"\bnext week\b", "Next week"),
         (r"\bweekly\b", "Weekly"),
+        (r"\b(?:done|completed|closed|share|send|get that)\s+(?:for|by)\s+(?:monday|tuesday|wednesday|thursday|friday)\b", None),
     ]
     for pattern, label in relative_patterns:
         match = re.search(pattern, lowered)
         if match:
-            return label or match.group(0)
+            if label:
+                return label
+            value = match.group(0)
+            if "wednesday" in value:
+                return "Done for Wednesday"
+            if value.startswith(("early ", "mid ")):
+                return value.title()
+            if value.startswith("second last week"):
+                return value.replace("july", "July").replace("june", "June")
+            return value
     return "Not specified"
+
+
+def _deadline_specificity(deadline: str) -> int:
+    lowered = deadline.lower()
+    if deadline == "Not specified":
+        return 0
+    if re.search(r"\d{1,2}|20\d{2}", deadline):
+        return 4
+    if "early" in lowered or "mid" in lowered or "end of" in lowered:
+        return 3
+    if "next week" in lowered or "this week" in lowered or "wednesday" in lowered:
+        return 2
+    if deadline == "Done" or deadline == "Weekly":
+        return 1
+    return 1
+
+
+def _action_deadline_source(
+    report: dict[str, Any],
+    action: dict[str, Any],
+    entry: dict[str, Any],
+) -> dict[str, Any] | None:
+    search_terms = list(dict.fromkeys(action["terms"] + action.get("deadline_terms", [])))
+    if action.get("deadline_lookup") is False:
+        return None
+    candidate_buckets = [
+        "action",
+        "responsibility",
+        "evidence_request",
+        "evidence_artifact",
+        "question",
+        "risk",
+        "process_flow",
+    ]
+    candidates: list[tuple[int, int, int, dict[str, Any], str]] = []
+    existing_anchors = {source["anchor"] for source in entry["sources"]}
+    for bucket_position, bucket in enumerate(candidate_buckets):
+        for source in _indexed_bucket(report, bucket):
+            deadline = _infer_action_deadline(source["text"])
+            if deadline == "Not specified":
+                continue
+            lowered = source["text"].lower()
+            score = sum(1 for term in search_terms if _term_matches(lowered, term.lower()))
+            is_existing_source = source["anchor"] in existing_anchors
+            if is_existing_source:
+                score += 2
+            elif score < action.get("deadline_min_score", 2):
+                continue
+            candidates.append(
+                (
+                    _deadline_specificity(deadline),
+                    score,
+                    -bucket_position,
+                    source,
+                    deadline,
+                )
+            )
+    if not candidates:
+        return None
+    candidates.sort(key=lambda row: (-row[0], -row[1], row[2], row[3]["index"]))
+    _, _, _, source, deadline = candidates[0]
+    deadline_source = dict(source)
+    deadline_source["deadline"] = deadline
+    return deadline_source
 
 
 ACTION_PROFILES: list[dict[str, Any]] = [
@@ -1107,6 +1192,7 @@ ACTION_PROFILES: list[dict[str, Any]] = [
     {
         "text": "Review barcode, UDI or registration questions with the relevant internal team.",
         "terms": ["barcode", "udi", "upc", "sku", "registration", "us team", "bring that"],
+        "deadline_terms": ["lot number", "lot numbering", "early july"],
         "requires_topic": ["UDI"],
     },
     {
@@ -1129,12 +1215,14 @@ ACTION_PROFILES: list[dict[str, Any]] = [
     {
         "text": "Review the alarm mute/flash behaviour and confirm the updated alarm setup.",
         "terms": ["mute", "alarm", "flash", "low", "medium", "high"],
+        "deadline_min_score": 3,
         "requires_topic": ["Software"],
         "owner": "Andrew",
     },
     {
         "text": "Complete clinical or usability review of the relevant changes.",
         "terms": ["clinical", "clinician", "usability", "formative", "summative", "study"],
+        "deadline_terms": ["review team", "signed off", "change request", "acceptable"],
         "requires_topic": ["Clinical"],
         "owner": "Rebecca",
     },
@@ -1147,6 +1235,7 @@ ACTION_PROFILES: list[dict[str, Any]] = [
     {
         "text": "Trace software version changes and generate supporting test evidence if needed.",
         "terms": ["version", "v1.01", "v1.02", "trace", "test data", "retrospective"],
+        "deadline_terms": ["17 changes", "code", "test scenarios"],
         "requires_topic": ["Software"],
         "owner": "David/Andrew",
     },
@@ -1159,12 +1248,14 @@ ACTION_PROFILES: list[dict[str, Any]] = [
     {
         "text": "Complete or review electrical compliance testing and related outputs.",
         "terms": ["electrical", "60601", "testing", "test reports", "test report"],
+        "deadline_terms": ["23rd", "july", "final piece", "compliance testing"],
         "requires_topic": ["Electrical"],
         "owner": "Andrew",
     },
     {
         "text": "Update risk management for cybersecurity, USB access and related controls.",
         "terms": ["cybersecurity", "usb", "risk management", "port lock", "password", "controls"],
+        "deadline_terms": ["risk", "risk management file", "wednesday", "share back"],
         "requires_topic": ["Cybersecurity"],
         "owner": "Rebecca",
     },
@@ -1177,6 +1268,7 @@ ACTION_PROFILES: list[dict[str, Any]] = [
     {
         "text": "Schedule or hold the follow-up calls needed to close open items.",
         "terms": ["schedule", "call", "follow up", "follow-up", "working session", "weekly"],
+        "deadline_lookup": False,
     },
 ]
 
