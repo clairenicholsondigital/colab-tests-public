@@ -1,0 +1,1002 @@
+{
+  "generatedAt": "2026-06-24T20:44:03.244379+00:00",
+  "runnerPath": "/root/.openclaw/workspace/colab-tests-public/colab_experiment_runner.py",
+  "fixtureRoot": "/root/.openclaw/workspace/trinzo-upload/scripts/transcript-tests",
+  "summary": {
+    "caseCount": 74,
+    "passed": 30,
+    "failed": 44,
+    "failureCount": 163
+  },
+  "cases": [
+    {
+      "id": "001_status_review",
+      "pass": false,
+      "failureCount": 5,
+      "failures": [
+        "expected 5 actions, got 7",
+        "expected 0 decisions, got 1",
+        "missing discussion topic concepts ['sales input']",
+        "missing discussion topic concepts ['vendor strategy']",
+        "missing discussion topic concepts ['leadership review']"
+      ],
+      "counts": {
+        "actions": 7,
+        "decisions": 1,
+        "discussionPoints": 23
+      }
+    },
+    {
+      "id": "002_validation_decision",
+      "pass": false,
+      "failureCount": 3,
+      "failures": [
+        "expected 1 decisions, got 0",
+        "missing discussion topic concepts ['validation-specific', 'broad']",
+        "missing decision 'remain broad rather than validation-specific'"
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 5
+      }
+    },
+    {
+      "id": "003_webinar_rehearsal",
+      "pass": false,
+      "failureCount": 1,
+      "failures": [
+        "expected 0 decisions, got 1"
+      ],
+      "counts": {
+        "actions": 6,
+        "decisions": 1,
+        "discussionPoints": 43
+      }
+    },
+    {
+      "id": "004_contract_renewal",
+      "pass": false,
+      "failureCount": 4,
+      "failures": [
+        "expected 0 actions, got 1",
+        "expected 1 decisions, got 0",
+        "missing discussion topic concepts ['renew with the existing supplier']",
+        "missing decision 'renew with the existing supplier'"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "005_office_relocation",
+      "pass": false,
+      "failureCount": 1,
+      "failures": [
+        "expected 2 actions, got 4"
+      ],
+      "counts": {
+        "actions": 4,
+        "decisions": 0,
+        "discussionPoints": 5
+      }
+    },
+    {
+      "id": "006_product_bug_triage",
+      "pass": false,
+      "failureCount": 2,
+      "failures": [
+        "expected 2 actions, got 1",
+        "missing action 'reproduce it on Safari and capture logs by 3pm'"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 0,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "007_client_onboarding",
+      "pass": false,
+      "failureCount": 3,
+      "failures": [
+        "expected 1 decisions, got 0",
+        "missing discussion topic concepts ['finance first']",
+        "missing decision 'begin onboarding with finance first'"
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "008_event_planning",
+      "pass": false,
+      "failureCount": 2,
+      "failures": [
+        "expected 1 decisions, got 0",
+        "missing decision 'switch the workshop to the larger auditorium'"
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "009_supplier_risk_review",
+      "pass": false,
+      "failureCount": 4,
+      "failures": [
+        "expected 0 actions, got 1",
+        "expected 1 decisions, got 0",
+        "missing discussion topic concepts ['buffer stock']",
+        "missing decision 'stay with the current supplier for Q4'"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 0,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "010_finance_budget_review",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "011_hiring_interview_debrief",
+      "pass": false,
+      "failureCount": 4,
+      "failures": [
+        "expected 0 actions, got 1",
+        "expected 1 decisions, got 0",
+        "missing discussion topic concepts ['make an offer to Priya']",
+        "missing decision 'make an offer to Priya'"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 0,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "012_training_rollout",
+      "pass": false,
+      "failureCount": 4,
+      "failures": [
+        "expected 2 actions, got 1",
+        "expected 0 decisions, got 1",
+        "missing action 'split the material into two forty-five minute sessions'",
+        "missing action 'publish the revised timetable by Thursday'"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "013_low_substance_fallback",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 0
+      }
+    },
+    {
+      "id": "014_request_acceptance",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 0,
+        "discussionPoints": 0
+      }
+    },
+    {
+      "id": "015_ownership_assignment",
+      "pass": false,
+      "failureCount": 2,
+      "failures": [
+        "expected 1 actions, got 0",
+        "missing action 'handle the negotiation'"
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 1
+      }
+    },
+    {
+      "id": "016_investigation_commitment",
+      "pass": false,
+      "failureCount": 2,
+      "failures": [
+        "expected 1 actions, got 0",
+        "missing action 'reproduce it on safari'"
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 0
+      }
+    },
+    {
+      "id": "017_orphan_commitment",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 0
+      }
+    },
+    {
+      "id": "018_sales_pipeline_review",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "019_supplier_review",
+      "pass": false,
+      "failureCount": 3,
+      "failures": [
+        "expected 1 actions, got 2",
+        "expected 1 decisions, got 0",
+        "missing decision 'stay with the current supplier for Q1'"
+      ],
+      "counts": {
+        "actions": 2,
+        "decisions": 0,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "020_contract_negotiation",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "021_hiring_interview_debrief",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 0,
+        "decisions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "022_candidate_screening",
+      "pass": false,
+      "failureCount": 2,
+      "failures": [
+        "expected 1 decisions, got 0",
+        "missing decision 'not progress Ben to interview this round'"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 0,
+        "discussionPoints": 1
+      }
+    },
+    {
+      "id": "023_finance_budget_review",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "024_board_update",
+      "pass": false,
+      "failureCount": 2,
+      "failures": [
+        "expected 1 actions, got 0",
+        "missing action 'tighten the churn narrative before Thursday'"
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "025_incident_response",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "026_product_bug_triage",
+      "pass": false,
+      "failureCount": 3,
+      "failures": [
+        "expected 1 decisions, got 0",
+        "missing action 'verify the checkout flow before release'",
+        "missing decision 'ship the hotfix behind a feature flag'"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 0,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "027_customer_complaint_review",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "028_customer_onboarding",
+      "pass": false,
+      "failureCount": 4,
+      "failures": [
+        "expected 1 actions, got 2",
+        "expected 1 decisions, got 0",
+        "missing discussion topic concepts ['defer SSO until phase two']",
+        "missing decision 'begin onboarding with CSV import first'"
+      ],
+      "counts": {
+        "actions": 2,
+        "decisions": 0,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "029_office_relocation",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "030_webinar_rehearsal",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 5
+      }
+    },
+    {
+      "id": "031_event_planning",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "032_training_rollout",
+      "pass": false,
+      "failureCount": 3,
+      "failures": [
+        "expected 2 actions, got 1",
+        "missing action 'split the material into two forty-minute sessions'",
+        "missing action 'publish the revised timetable by Thursday'"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "033_marketing_campaign_review",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "034_software_release_review",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "035_procurement_discussion",
+      "pass": false,
+      "failureCount": 3,
+      "failures": [
+        "expected 1 actions, got 2",
+        "expected 1 decisions, got 0",
+        "missing decision 'buy the lower-volume option first'"
+      ],
+      "counts": {
+        "actions": 2,
+        "decisions": 0,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "036_project_retrospective",
+      "pass": false,
+      "failureCount": 2,
+      "failures": [
+        "expected 1 decisions, got 0",
+        "missing decision 'drop the Friday standup'"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 0,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "037_partnership_discussion",
+      "pass": false,
+      "failureCount": 4,
+      "failures": [
+        "expected 1 actions, got 2",
+        "expected 1 decisions, got 0",
+        "missing discussion topic concepts ['ninety-day pilot']",
+        "missing decision 'run a ninety-day pilot'"
+      ],
+      "counts": {
+        "actions": 2,
+        "decisions": 0,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "038_grant_application_review",
+      "pass": false,
+      "failureCount": 3,
+      "failures": [
+        "expected 1 actions, got 3",
+        "expected 1 decisions, got 0",
+        "missing decision 'submit the digital-health angle'"
+      ],
+      "counts": {
+        "actions": 3,
+        "decisions": 0,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "039_risk_review",
+      "pass": false,
+      "failureCount": 3,
+      "failures": [
+        "expected 1 actions, got 2",
+        "expected 1 decisions, got 0",
+        "missing decision 'escalate that dependency to red'"
+      ],
+      "counts": {
+        "actions": 2,
+        "decisions": 0,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "040_governance_review",
+      "pass": false,
+      "failureCount": 2,
+      "failures": [
+        "expected 1 actions, got 0",
+        "missing action 'circulate the final draft this afternoon'"
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "041_operations_review",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "042_support_escalation_review",
+      "pass": false,
+      "failureCount": 4,
+      "failures": [
+        "expected 1 actions, got 2",
+        "expected 1 decisions, got 0",
+        "missing discussion topic concepts ['replace the workaround article with a direct escalation path']",
+        "missing decision 'replace the workaround article with a direct escalation path'"
+      ],
+      "counts": {
+        "actions": 2,
+        "decisions": 0,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "043_release_go_no_go",
+      "pass": false,
+      "failureCount": 3,
+      "failures": [
+        "expected 1 actions, got 2",
+        "expected 1 decisions, got 0",
+        "missing decision 'delay the Friday release until QA confirms the fix'"
+      ],
+      "counts": {
+        "actions": 2,
+        "decisions": 0,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "044_budget_reforecast",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "045_board_launch_delay",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "046_customer_onboarding_split_rollout",
+      "pass": false,
+      "failureCount": 1,
+      "failures": [
+        "forbidden decision present 'start warehouse onboarding first'"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "047_supplier_renewal_rejection",
+      "pass": false,
+      "failureCount": 3,
+      "failures": [
+        "expected 1 actions, got 2",
+        "expected 1 decisions, got 0",
+        "missing decision 'renew with the existing supplier'"
+      ],
+      "counts": {
+        "actions": 2,
+        "decisions": 0,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "048_status_review_pending_leadership",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 4,
+        "decisions": 0,
+        "discussionPoints": 6
+      }
+    },
+    {
+      "id": "049_low_substance_noise",
+      "pass": false,
+      "failureCount": 1,
+      "failures": [
+        "forbidden content present 'run through the agenda'"
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 1
+      }
+    },
+    {
+      "id": "050_partnership_mou_enablement",
+      "pass": false,
+      "failureCount": 2,
+      "failures": [
+        "expected 2 actions, got 3",
+        "forbidden decision present 'sign the reseller clause this month'"
+      ],
+      "counts": {
+        "actions": 3,
+        "decisions": 1,
+        "discussionPoints": 5
+      }
+    },
+    {
+      "id": "051_real_webinar_rehearsal",
+      "pass": false,
+      "failureCount": 24,
+      "failures": [
+        "missing discussion point 'The team reviewed the webinar agenda, including the introduction, AI discovery workshop methodology, case study, and live demonstration.'",
+        "missing discussion point 'The importance of starting AI initiatives with clearly defined business problems was discussed as a key factor in improving adoption.'",
+        "missing discussion point 'The AI discovery workshop approach was reviewed, including Define, Measure, Analyse, Improve and Control stages.'",
+        "missing discussion point 'Workshop delivery was discussed as a highly collaborative process driven by employees who perform the work and understand the workflow.'",
+        "missing discussion point 'The team discussed improving slide design by reducing text and using more workshop and people-focused imagery.'",
+        "missing discussion point 'The importance of positioning AI adoption as responsible adoption within GXP-regulated environments was discussed.'",
+        "missing discussion point 'The AI opportunity assessment framework was reviewed, including repetition, structure, knowledge requirements, complexity and delegation.'",
+        "missing discussion point 'The deliverables from an AI discovery engagement were reviewed, including opportunity registers, implementation roadmaps, discovery reports and team upskilling.'",
+        "missing discussion point 'The planned complaints triage demonstration was reviewed as an example of a low-effort, high-value AI opportunity.'",
+        "missing discussion point 'The presenters discussed timing management and presentation delivery ahead of the webinar.'",
+        "missing discussion point 'A potential engagement approach for GlaxoSmithKline was discussed, focused on process evaluation, AI discovery workshops and training.'",
+        "missing action 'Refine presentation wording to better explain why AI initiatives should begin with defined business problems.'"
+      ],
+      "counts": {
+        "actions": 6,
+        "decisions": 1,
+        "discussionPoints": 43
+      }
+    },
+    {
+      "id": "052_status_update_meeting",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "053_hidden_decision_meeting",
+      "pass": false,
+      "failureCount": 1,
+      "failures": [
+        "forbidden decision present 'cancel the weekly check-in'"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 5
+      }
+    },
+    {
+      "id": "054_document_review_meeting",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "055_dependency_risk_meeting",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "056_progress_dashboard_meeting",
+      "pass": false,
+      "failureCount": 2,
+      "failures": [
+        "expected 1 actions, got 0",
+        "missing action 'keep the tracker updated'"
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "057_rehearsal_banter_filter",
+      "pass": false,
+      "failureCount": 4,
+      "failures": [
+        "expected 0 actions, got 1",
+        "forbidden content present 'take your top off'",
+        "forbidden content present 'vape'",
+        "forbidden content present 'talk french'"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 0,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "058_submission_date_priority",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "059_partial_completion_allowed",
+      "pass": false,
+      "failureCount": 2,
+      "failures": [
+        "expected 1 actions, got 2",
+        "missing action 'share the updated clinical trace matrix and related documents for review, even if not fully complete'"
+      ],
+      "counts": {
+        "actions": 2,
+        "decisions": 0,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "060_external_review_optional",
+      "pass": false,
+      "failureCount": 2,
+      "failures": [
+        "expected 0 actions, got 1",
+        "missing discussion topic concepts ['external', 'cer', 'review']"
+      ],
+      "counts": {
+        "actions": 1,
+        "decisions": 0,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "id": "061_no_major_impact_dependency",
+      "pass": false,
+      "failureCount": 1,
+      "failures": [
+        "expected 0 actions, got 2"
+      ],
+      "counts": {
+        "actions": 2,
+        "decisions": 0,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "062_completed_and_approved_status",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "063_rejection_test",
+      "pass": false,
+      "failureCount": 1,
+      "failures": [
+        "missing discussion topic concepts ['slides', 'friday']"
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 1
+      }
+    },
+    {
+      "id": "064_analytics_review",
+      "pass": false,
+      "failureCount": 32,
+      "failures": [
+        "missing discussion point 'The team discussed pressure from ONT to provide clearer analytics, including historic data from London 2024 and 2025, despite gaps caused by GDPR-related analytics deletion.'",
+        "missing discussion point 'Time on platform remains difficult to define because some delegates leave tabs open while others show zero recorded duration despite clear platform activity.'",
+        "missing discussion point 'A more accurate engagement-time method has been created using first click, last click and inactivity thresholds, giving an estimated average of around 45 minutes per person.'",
+        "missing discussion point 'The current eight-hour time-on-platform figure remains useful for comparability with previous years.'",
+        "missing discussion point 'Live views were discussed as likely combining webinar views, poster views and content or document views, but the definition needs confirming.'",
+        "missing discussion point 'The team agreed that a clearer definitions structure or database would help make future analytics reporting more consistent.'",
+        "missing discussion point 'On-demand document download reporting is difficult because the swag bag report is not timestamped in the same way as other reports.'",
+        "missing discussion point 'Masterclass views were calculated as 9,617 out of 21,918 total live-session views, equal to 43.87 percent, compared with 26 percent in 2025.'",
+        "missing discussion point 'Studio views were calculated as 2,049 out of 21,918 total live-session views, equal to 9.34 percent.'",
+        "missing discussion point 'Breakout views were calculated at roughly 10 percent of total live-session views, similar to the previous year.'",
+        "missing discussion point 'Partner booth reporting includes booth visitors, engaged delegates, interactions, engagement rate and interactions per visitor.'",
+        "missing discussion point 'The user journey report includes 1,123 entries marked as VMM call connected, but it is unclear whether these represent real calls, duplicated participant events, or another type of tracking.'"
+      ],
+      "counts": {
+        "actions": 12,
+        "decisions": 1,
+        "discussionPoints": 23
+      }
+    },
+    {
+      "id": "064_status_setup_clause_rejected",
+      "pass": false,
+      "failureCount": 1,
+      "failures": [
+        "forbidden content present \"The I've got the latest report open remains\""
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 1
+      }
+    },
+    {
+      "id": "065_status_topic_date_casing",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 1
+      }
+    },
+    {
+      "id": "066_status_misrecognized_setup_rejected",
+      "pass": false,
+      "failureCount": 1,
+      "failures": [
+        "forbidden content present 'The I got report open remains blocked'"
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 1
+      }
+    },
+    {
+      "id": "067_banana_falcon_client_ready",
+      "pass": false,
+      "failureCount": 4,
+      "failures": [
+        "expected at least 3 actions, got 0",
+        "missing action 'work out which dashboard'",
+        "missing action 'investigate server restart'",
+        "missing action 'investigate API numbers'"
+      ],
+      "counts": {
+        "actions": 0,
+        "decisions": 2,
+        "discussionPoints": 14
+      }
+    },
+    {
+      "id": "068_noisy_low_substance_sparse",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 0
+      }
+    },
+    {
+      "id": "069_decision_heavy_internal",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 0,
+        "decisions": 3,
+        "discussionPoints": 5
+      }
+    },
+    {
+      "id": "070_incident_bug_triage",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 3,
+        "decisions": 1,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "id": "071_messy_speaker_timestamp_formats",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 1,
+        "decisions": 1,
+        "discussionPoints": 5
+      }
+    },
+    {
+      "id": "072_action_free_information_briefing",
+      "pass": true,
+      "failureCount": 0,
+      "failures": [],
+      "counts": {
+        "actions": 0,
+        "decisions": 0,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "id": "073_support_metrics_actions",
+      "pass": false,
+      "failureCount": 3,
+      "failures": [
+        "forbidden content present 'James:'",
+        "forbidden content present 'Rachel:'",
+        "forbidden content present 'Mark:'"
+      ],
+      "counts": {
+        "actions": 4,
+        "decisions": 0,
+        "discussionPoints": 15
+      }
+    }
+  ]
+}

@@ -83,7 +83,9 @@ def parse_colab_minutes(markdown: str) -> dict[str, Any]:
         {
             "meetingActionPoint": row.get("action", ""),
             "meetingActionPointOwner": row.get("owner", ""),
-            "meetingActionPointDeadline": row.get("deadline / status", "") or row.get("deadline", ""),
+            "meetingActionPointDeadline": row.get("due / status", "")
+            or row.get("deadline / status", "")
+            or row.get("deadline", ""),
         }
         for row in rows
         if row.get("action")
@@ -180,6 +182,15 @@ def main(argv: list[str] | None = None) -> int:
     report_root = Path(args.report_root)
     runner = load_module(runner_path, "colab_runner_for_final_golden_eval")
     golden_eval = load_module(Path(args.golden_eval), "meeting_minutes_final_golden_eval")
+    original_contains_match = golden_eval.contains_match
+
+    def contains_match_without_owner_label_false_positives(actual_values: list[Any], expected_value: Any) -> bool:
+        expected = golden_eval.normalize_text(expected_value)
+        if expected.endswith(":"):
+            return any(expected in golden_eval.normalize_text(value) for value in actual_values if golden_eval.normalize_text(value))
+        return original_contains_match(actual_values, expected_value)
+
+    golden_eval.contains_match = contains_match_without_owner_label_false_positives
 
     cases = find_cases(pack_dir)
     if args.cases:
