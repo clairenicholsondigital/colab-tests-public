@@ -668,6 +668,10 @@ def _anchor_list(sources: list[dict[str, Any]]) -> str:
     return ", ".join(source["anchor"] for source in sources)
 
 
+def _table_cell(value: str) -> str:
+    return value.replace("|", "\\|").replace("\n", " ").strip()
+
+
 def _source_excerpt(source: dict[str, Any]) -> str:
     return f"{source['anchor']} {source['speaker']}: {source['text']}"
 
@@ -1017,10 +1021,78 @@ def _generic_action_entries(
         if key in seen:
             continue
         seen.add(key)
+        combined_source_text = " ".join(source.get("text", "") for source in entry["sources"])
+        entry["owner"] = _infer_action_owner(combined_source_text, action)
+        entry["deadline"] = _infer_action_deadline(combined_source_text)
         entries.append(entry)
         if len(entries) >= limit:
             return entries
     return entries
+
+
+OWNER_PATTERNS: list[tuple[str, str]] = [
+    ("Jacqui", r"\bjacqui\b"),
+    ("Orla", r"\borla\b|\bo['’]?reilly\b"),
+    ("Colm", r"\bcolm\b"),
+    ("Mark", r"\bmark\b"),
+    ("Jenny", r"\bjenny\b"),
+    ("John-Paul", r"\bjohn[-\s]?paul\b"),
+    ("Andrew", r"\bandrew\b"),
+    ("Rebecca", r"\brebecca\b"),
+    ("David", r"\bdavid\b"),
+    ("Ciaran", r"\bciaran\b"),
+    ("Adil", r"\badil\b"),
+    ("Kevin", r"\bkevin\b"),
+    ("Grace", r"\bgrace\b"),
+    ("Liam", r"\bliam\b"),
+    ("All", r"\ball\b"),
+    ("Team", r"\bteam\b"),
+]
+
+
+def _infer_action_owner(source_text: str, action: dict[str, Any]) -> str:
+    explicit_owner = action.get("owner")
+    if explicit_owner:
+        return explicit_owner
+    lowered = source_text.lower()
+    owners: list[str] = []
+    for owner, pattern in OWNER_PATTERNS:
+        if re.search(pattern, lowered) and owner not in owners:
+            owners.append(owner)
+    if not owners:
+        return "Owner not specified"
+    return "/".join(owners[:2])
+
+
+def _infer_action_deadline(source_text: str) -> str:
+    cleaned = _clean_source_text(source_text)
+    lowered = cleaned.lower()
+    if re.search(r"\bdone\b|\bclosed\b", lowered):
+        return "Done"
+
+    date_patterns = [
+        r"\b\d{1,2}(?:st|nd|rd|th)?\s+(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)(?:\s+['’]?\d{2,4})?\b",
+        r"\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?(?:\s+['’]?\d{2,4})?\b",
+        r"\b\d{4}-\d{2}-\d{2}\b",
+    ]
+    for pattern in date_patterns:
+        match = re.search(pattern, cleaned, flags=re.IGNORECASE)
+        if match:
+            return match.group(0)
+
+    relative_patterns = [
+        (r"\bearly\s+(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b", None),
+        (r"\bmid\s+(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b", None),
+        (r"\bend of (?:the )?week\b", "End of week"),
+        (r"\bthis week\b", "This week"),
+        (r"\bnext week\b", "Next week"),
+        (r"\bweekly\b", "Weekly"),
+    ]
+    for pattern, label in relative_patterns:
+        match = re.search(pattern, lowered)
+        if match:
+            return label or match.group(0)
+    return "Not specified"
 
 
 ACTION_PROFILES: list[dict[str, Any]] = [
@@ -1046,51 +1118,61 @@ ACTION_PROFILES: list[dict[str, Any]] = [
         "text": "Review scope and documentation implications for PPE/sunglasses.",
         "terms": ["ppe", "sunglasses", "scope", "doc", "declaration"],
         "requires_topic": ["Labelling"],
+        "owner": "Jacqui",
     },
     {
         "text": "Follow up on language or translation requirements.",
         "terms": ["translation", "language", "languages", "doc", "competent authority"],
         "requires_topic": ["Labelling"],
+        "owner": "Jacqui",
     },
     {
         "text": "Review the alarm mute/flash behaviour and confirm the updated alarm setup.",
         "terms": ["mute", "alarm", "flash", "low", "medium", "high"],
         "requires_topic": ["Software"],
+        "owner": "Andrew",
     },
     {
         "text": "Complete clinical or usability review of the relevant changes.",
         "terms": ["clinical", "clinician", "usability", "formative", "summative", "study"],
         "requires_topic": ["Clinical"],
+        "owner": "Rebecca",
     },
     {
         "text": "Review debug commands or scripts and confirm what appears on the device.",
         "terms": ["debug", "command", "commands", "script", "screen"],
         "requires_topic": ["Software"],
+        "owner": "Andrew/David",
     },
     {
         "text": "Trace software version changes and generate supporting test evidence if needed.",
         "terms": ["version", "v1.01", "v1.02", "trace", "test data", "retrospective"],
         "requires_topic": ["Software"],
+        "owner": "David/Andrew",
     },
     {
         "text": "Review language-file or graphics-driver issues for the additional translations.",
         "terms": ["language", "languages", "arabic", "vietnamese", "greek", "driver", "font"],
         "requires_topic": ["Software"],
+        "owner": "Andrew",
     },
     {
         "text": "Complete or review electrical compliance testing and related outputs.",
         "terms": ["electrical", "60601", "testing", "test reports", "test report"],
         "requires_topic": ["Electrical"],
+        "owner": "Andrew",
     },
     {
         "text": "Update risk management for cybersecurity, USB access and related controls.",
         "terms": ["cybersecurity", "usb", "risk management", "port lock", "password", "controls"],
         "requires_topic": ["Cybersecurity"],
+        "owner": "Rebecca",
     },
     {
         "text": "Review applicability of the relevant standards.",
         "terms": ["standard", "standards", "81001", "27427", "applicable"],
         "requires_topic": ["Electrical", "Cybersecurity"],
+        "owner": "Colm/Andrew",
     },
     {
         "text": "Schedule or hold the follow-up calls needed to close open items.",
@@ -1284,8 +1366,24 @@ def _render_topic_grouped_minutes(topic_groups: dict[str, Any]) -> str:
             lines.append("")
 
     lines.extend(["## Actions", ""])
+    if topic_groups["actions"]:
+        lines.append("| Action | Owner | Deadline/status | Sources |")
+        lines.append("|---|---|---|---|")
+    else:
+        lines.append("No actions detected from the allowed buckets.")
     for entry in topic_groups["actions"]:
-        lines.append(f"- {entry['text']} _(Sources: {_anchor_list(entry['sources'])})_")
+        lines.append(
+            "| "
+            + " | ".join(
+                [
+                    _table_cell(entry["text"]),
+                    _table_cell(entry.get("owner", "Owner not specified")),
+                    _table_cell(entry.get("deadline", "Not specified")),
+                    _table_cell(_anchor_list(entry["sources"])),
+                ]
+            )
+            + " |"
+        )
     lines.append("")
 
     lines.extend(["## Source excerpts", ""])
