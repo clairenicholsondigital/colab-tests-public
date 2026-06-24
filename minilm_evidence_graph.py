@@ -177,6 +177,8 @@ NOISE_PHRASES = [
     "doggy",
     "dog people",
     "google, google",
+    "no problem",
+    "not an issue",
 ]
 
 PROCESS_FLOW_WORDS = [
@@ -235,7 +237,16 @@ class EvidenceItem:
 
 
 def has_any(text: str, phrases: Iterable[str]) -> bool:
-    return any(phrase in text for phrase in phrases)
+    for phrase in phrases:
+        phrase = phrase.strip().lower()
+        if not phrase:
+            continue
+        if re.fullmatch(r"[a-z0-9]+", phrase):
+            if re.search(rf"\b{re.escape(phrase)}\b", text):
+                return True
+        elif phrase in text:
+            return True
+    return False
 
 
 def normalise(text: str) -> str:
@@ -256,7 +267,14 @@ def is_noise(sentence: str) -> bool:
 def is_actionable(sentence: str, text: str) -> bool:
     if text in {"task", "tasks", "action", "actions", "to do"}:
         return False
-    if has_any(text, ACTION_COMMITMENT_WORDS):
+    if "trying to figure out what i can do" in text:
+        return False
+    commitment_pattern = (
+        r"\b(i|we)\s+(can|will|could|need to|have to)\b(?!'t)"
+        r"|\b(i'll|we'll)\b"
+        r"|\b(send it|send that|send on|follow up|come back|share that|provide that|confirm that)\b"
+    )
+    if re.search(commitment_pattern, text):
         return True
     if not has_any(text, ACTION_WORDS):
         return False
