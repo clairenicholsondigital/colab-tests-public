@@ -220,24 +220,22 @@ MISS_PATTERNS = {
 
 
 def _load_classifier() -> Any:
-    try:
-        import minilm_evidence_graph as classifier
-
-        return classifier
-    except ModuleNotFoundError:
-        pass
-
     local_path = Path(__file__).with_name("minilm_evidence_graph.py")
     if local_path.exists():
         return _load_module_from_path(local_path)
 
-    with urllib.request.urlopen(RAW_CLASSIFIER_URL, timeout=20) as response:
-        source = response.read()
+    try:
+        with urllib.request.urlopen(RAW_CLASSIFIER_URL, timeout=20) as response:
+            source = response.read()
 
-    temp_dir = Path(tempfile.mkdtemp(prefix="minilm_classifier_"))
-    temp_path = temp_dir / "minilm_evidence_graph.py"
-    temp_path.write_bytes(source)
-    return _load_module_from_path(temp_path)
+        temp_dir = Path(tempfile.mkdtemp(prefix="minilm_classifier_"))
+        temp_path = temp_dir / "minilm_evidence_graph.py"
+        temp_path.write_bytes(source)
+        return _load_module_from_path(temp_path)
+    except Exception:
+        import minilm_evidence_graph as classifier
+
+        return classifier
 
 
 def _load_module_from_path(path: Path) -> Any:
