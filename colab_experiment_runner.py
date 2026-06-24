@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import re
 import sys
 import tempfile
 import urllib.request
@@ -643,7 +644,7 @@ def _source_candidates(
     for bucket_position, bucket in enumerate(buckets):
         for item in _indexed_bucket(report, bucket):
             lowered = item["text"].lower()
-            score = sum(1 for term in lowered_terms if term in lowered)
+            score = sum(1 for term in lowered_terms if _term_matches(lowered, term))
             if score <= 0:
                 continue
             key = item["text"].lower()
@@ -655,12 +656,33 @@ def _source_candidates(
     return [item for _, _, _, item in scored[:limit]]
 
 
+def _term_matches(lowered_text: str, lowered_term: str) -> bool:
+    if not lowered_term:
+        return False
+    if re.fullmatch(r"[a-z0-9]+", lowered_term):
+        return re.search(rf"\b{re.escape(lowered_term)}\b", lowered_text) is not None
+    return lowered_term in lowered_text
+
+
 def _anchor_list(sources: list[dict[str, Any]]) -> str:
     return ", ".join(source["anchor"] for source in sources)
 
 
 def _source_excerpt(source: dict[str, Any]) -> str:
     return f"{source['anchor']} {source['speaker']}: {source['text']}"
+
+
+def _clean_source_text(text: str) -> str:
+    text = re.sub(r"\b[A-Z][A-Za-z'’-]+(?:\s+[A-Z][A-Za-z'’-]+){0,2}\s+\d{1,2}:\d{2}", "", text)
+    text = re.sub(r"\s+", " ", text.replace(".And", ". And").replace(".So", ". So")).strip()
+    return text
+
+
+def _shorten_source_text(text: str, max_words: int = 28) -> str:
+    words = _clean_source_text(text).split()
+    if len(words) <= max_words:
+        return " ".join(words)
+    return " ".join(words[:max_words]).rstrip(",.;:") + "..."
 
 
 def _polished_entry(
@@ -937,259 +959,215 @@ def _add_topic_entry(
         topic["sections"].setdefault(section, []).append(entry)
 
 
+def _profile_topic_entry(
+    text: str,
+    report: dict[str, Any],
+    buckets: list[str],
+    terms: list[str],
+    limit: int = 4,
+) -> dict[str, Any] | None:
+    sources = _source_candidates(report, buckets, terms, limit)
+    if not sources:
+        return None
+    return {
+        "text": text,
+        "sources": sources,
+        "source_anchors": [source["anchor"] for source in sources],
+    }
+
+
+def _add_profile_section(
+    topic: dict[str, Any],
+    section: str,
+    text: str,
+    report: dict[str, Any],
+    buckets: list[str],
+    terms: list[str],
+    limit: int = 4,
+) -> None:
+    entry = _profile_topic_entry(text, report, buckets, terms, limit)
+    if entry is not None:
+        topic["sections"].setdefault(section, []).append(entry)
+
+
+def _generic_action_entries(report: dict[str, Any], limit: int = 12) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    blocked_fragments = [
+        "share my screen",
+        "play this",
+        "thank you",
+        "i can see",
+        "got your update",
+        "if not, i'll send",
+        "one, i know",
+    ]
+    for source in _indexed_bucket(report, "action"):
+        text = _shorten_source_text(source["text"], 24)
+        lowered = text.lower()
+        if any(fragment in lowered for fragment in blocked_fragments):
+            continue
+        key = text.lower()
+        if not text or key in seen:
+            continue
+        seen.add(key)
+        entries.append(
+            {
+                "text": text,
+                "sources": [source],
+                "source_anchors": [source["anchor"]],
+            }
+        )
+        if len(entries) >= limit:
+            break
+    return entries
+
+
+TOPIC_PROFILES: list[dict[str, Any]] = [
+    {
+        "topic": "QMS, procedures and business process alignment",
+        "summary": "The discussion covered how procedures and quality-system documents need to align with existing business processes.",
+        "responsibility": "Procedures need to reflect both regulatory requirements and the way the business actually operates.",
+        "evidence": "Quality manuals, procedures, trackers or summary documents are supporting evidence for this topic.",
+        "risk": "If procedures are not aligned with day-to-day work, they may be difficult to use or maintain.",
+        "questions": "Open questions remain around how current processes, systems or records work in practice.",
+        "terms": ["qms", "quality manual", "procedure", "process", "business works", "tracker", "summary document", "technical file"],
+    },
+    {
+        "topic": "Supply chain, warehousing and order fulfilment",
+        "summary": "The discussion covered product flow, warehousing, picking, packing, labelling and dispatch.",
+        "responsibility": "The process needs clear ownership for product handling, storage, picking, packing and dispatch steps.",
+        "evidence": "Flow diagrams, warehouse process details, labels and system records are supporting evidence.",
+        "risk": "Weak process understanding could leave gaps in procedure definition or operational controls.",
+        "questions": "Open questions remain around storage, automation, order flow or third-party involvement.",
+        "terms": ["warehouse", "warehousing", "japan", "netherlands", "ireland", "park west", "picking", "packing", "shipping", "courier", "sales order"],
+    },
+    {
+        "topic": "UDI, EUDAMED and registration responsibilities",
+        "summary": "The discussion covered device registration, UDI/barcode data and responsibility for registration checks.",
+        "responsibility": "Registration responsibilities need to be clear across manufacturer, importer and representative roles.",
+        "evidence": "Registration data, UDI/barcode information and project plans are supporting evidence.",
+        "risk": "There is a risk that registration activity is assumed to sit elsewhere and is missed.",
+        "questions": "Open questions remain around registration level, barcode format, data ownership or timelines.",
+        "terms": ["udimed", "eudamed", "udi", "upc", "sku", "registration", "registered", "importer", "authorised rep", "med envoy"],
+    },
+    {
+        "topic": "Labelling, IFU, DoC and product documentation",
+        "summary": "The discussion covered labels, IFUs, declarations of conformity and product documentation.",
+        "responsibility": "Product documentation needs review so labels, IFUs, DoCs and supporting information remain aligned.",
+        "evidence": "Labels, DoCs, IFUs, warranty booklets, manufacturer information notes and screenshots are supporting artefacts.",
+        "risk": "Documentation gaps may create audit findings or market-specific follow-up actions.",
+        "questions": "Open questions remain around documentation content, translation, label symbols or applicable documents.",
+        "terms": ["label", "barcode", "ifu", "doc", "declaration", "warranty booklet", "manufacturer information", "translation", "language", "languages", "sunglasses", "ppe"],
+    },
+    {
+        "topic": "Software changes, alarms and versioning",
+        "summary": "The discussion covered software changes, alarm behaviour, language changes, debug behaviour and version traceability.",
+        "responsibility": "Software changes need review, traceability and appropriate supporting documentation.",
+        "evidence": "Change requests, code review outputs, test data, debug scripts and version comparisons are supporting evidence.",
+        "risk": "If software changes cannot be traced or evidenced, retrospective test data or justification may be needed.",
+        "questions": "Open questions remain around alarm behaviour, debug commands, version differences or implementation evidence.",
+        "terms": ["software", "alarm", "mute", "debug", "version", "v1.01", "v1.02", "code", "firmware", "language", "languages", "driver", "font"],
+    },
+    {
+        "topic": "Clinical, usability and study timing",
+        "summary": "The discussion covered clinical or usability review, formative/summative study timing and submission alignment.",
+        "responsibility": "Clinical and usability inputs need to align with change review and submission timelines.",
+        "evidence": "Clinical review feedback, task analysis, usability documents and study plans are supporting evidence.",
+        "risk": "Misaligned study dates could affect submission readiness or notified-body review.",
+        "questions": "Open questions remain around study dates, review ownership or whether changes are acceptable clinically.",
+        "terms": ["clinical", "clinician", "usability", "formative", "summative", "study", "task analysis", "submission", "review date"],
+    },
+    {
+        "topic": "Electrical compliance and standards assessment",
+        "summary": "The discussion covered electrical compliance testing, standards assessment and test-report dependencies.",
+        "responsibility": "Electrical compliance and standards gaps need review before deliverables can be completed.",
+        "evidence": "Test reports, gap assessments and standards reviews are supporting evidence.",
+        "risk": "Testing or standards gaps could delay deliverables or require additional justification.",
+        "questions": "Open questions remain around test completion, applicable standards or remaining compliance gaps.",
+        "terms": ["electrical", "iec60601", "60601", "testing", "test report", "standards", "standard", "gap assessment", "mdd"],
+    },
+    {
+        "topic": "Cybersecurity, risk management and access controls",
+        "summary": "The discussion covered cybersecurity, risk management updates, USB access and control options.",
+        "responsibility": "Risk management needs to address cybersecurity controls and residual-risk decisions.",
+        "evidence": "Risk-management updates, standards, competitor-control reviews and benefit-risk rationale are supporting evidence.",
+        "risk": "Uncontrolled access or unresolved residual risk may require further controls or benefit-risk justification.",
+        "questions": "Open questions remain around control effectiveness, password protection, port locks or standard applicability.",
+        "terms": ["cybersecurity", "usb", "port", "password", "risk management", "benefit-risk", "controls", "81001", "27427", "unauthorized"],
+    },
+    {
+        "topic": "Project tracking, document control and submission readiness",
+        "summary": "The discussion covered project status, document tracking, change requests and submission readiness.",
+        "responsibility": "Owners need to keep project documents, change requests and submission materials moving.",
+        "evidence": "Trackers, change requests, document-control records and submission packages are supporting evidence.",
+        "risk": "Open document or tracker gaps may delay review, approval or submission readiness.",
+        "questions": "Open questions remain around status, ownership, deadlines or what needs to be closed before submission.",
+        "terms": ["tracker", "change request", "document", "documents", "approval", "submission", "deadline", "sign off", "status", "tf24", "technical file"],
+    },
+]
+
+
 def _polished_minutes_topic_groups(report: dict[str, Any]) -> dict[str, Any]:
-    """Build polished minutes grouped by topic, with actions kept separate."""
+    """Build polished minutes grouped by evidence-driven topic profiles."""
 
     topics: list[dict[str, Any]] = []
+    for profile in TOPIC_PROFILES:
+        topic = {"topic": profile["topic"], "sections": {}}
+        terms = profile["terms"]
+        _add_profile_section(
+            topic,
+            "Discussion points",
+            profile["summary"],
+            report,
+            ["responsibility", "evidence_request", "evidence_artifact", "process_flow", "question", "risk"],
+            terms,
+        )
+        _add_profile_section(
+            topic,
+            "Responsibilities",
+            profile["responsibility"],
+            report,
+            ["responsibility", "action"],
+            terms,
+        )
+        _add_profile_section(
+            topic,
+            "Evidence required",
+            profile["evidence"],
+            report,
+            ["evidence_artifact", "evidence_request", "responsibility"],
+            terms,
+        )
+        _add_profile_section(
+            topic,
+            "Risks",
+            profile["risk"],
+            report,
+            ["risk", "responsibility", "evidence_request"],
+            terms,
+            limit=3,
+        )
+        _add_profile_section(
+            topic,
+            "Open questions",
+            profile["questions"],
+            report,
+            ["question", "evidence_request"],
+            terms,
+            limit=3,
+        )
+        unique_topic_anchors = {
+            anchor
+            for entries in topic["sections"].values()
+            for entry in entries
+            for anchor in entry["source_anchors"]
+        }
+        if topic["sections"] and len(unique_topic_anchors) >= 2:
+            topics.append(topic)
 
-    supply_chain = {
-        "topic": "Supply chain, product flow and warehousing",
-        "sections": {},
-    }
-    _add_topic_entry(
-        supply_chain,
-        "Discussion points",
-        "The product flow is Japan to the Netherlands for fiscal clearance, then onwards to Ireland, with little or no Netherlands storage.",
-        report,
-        ["process_flow"],
-        ["japan", "netherlands", "ireland", "cleared", "storage"],
-    )
-    _add_topic_entry(
-        supply_chain,
-        "Responsibilities",
-        "DITA needs a lot-number process so product can be picked, labelled and stored by lot number.",
-        report,
-        ["responsibility", "action", "evidence_artifact"],
-        ["lot number", "pick", "store"],
-    )
-    _add_topic_entry(
-        supply_chain,
-        "Open questions",
-        "Is the described product-flow reflection correct?",
-        report,
-        ["question"],
-        ["correct reflection", "how it works"],
-    )
-    _add_topic_entry(
-        supply_chain,
-        "Open questions",
-        "Is the Park West warehousing facility DITA-operated or third-party?",
-        report,
-        ["question"],
-        ["park west", "third party", "own operated"],
-    )
-    _add_topic_entry(
-        supply_chain,
-        "Open questions",
-        "Is the warehouse automated or fully manual?",
-        report,
-        ["question"],
-        ["automated", "manual warehouse"],
-    )
-    _add_topic_entry(
-        supply_chain,
-        "Open questions",
-        "Does the mapped process cover supplier purchase orders, customer sales orders, or both?",
-        report,
-        ["question"],
-        ["purchase order", "sales order", "flow of products"],
-    )
-    topics.append(supply_chain)
-
-    registration = {
-        "topic": "Udimed/Eudamed, UDI and importer responsibilities",
-        "sections": {},
-    }
-    _add_topic_entry(
-        registration,
-        "Discussion points",
-        "The team focused on importer obligations, Udimed/Eudamed registration, UDI/barcode data, and who is responsible for checking or uploading product data.",
-        report,
-        ["responsibility", "question", "evidence_request"],
-        ["udimed", "eudamed", "udi", "upc", "importer", "data"],
-    )
-    _add_topic_entry(
-        registration,
-        "Responsibilities",
-        "As importer, DITA needs to check labels and confirm the importer link for DITA Inc.",
-        report,
-        ["responsibility"],
-        ["importer", "label", "check", "dita inc"],
-    )
-    _add_topic_entry(
-        registration,
-        "Responsibilities",
-        "New products need to be entered into Udimed immediately, and existing items need to be entered by the November deadline discussed in the call.",
-        report,
-        ["responsibility", "question"],
-        ["new products", "udimed", "immediately", "november"],
-    )
-    _add_topic_entry(
-        registration,
-        "Responsibilities",
-        "The legal manufacturer is responsible for putting data into Udimed; the importer and authorised representative need to check that it is there.",
-        report,
-        ["responsibility"],
-        ["legal manufacturer", "responsible", "authorised rep", "udimed"],
-    )
-    _add_topic_entry(
-        registration,
-        "Evidence required",
-        "Evidence is needed that product data is being collected or is ready to be put into Udimed/Eudamed.",
-        report,
-        ["evidence_request", "responsibility"],
-        ["collecting the data", "product information", "udimed", "data"],
-    )
-    _add_topic_entry(
-        registration,
-        "Risks",
-        "There is a risk that responsibility for Udimed activity is assumed to sit elsewhere and gets dropped or missed.",
-        report,
-        ["responsibility", "risk"],
-        ["dropped", "missed", "somebody else", "oversight"],
-    )
-    _add_topic_entry(
-        registration,
-        "Open questions",
-        "Are product registrations handled at UPC/SKU level, and are barcodes actual UDI barcodes?",
-        report,
-        ["question"],
-        ["upc", "sku", "udi barcodes", "barcodes"],
-    )
-    topics.append(registration)
-
-    audit = {
-        "topic": "Audit readiness, QMS procedures and Med Envoy planning",
-        "sections": {},
-    }
-    _add_topic_entry(
-        audit,
-        "Discussion points",
-        "Audit readiness depends on showing that procedures, data collection, Med Envoy activity and supporting evidence are in progress.",
-        report,
-        ["evidence_request", "risk"],
-        ["audit", "preparation", "data", "med envoy", "project plan", "task list"],
-    )
-    _add_topic_entry(
-        audit,
-        "Responsibilities",
-        "DITA needs procedures that reflect the applicable regulatory requirements and the way the business actually operates.",
-        report,
-        ["responsibility", "evidence_request"],
-        ["reg requirements", "procedure", "business works", "meaningful", "usable"],
-    )
-    _add_topic_entry(
-        audit,
-        "Evidence required",
-        "The quality manual and related procedures are core evidence for showing importer-obligation controls.",
-        report,
-        ["evidence_request"],
-        ["quality manual", "procedure"],
-    )
-    _add_topic_entry(
-        audit,
-        "Evidence required",
-        "A Med Envoy project plan, task list or equivalent activity overview is needed to understand timing, responsibilities and crossover points.",
-        report,
-        ["evidence_request", "risk", "action"],
-        ["med envoy", "project plan", "task list", "timelines", "crossover"],
-    )
-    _add_topic_entry(
-        audit,
-        "Risks",
-        "Without a clear Med Envoy plan or timeline, there is a gap around when registration work will be completed.",
-        report,
-        ["risk", "evidence_request"],
-        ["without", "gap", "timelines", "med envoy"],
-    )
-    _add_topic_entry(
-        audit,
-        "Risks",
-        "If the audit happens early, DITA will need to show preparation is underway rather than finished.",
-        report,
-        ["risk", "evidence_request"],
-        ["audit", "early", "preparation"],
-    )
-    _add_topic_entry(
-        audit,
-        "Open questions",
-        "What is Med Envoy doing, what information do they need, and how long will their work take?",
-        report,
-        ["question", "evidence_request"],
-        ["med envoy", "what information", "how long", "process"],
-    )
-    topics.append(audit)
-
-    labelling = {
-        "topic": "Labelling, barcode design and product documentation",
-        "sections": {},
-    }
-    _add_topic_entry(
-        labelling,
-        "Discussion points",
-        "Labelling, barcode design, lot numbering and product documentation are active areas of work.",
-        report,
-        ["evidence_artifact", "action", "question"],
-        ["label", "barcode", "lot", "manufacturer", "warranty booklet"],
-    )
-    _add_topic_entry(
-        labelling,
-        "Evidence required",
-        "Labels, barcode design, barcode format and lot-number implementation are supporting artefacts to keep under review.",
-        report,
-        ["evidence_artifact", "question", "action"],
-        ["label", "barcode", "lot number"],
-    )
-    _add_topic_entry(
-        labelling,
-        "Evidence required",
-        "The warranty booklet/manufacturer information note and IFU status need to be clarified as part of the documentation set.",
-        report,
-        ["evidence_request", "process_flow"],
-        ["warranty booklet", "manufacturer", "ifu", "MIN"],
-    )
-    topics.append(labelling)
-
-    actions: list[dict[str, Any]] = []
-    action_definitions = [
-        (
-            "Orla to provide a written formal overview of the intercompany structure.",
-            ["action"],
-            ["written formally", "intercompany structure"],
-        ),
-        (
-            "Jacqui to send the relevant QMS/manual material to Orla.",
-            ["action", "question"],
-            ["flick this over", "qms manual"],
-        ),
-        (
-            "Orla to review the document/update work with the additional information.",
-            ["action", "evidence_request"],
-            ["review that document", "update with all the additional information"],
-        ),
-        (
-            "Orla to take the barcode/UDI question back to the US team.",
-            ["action", "question"],
-            ["bring that to the US team", "barcodes", "udi"],
-        ),
-        (
-            "Orla to follow up with Cody/Med Envoy on the process, information needed and timelines.",
-            ["action", "evidence_request", "risk"],
-            ["follow up", "cody", "med envoy", "process", "timelines"],
-        ),
-        (
-            "Jacqui/Colm to review the SRN/company-size information and seek direction from Liam if needed.",
-            ["action", "evidence_request"],
-            ["send it on", "colm", "liam", "company size"],
-        ),
-    ]
-    for text, buckets, terms in action_definitions:
-        entry = _polished_entry(text, report, buckets, terms)
-        if entry is not None:
-            actions.append(entry)
-
+    actions = _generic_action_entries(report)
     return {"topics": topics, "actions": actions}
-
 
 def _iter_topic_entries(topic_groups: dict[str, Any]) -> list[dict[str, Any]]:
     entries: list[dict[str, Any]] = []
