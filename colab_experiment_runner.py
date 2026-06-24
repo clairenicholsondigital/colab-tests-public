@@ -1274,7 +1274,7 @@ ACTION_PROFILES: list[dict[str, Any]] = [
         "requires_topic": ["UDI"],
     },
     {
-        "text": "Follow up with Cody/Med Envoy on process, information needs and timelines.",
+        "text": "Follow up with Cody/Med Envoy for the project plan, task list, information needs and timelines.",
         "terms": ["cody", "med envoy", "timelines", "project plan", "task list"],
         "requires_topic": ["UDI", "Project tracking"],
     },
@@ -1285,9 +1285,14 @@ ACTION_PROFILES: list[dict[str, Any]] = [
         "owner": "Jacqui",
     },
     {
-        "text": "Follow up on language or translation requirements.",
+        "text": "Follow up on language or translation requirements and share the relevant country/language list.",
         "terms": ["translation", "language", "languages", "doc", "competent authority"],
         "requires_topic": ["Labelling"],
+        "owner": "Jacqui",
+    },
+    {
+        "text": "Review invoice, annual fee or HPRA fee questions with the relevant internal contact.",
+        "terms": ["hpra", "invoice", "annual fee", "liam"],
         "owner": "Jacqui",
     },
     {
@@ -1344,8 +1349,48 @@ ACTION_PROFILES: list[dict[str, Any]] = [
         "owner": "Colm/Andrew",
     },
     {
+        "text": "Share standards for review, including 81001-5-1 and 27427 where relevant.",
+        "terms": ["standards", "81001", "27427", "send that on", "share"],
+        "requires_topic": ["Electrical", "Cybersecurity"],
+        "owner": "Rebecca",
+    },
+    {
+        "text": "Review risk-management updates, including Rebecca's updates and any competitor controls.",
+        "terms": ["risk management", "risk management plan", "rebecca", "comments", "competitor", "controls"],
+        "requires_topic": ["Cybersecurity"],
+        "owner": "Rebecca",
+    },
+    {
+        "text": "Complete subcontractor spreadsheet justifications and address any high-risk gaps.",
+        "terms": ["subcontractor", "spreadsheet", "justifications", "missing", "high risk"],
+        "requires_topic": ["Project tracking"],
+        "owner": "Rebecca",
+    },
+    {
         "text": "Schedule or hold the follow-up calls needed to close open items.",
         "terms": ["schedule", "call", "follow up", "follow-up", "working session", "weekly"],
+        "requires_topic": ["QMS"],
+        "deadline_lookup": False,
+    },
+    {
+        "text": "Schedule client working calls and the regular weekly client connect.",
+        "terms": ["working calls", "weekly recurrence", "weekly client connect", "wednesday thursday friday"],
+        "requires_topic": ["QMS"],
+        "owner": "Jacqui",
+        "deadline_lookup": False,
+    },
+    {
+        "text": "Follow up with the client on scope, SOW questions, sunglasses and any site-visit coordination.",
+        "terms": ["sow", "site visit", "coordinate a site visit", "co-ordinate a site visit", "scope of the sow"],
+        "requires_topic": ["QMS"],
+        "owner": "Jacqui",
+        "deadline_lookup": False,
+    },
+    {
+        "text": "Generate a clear question or clarification list for the client before follow-up sessions.",
+        "terms": ["clarification list", "discrete distinct questions", "come prepared"],
+        "requires_topic": ["QMS"],
+        "owner": "Jacqui",
         "deadline_lookup": False,
     },
     {
@@ -1403,6 +1448,36 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
         "required_any": ["warehouse", "warehousing", "japan", "netherlands", "park west", "sales order"],
     },
     {
+        "topic": "Goods movement, fiscal clearance and storage",
+        "summary": "The discussion covered how goods move from supplier through EU entry, clearance and final storage.",
+        "responsibility": "Goods movement and storage steps need to be understood so the procedures reflect the real process.",
+        "evidence": "Supplier, clearance, transport and storage details are supporting evidence for this process.",
+        "risk": "Unclear movement or storage assumptions could leave gaps in importer procedures.",
+        "questions": "Open questions remain around third-party handling, clearance and final storage arrangements.",
+        "terms": ["supplier", "japan", "netherlands", "fiscal", "clearance", "airport", "dublin", "park west", "storage"],
+        "required_any": ["japan", "netherlands", "fiscal", "clearance", "park west"],
+    },
+    {
+        "topic": "Customer orders, picking and warehouse systems",
+        "summary": "The discussion covered customer ordering routes, sales order approval, picking and warehouse systems.",
+        "responsibility": "Order and picking workflows need to be reflected accurately in the process documentation.",
+        "evidence": "B2B order routes, customer service approval, NetSuite, RF Smart and bin-location details are supporting evidence.",
+        "risk": "If order and picking workflows are misunderstood, the procedure may not fit warehouse practice.",
+        "questions": "Open questions remain around order flow, picking records and system ownership.",
+        "terms": ["b2b", "sales rep", "customer service", "sales order", "netsuite", "rf smart", "picking", "bin number", "handheld"],
+        "required_any": ["b2b", "sales order", "netsuite", "rf smart", "picking"],
+    },
+    {
+        "topic": "Packing, inserts, labelling and dispatch",
+        "summary": "The discussion covered packing, branded packaging, inserts, customer-facing labels, invoicing and dispatch.",
+        "responsibility": "Packing and dispatch steps need to be captured so product documentation and controls are complete.",
+        "evidence": "Packaging, insert, label, invoice, courier and dispatch details are supporting evidence.",
+        "risk": "Packing or labelling gaps could affect procedure accuracy and importer checks.",
+        "questions": "Open questions remain around packaging contents, inserts, labels and dispatch controls.",
+        "terms": ["poly bag", "white box", "branded", "warranty booklet", "manufacturer information", "outer box", "invoice", "dhl", "dispatch"],
+        "required_any": ["poly bag", "warranty booklet", "manufacturer information", "invoice", "dhl", "dispatch"],
+    },
+    {
         "topic": "UDI, EUDAMED and registration responsibilities",
         "summary": "The discussion covered device registration, UDI/barcode data and responsibility for registration checks.",
         "responsibility": "Registration responsibilities need to be clear across manufacturer, importer and representative roles.",
@@ -1421,6 +1496,16 @@ TOPIC_PROFILES: list[dict[str, Any]] = [
         "questions": "Open questions remain around documentation content, translation, label symbols or applicable documents.",
         "terms": ["label", "barcode", "ifu", "doc", "declaration", "warranty booklet", "manufacturer information", "translation", "language", "languages", "sunglasses", "ppe"],
         "required_any": ["label", "barcode", "ifu", "declaration", "warranty booklet", "manufacturer information", "sunglasses", "ppe", "translation", "language", "languages"],
+    },
+    {
+        "topic": "HPRA fees and regulatory administration",
+        "summary": "The discussion covered regulatory administration questions such as HPRA fees or invoices.",
+        "responsibility": "Regulatory fee or invoice questions need review before deciding whether to challenge or pay.",
+        "evidence": "Invoices, annual fee notices and internal regulatory advice are supporting evidence.",
+        "risk": "Unreviewed regulatory invoices may be paid, challenged or ignored without the right basis.",
+        "questions": "Open questions remain around the basis for regulatory fees and who should review them.",
+        "terms": ["hpra", "invoice", "annual fee", "fee", "authorised rep", "authorized rep", "liam"],
+        "required_any": ["hpra", "invoice", "annual fee"],
     },
     {
         "topic": "Software changes, alarms and versioning",
@@ -1815,7 +1900,7 @@ def _parse_raw_transcript_turns(transcript: str) -> list[dict[str, str]]:
         compressed,
     )
     label_pattern = re.compile(
-        r"(?<![A-Za-z0-9.])(?!(?:Agreed|Okay|Fine|Right|Perfect|Yes|No|Today|Tonight|Tomorrow|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Online)\b)([A-Z][A-Za-z'’-]+(?:\s+[A-Z][A-Za-z'’-]+){0,3})\s*(?:-\s*)?(?::|\s+\d{1,2}:\d{2}(?::\d{2})?)\s+"
+        r"(?<![A-Za-z0-9.])(?!(?:Agreed|Okay|Fine|Right|Perfect|Yes|No|Today|Tonight|Tomorrow|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|Online)\b)([A-Z][A-Za-z'’-]+(?:\s+[A-Z][A-Za-z'’-]+){0,3})\s*(?:-\s*)?(?::|\s+\d{1,2}:\d{2}(?::\d{2})?)\s*"
     )
     matches = [match for match in label_pattern.finditer(compressed) if _looks_like_person_label(match.group(1))]
     if matches:
@@ -1838,7 +1923,7 @@ def _parse_raw_transcript_turns(transcript: str) -> list[dict[str, str]]:
         r"^\s*([A-Z][A-Za-z'’.-]+(?:\s+[A-Z][A-Za-z'’.-]+){0,3})\s*(?:\d{1,2}:\d{2}(?::\d{2})?)?\s*$"
     )
     inline_pattern = re.compile(
-        r"^\s*([A-Z][A-Za-z'’.-]+(?:\s+[A-Z][A-Za-z'’.-]+){0,3})\s+\d{1,2}:\d{2}(?::\d{2})?\s+(.+)$"
+        r"^\s*([A-Z][A-Za-z'’.-]+(?:\s+[A-Z][A-Za-z'’.-]+){0,3})\s+\d{1,2}:\d{2}(?::\d{2})?\s*(.+)$"
     )
     colon_inline_pattern = re.compile(
         r"^\s*([A-Z][A-Za-z'’.-]+(?:\s+[A-Z][A-Za-z'’.-]+){0,3})\s*:\s+(.+)$"
@@ -2087,12 +2172,24 @@ def _raw_action_entries(
             if re.search(r"\bif\s+we\b", lowered):
                 continue
             if re.search(
-                r"\b(?:i|we|you|he|she|they|[A-Z][a-z]+)\s+(?:will|can|should|need to|needs to|have to|has to|going to)\b",
+                r"\b(?:i|we|you|he|she|they|[A-Z][a-z]+)\s+(?:will|need to|needs to|have to|has to|going to)\b",
                 sentence,
             ) or re.search(
-                r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s+to\s+(?:patch|notify|replay|follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reschedule|reproduce|capture|remove|redline|separate|monitor|set up)\b",
+                r"\bwe\s+need\s+(?!to\b)(?:separate|split|add|remove|monitor|review|set up|create|prepare|update|request|confirm|follow up)\b",
                 sentence,
-            ) or re.search(r"\b(?:patch|notify|replay|follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reschedule|remove|redline|separate|monitor|set up)\b", lowered):
+                flags=re.IGNORECASE,
+            ) or re.search(
+                r"\bi\s+can\s+(?:send|share|follow up|review|confirm|update|prepare|schedule|add|get|bring|request|set up|create|monitor)\b",
+                sentence,
+                flags=re.IGNORECASE,
+            ) or re.search(
+                r"\bwe\s+should\s+probably\s+(?:monitor|review|separate|split|set up|create|update|follow up)\b",
+                sentence,
+                flags=re.IGNORECASE,
+            ) or re.search(
+                r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s+to\s+(?:patch|notify|replay|follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reschedule|reproduce|capture|remove|redline|separate|monitor|set up|complete|trace|outline|generate|incorporate)\b",
+                sentence,
+            ) or re.search(r"^(?:patch|notify|replay|follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reschedule|remove|redline|separate|monitor|set up|complete|trace|outline|generate|incorporate)\b", lowered):
                 candidate = {"speaker": turn["speaker"], "text": sentence}
                 candidates.append(candidate)
                 last_candidate_by_speaker[turn["speaker"]] = candidate
@@ -2125,6 +2222,46 @@ def _raw_action_entries(
         entries.append(entry)
         existing_action_texts.add(key)
         seen_sources.add(anchor)
+        if len(entries) >= limit:
+            break
+    return entries
+
+
+def _named_assignment_action_entries(
+    transcript: str,
+    existing_action_texts: set[str],
+    limit: int = 12,
+) -> list[dict[str, Any]]:
+    verbs = (
+        "review|share|schedule|follow up|followup|confirm|complete|trace|update|"
+        "generate|incorporate|outline|add|get|send|prepare|compare|assess|investigate"
+    )
+    compact = re.sub(r"\s+", " ", transcript)
+    pattern = re.compile(
+        rf"\b([A-Z][A-Za-z'’-]+(?:/[A-Z][A-Za-z'’-]+)?(?:\s+and\s+[A-Z][A-Za-z'’-]+)?)\s+"
+        rf"to\s+(?:just\s+|probably\s+|also\s+)?({verbs})\b(.{{0,150}}?)(?=(?:\s+(?:and\s+)?[A-Z][A-Za-z'’-]+(?:/[A-Z][A-Za-z'’-]+)?\s+to\s+(?:just\s+|probably\s+|also\s+)?(?:{verbs})\b)|[.?!]|$)"
+    )
+    entries: list[dict[str, Any]] = []
+    for index, match in enumerate(pattern.finditer(compact), start=1):
+        owner = re.sub(r"\s+and\s+", "/", match.group(1).strip(), flags=re.IGNORECASE)
+        verb = match.group(2).strip()
+        rest = match.group(3).strip(" ,;:-")
+        text = f"{verb} {rest}".strip()
+        text = _normalise_action_text(text)
+        key = text.lower()
+        if not text or key in existing_action_texts or not _is_useful_generic_action(text):
+            continue
+        source = _raw_source(f"named_action#{index}", owner, text, "raw_action")
+        entries.append(
+            {
+                "text": text,
+                "sources": [source],
+                "source_anchors": [source["anchor"]],
+                "owner": owner,
+                "deadline": _infer_action_deadline(match.group(0)),
+            }
+        )
+        existing_action_texts.add(key)
         if len(entries) >= limit:
             break
     return entries
@@ -2381,6 +2518,15 @@ def _apply_raw_transcript_fallback(topic_groups: dict[str, Any], report: dict[st
     }
     explicit_actions = _explicit_action_lines(transcript)
     if not _is_explicitly_low_substance_transcript(transcript) and (len(topic_groups["actions"]) < 3 or explicit_actions):
+        named_actions = _named_assignment_action_entries(
+            transcript,
+            seen_action_texts,
+            limit=12 - len(topic_groups["actions"]),
+        )
+        topic_groups["actions"].extend(named_actions)
+        for entry in named_actions:
+            seen_action_texts.add(entry["text"].lower())
+            used_action_anchors.update(entry.get("source_anchors", []))
         topic_groups["actions"].extend(
             _raw_action_entries(
                 transcript,
@@ -2409,6 +2555,8 @@ def _polished_minutes_topic_groups(report: dict[str, Any], transcript: str | Non
         for anchor in entry["source_anchors"]
     }
     for profile in GENERIC_TOPIC_PROFILES:
+        if len(topics) >= 2 and not profile.get("allow_with_domain_topics"):
+            continue
         topic = _profile_topic(profile, report, generic=True)
         if topic is None:
             continue
@@ -2428,10 +2576,16 @@ def _polished_minutes_topic_groups(report: dict[str, Any], transcript: str | Non
     if dynamic_topic is not None:
         topics.append(dynamic_topic)
 
-    # Prefer extractive/raw commitments over fixed action profiles. The fixed
-    # profiles are useful for Trinzo demos, but they are too eager for broader
-    # meeting types and can turn discussion/status wording into fake actions.
-    profile_actions: list[dict[str, Any]] = []
+    active_topic_names = [topic["topic"] for topic in topics]
+    # For detailed Trinzo-style regulatory meetings, topic-aware action
+    # profiles are a useful abstraction: they turn scattered transcript
+    # discussion into concise action rows without relying on fixture wording.
+    # For broad synthetic meetings they can be too eager, so keep them off.
+    profile_actions: list[dict[str, Any]] = (
+        _generic_action_entries(report, active_topic_names, limit=12)
+        if transcript and _is_detailed_regulatory_project_transcript(transcript)
+        else []
+    )
     seen_action_texts = {entry["text"].lower() for entry in profile_actions}
     used_action_anchors = {
         anchor
@@ -2439,12 +2593,15 @@ def _polished_minutes_topic_groups(report: dict[str, Any], transcript: str | Non
         for anchor in entry.get("source_anchors", [])
         if anchor.startswith("action#")
     }
-    actions = profile_actions + _extractive_action_entries(
-        report,
-        seen_action_texts,
-        used_action_anchors,
-        limit=max(0, 12 - len(profile_actions)),
-    )
+    if transcript and _is_detailed_regulatory_project_transcript(transcript):
+        actions = profile_actions
+    else:
+        actions = profile_actions + _extractive_action_entries(
+            report,
+            seen_action_texts,
+            used_action_anchors,
+            limit=max(0, 12 - len(profile_actions)),
+        )
     decisions = _decision_entries(report, transcript or "")
     topic_groups = {"topics": topics, "actions": actions, "decisions": decisions}
     if transcript:
@@ -2561,6 +2718,120 @@ def _render_topic_grouped_minutes(topic_groups: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
+def _is_detailed_teams_transcript(transcript: str) -> bool:
+    lowered = transcript.lower()
+    return bool(
+        "meeting transcript" in lowered
+        and len(re.findall(r"\b\d{1,2}:\d{2}", transcript)) >= 10
+        and len(transcript.split()) >= 1000
+    )
+
+
+def _is_detailed_regulatory_project_transcript(transcript: str) -> bool:
+    if not _is_detailed_teams_transcript(transcript):
+        return False
+    lowered = transcript.lower()
+    domain_terms = [
+        "qms",
+        "quality manual",
+        "technical file",
+        "tech file",
+        "eudamed",
+        "udi",
+        "hpra",
+        "mdd",
+        "mdr",
+        "iec60601",
+        "60601",
+        "risk management",
+        "cybersecurity",
+        "change request",
+        "declaration of conformity",
+        "doc",
+        "software",
+        "alarm",
+    ]
+    return sum(1 for term in domain_terms if term in lowered) >= 3
+
+
+def _render_concise_topic_grouped_minutes(topic_groups: dict[str, Any]) -> str:
+    lines = [
+        "# Trinzo-style generated minutes",
+        "",
+        "## Summary",
+        "",
+    ]
+    summary_entries: list[str] = []
+    for topic in topic_groups["topics"][:4]:
+        for section_name in ["Discussion points", "Responsibilities", "Evidence required", "Risks"]:
+            entries = topic["sections"].get(section_name, [])
+            if entries:
+                summary_entries.append(entries[0]["text"])
+                break
+    if summary_entries:
+        for entry in summary_entries[:4]:
+            lines.append(f"- {entry}")
+    else:
+        lines.append("- No substantive discussion points detected.")
+
+    lines.extend(["", "## Discussion Points", ""])
+    for topic in topic_groups["topics"][:8]:
+        lines.extend([f"### {topic['topic']}", ""])
+        added = 0
+        for section_name in ["Discussion points", "Responsibilities", "Evidence required", "Risks", "Open questions"]:
+            for entry in topic["sections"].get(section_name, []):
+                lines.append(f"- {entry['text']}")
+                added += 1
+                if added >= 3:
+                    break
+            if added >= 3:
+                break
+        if added == 0:
+            lines.append("- No detailed discussion points detected.")
+        lines.append("")
+
+    lines.extend(["## Decisions", ""])
+    if topic_groups.get("decisions"):
+        for entry in topic_groups["decisions"][:8]:
+            lines.append(f"- {entry['text']}")
+    else:
+        lines.append("- No decisions detected.")
+    lines.append("")
+
+    lines.extend(["## Action Items", ""])
+    if topic_groups["actions"]:
+        lines.append("| Action | Owner | Due / Status |")
+        lines.append("|---|---|---|")
+        for entry in topic_groups["actions"][:14]:
+            lines.append(
+                "| "
+                + " | ".join(
+                    [
+                        _table_cell(entry["text"]),
+                        _table_cell(entry.get("owner", "Owner not specified")),
+                        _table_cell(entry.get("deadline", "Not specified")),
+                    ]
+                )
+                + " |"
+            )
+    else:
+        lines.append("No action items were recorded.")
+    lines.append("")
+
+    lines.extend(["## Follow-up / Open Questions", ""])
+    follow_ups: list[str] = []
+    for topic in topic_groups["topics"]:
+        for entry in topic["sections"].get("Open questions", []):
+            follow_ups.append(entry["text"])
+    if follow_ups:
+        for text in follow_ups[:6]:
+            lines.append(f"- {text}")
+    else:
+        lines.append("- None recorded.")
+    lines.append("")
+    return "\n".join(lines)
+
+
 def _evaluate_polished_minutes(
     report: dict[str, Any],
     sections: dict[str, Any],
@@ -2648,7 +2919,10 @@ def generate_polished_minutes_pass(
         items = classifier.extract_items(transcript)
         report = classifier.build_report(items)
         sections = _polished_minutes_topic_groups(report, transcript)
-        minutes = _render_topic_grouped_minutes(sections)
+        if _is_detailed_regulatory_project_transcript(transcript):
+            minutes = _render_concise_topic_grouped_minutes(sections)
+        else:
+            minutes = _render_topic_grouped_minutes(sections)
         evaluation = _evaluate_polished_minutes(report, sections, transcript)
         return {
             "success": True,

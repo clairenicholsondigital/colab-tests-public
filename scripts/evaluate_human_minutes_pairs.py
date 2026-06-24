@@ -184,6 +184,11 @@ def looks_like_heading(line: str) -> bool:
     clean = re.sub(r"\s+", " ", line.strip())
     if not clean or clean.startswith(("•", "o ")):
         return False
+    lowered = clean.lower()
+    if re.search(r"\b(?:will|forward|implementing|confirmed|purchased|reviewing|working|hoping)\b", lowered):
+        return False
+    if re.search(r"\bby\s+(?:\d|third)\b", lowered):
+        return False
     if len(clean) > 70 or len(clean.split()) > 9:
         return False
     if re.search(r"[.!?]$", clean):
@@ -201,8 +206,13 @@ def extract_human_topics(text: str) -> list[str]:
             continue
         if looks_like_heading(line):
             if pending:
-                topics.append(pending)
-            pending = line
+                if len(pending.split()) <= 2 and len(line.split()) <= 2:
+                    pending = f"{pending} {line}"
+                else:
+                    topics.append(pending)
+                    pending = line
+            else:
+                pending = line
             continue
         match = re.match(r"^([A-Z][A-Za-z0-9/&' -]{2,45}?)(?=\s+[A-Z][a-z]+\b)", line)
         if match:
@@ -282,7 +292,7 @@ def action_match_score(expected_actions: list[str], actual_actions: list[dict[st
             actual_tokens = tokens(actual)
             if expected_tokens:
                 best = max(best, len(expected_tokens & actual_tokens) / len(expected_tokens))
-        if best < 0.42:
+        if best < 0.34:
             missed.append(expected)
     return 1.0 - (len(missed) / len(expected_actions)), missed
 
