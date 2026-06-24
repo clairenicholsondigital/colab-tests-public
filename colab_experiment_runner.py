@@ -1145,6 +1145,10 @@ def _infer_action_deadline(source_text: str) -> str:
     cleaned = _clean_source_text(source_text)
     lowered = cleaned.lower()
 
+    time_match = re.search(r"\b(?:by|before)\s+(\d{1,2}(?::\d{2})?\s*(?:am|pm))\b", cleaned, flags=re.IGNORECASE)
+    if time_match:
+        return f"By {time_match.group(1).replace(' ', '').lower()}"
+
     date_patterns = [
         r"\b\d{1,2}(?:st|nd|rd|th)?(?:\s+of)?\s+(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)(?:\s+['’]?\d{2,4})?\b",
         r"\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?(?:\s+['’]?\d{2,4})?\b",
@@ -1162,6 +1166,8 @@ def _infer_action_deadline(source_text: str) -> str:
         (r"\bearly\s+(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b", None),
         (r"\bmid\s+(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b", None),
         (r"\bsecond last week of (?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\b", None),
+        (r"\bbefore\s+(?:the\s+)?live\s+(?:webinar|session)\b", "Before live webinar"),
+        (r"\bbefore\s+next\s+week\b", "Before next week"),
         (r"\bend of next week\b", "End of next week"),
         (r"\bend of (?:the )?week\b", "End of week"),
         (r"\bthis week\b", "This week"),
@@ -1173,6 +1179,8 @@ def _infer_action_deadline(source_text: str) -> str:
         (r"\btoday\b", "Today"),
         (r"\bthis afternoon\b", "This afternoon"),
         (r"\bthis evening\b", "This evening"),
+        (r"\bconditional\b", "Conditional"),
+        (r"\bif\s+.+\b", "Conditional"),
     ]
     for pattern, label in relative_patterns:
         match = re.search(pattern, lowered)
@@ -1792,7 +1800,7 @@ def _normalise_action_text(text: str) -> str:
     text = re.sub(r"\bfollow-up\s+feedback\b", "feedback", text, flags=re.IGNORECASE)
     text = re.sub(r"\bfollow up\s+follow up\b", "follow up", text, flags=re.IGNORECASE)
     text = re.sub(
-        r"\s+\b(?:by|before)\s+(?:monday|tuesday|wednesday|thursday|friday|lunch|noon|next week)\b\.?$",
+        r"\s+\b(?:by|before)\s+(?:monday|tuesday|wednesday|thursday|friday|lunch|noon|next week|\d{1,2}(?::\d{2})?\s*(?:am|pm))\b\.?$",
         "",
         text,
         flags=re.IGNORECASE,
@@ -2084,14 +2092,16 @@ def _explicit_action_lines(transcript: str) -> list[dict[str, str]]:
         inline_header = re.match(r"^(?:actions?|next steps?|to dos?)(?:\s+before\s+[^:]+)?\s*:\s*(.+)$", stripped, flags=re.IGNORECASE)
         if inline_header:
             collecting = True
+            header_deadline = _infer_action_deadline(stripped[: inline_header.start(1)])
             inline_text = inline_header.group(1)
+            list_deadline = "Before live webinar" if re.search(r"\bbefore\s+(?:the\s+)?live\s+(?:session|webinar)\b", inline_text, flags=re.IGNORECASE) else header_deadline
             parts = _split_raw_sentences(inline_text)
             if len(parts) == 1:
                 parts = re.split(r",\s+|\s+and\s+(?=\w+\b)", inline_text)
             for part in parts:
                 if len(part.split()) < 2:
                     continue
-                actions.append({"speaker": speaker, "text": part.rstrip(".") + "."})
+                actions.append({"speaker": speaker, "text": part.rstrip(".") + ".", "deadline_context": list_deadline})
             continue
         if re.search(r"\b(actions?|next steps?|to dos?)\b.*:$", lowered) or lowered in {"actions before next week:", "actions:"}:
             collecting = True
@@ -2128,11 +2138,71 @@ def _status_gap_action(sentence: str) -> str | None:
     return None
 
 
+def _action_keywords(text: str) -> set[str]:
+    stop_words = {
+        "action", "actions", "before", "after", "with", "from", "into", "this",
+        "that", "then", "again", "live", "session", "webinar", "issue",
+    }
+    return {
+        word
+        for word in re.findall(r"[a-z0-9]+", text.lower())
+        if len(word) > 3 and word not in stop_words
+    }
+
+
+def _first_name(label: str) -> str:
+    return label.strip().split()[0] if label.strip() else label
+
+
+def _infer_recap_action_context(transcript: str, action_text: str, recap_speaker: str) -> dict[str, str]:
+    keywords = _action_keywords(action_text)
+    best: tuple[int, str, str] | None = None
+    for turn in _parse_raw_transcript_turns(transcript):
+        for sentence in _split_raw_sentences(turn["text"]):
+            lowered = sentence.lower()
+            if re.match(r"^(?:actions?|next steps?|to dos?)\b", lowered):
+                continue
+            sentence_words = _action_keywords(sentence)
+            overlap = len(keywords & sentence_words)
+            if overlap <= 0:
+                continue
+            if re.search(r"\b(?:i\s+(?:can|will|should|need|have to)|i['’]?ll)\b", lowered):
+                overlap += 2
+            if re.search(r"\b(?:not\s+final|not\s+ready|not\s+operational|missing|blocked|does\s+not\s+exist|pending|should|need)\b", lowered):
+                overlap += 1
+            if best is None or overlap > best[0]:
+                best = (overlap, turn["speaker"], sentence)
+
+    owner = "Owner not specified"
+    deadline = "Not specified"
+    if best is not None and best[0] >= 2:
+        _, speaker, sentence = best
+        explicit = _infer_action_owner(sentence, {})
+        if explicit != "Owner not specified":
+            owner = explicit
+        elif re.search(r"\b(?:i\s+(?:can|will|should|need|have to)|i['’]?ll)\b", sentence, flags=re.IGNORECASE):
+            owner = speaker
+        elif _looks_like_person_label(speaker):
+            if _looks_like_person_label(recap_speaker) and _first_name(speaker) != _first_name(recap_speaker):
+                owner = f"{_first_name(recap_speaker)} / {_first_name(speaker)}"
+            else:
+                owner = speaker
+        deadline = _infer_action_deadline(sentence)
+
+    lowered_action = action_text.lower()
+    if owner == "Owner not specified" and re.search(r"\bpracti[cs]e\b", lowered_action) and "delivery" in lowered_action:
+        owner = "All"
+    if deadline == "Not specified" and re.search(r"\bpracti[cs]e\b", lowered_action) and "delivery" in lowered_action:
+        deadline = "Before live webinar"
+    return {"owner": owner, "deadline": deadline}
+
+
 def _raw_action_entries(
     transcript: str,
     existing_action_texts: set[str],
     used_action_anchors: set[str] | None = None,
     limit: int = 12,
+    explicit_only: bool = False,
 ) -> list[dict[str, Any]]:
     blocked = used_action_anchors or set()
     entries: list[dict[str, Any]] = []
@@ -2140,59 +2210,60 @@ def _raw_action_entries(
     pending_question: dict[str, str] | None = None
     last_candidate_by_speaker: dict[str, dict[str, str]] = {}
     stable_status_context = bool(re.search(r"\b(?:nothing\s+so\s+far\s+changes\s+the\s+timelines|timelines\s+are\s+unaffected|timelines\s+remain\s+unaffected)\b", transcript, flags=re.IGNORECASE))
-    for turn in _parse_raw_transcript_turns(transcript):
-        for sentence in _split_raw_sentences(turn["text"]):
-            lowered = sentence.lower()
-            gap_action = _status_gap_action(sentence)
-            if gap_action:
-                if not stable_status_context:
-                    candidate = {"speaker": turn["speaker"], "text": gap_action}
+    if not explicit_only:
+        for turn in _parse_raw_transcript_turns(transcript):
+            for sentence in _split_raw_sentences(turn["text"]):
+                lowered = sentence.lower()
+                gap_action = _status_gap_action(sentence)
+                if gap_action:
+                    if not stable_status_context:
+                        candidate = {"speaker": turn["speaker"], "text": gap_action}
+                        candidates.append(candidate)
+                        last_candidate_by_speaker[turn["speaker"]] = candidate
+                    continue
+                delegated_question = re.search(
+                    r"\bcan\s+you\s+(.+?)(?:\?|$)",
+                    sentence,
+                    flags=re.IGNORECASE,
+                )
+                if delegated_question:
+                    pending_question = {"speaker": turn["speaker"], "text": delegated_question.group(1)}
+                    continue
+                if pending_question and re.search(r"\b(?:i['’]?ll|i\s+will|yes|yeah|sure|i\s+can|i['’]?ll\s+do\s+that)\b", lowered):
+                    candidates.append({"speaker": turn["speaker"], "text": pending_question["text"]})
+                    pending_question = None
+                    continue
+                if re.fullmatch(r"(?:today|tonight|tomorrow|before lunch|by lunch|before noon|by noon|this afternoon|this evening|monday|tuesday|wednesday|thursday|friday)\.?", lowered.strip()):
+                    previous = last_candidate_by_speaker.get(turn["speaker"])
+                    if previous and not re.search(r"\b(?:today|tonight|tomorrow|before lunch|by lunch|before noon|by noon|monday|tuesday|wednesday|thursday|friday)\b", previous["text"], re.I):
+                        previous["text"] = previous["text"].rstrip(".") + " " + sentence.strip().rstrip(".") + "."
+                    continue
+                if re.search(r"\b(?:we|i)\s+should\b", lowered) and not re.search(r"\b(?:we|i)\s+should\s+probably\b", lowered):
+                    continue
+                if re.search(r"\bif\s+we\b", lowered):
+                    continue
+                if re.search(
+                    r"\b(?:i|we|you|he|she|they|[A-Z][a-z]+)\s+(?:will|need to|needs to|have to|has to|going to)\b",
+                    sentence,
+                ) or re.search(
+                    r"\bwe\s+need\s+(?!to\b)(?:separate|split|add|remove|monitor|review|set up|create|prepare|update|request|confirm|follow up)\b",
+                    sentence,
+                    flags=re.IGNORECASE,
+                ) or re.search(
+                    r"\bi\s+can\s+(?:send|share|follow up|review|confirm|update|prepare|schedule|add|get|bring|request|set up|create|monitor)\b",
+                    sentence,
+                    flags=re.IGNORECASE,
+                ) or re.search(
+                    r"\bwe\s+should\s+probably\s+(?:monitor|review|separate|split|set up|create|update|follow up)\b",
+                    sentence,
+                    flags=re.IGNORECASE,
+                ) or re.search(
+                    r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s+to\s+(?:patch|notify|replay|follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reschedule|reproduce|capture|remove|redline|separate|monitor|set up|complete|trace|outline|generate|incorporate)\b",
+                    sentence,
+                ) or re.search(r"^(?:patch|notify|replay|follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reschedule|remove|redline|separate|monitor|set up|complete|trace|outline|generate|incorporate)\b", lowered):
+                    candidate = {"speaker": turn["speaker"], "text": sentence}
                     candidates.append(candidate)
                     last_candidate_by_speaker[turn["speaker"]] = candidate
-                continue
-            delegated_question = re.search(
-                r"\bcan\s+you\s+(.+?)(?:\?|$)",
-                sentence,
-                flags=re.IGNORECASE,
-            )
-            if delegated_question:
-                pending_question = {"speaker": turn["speaker"], "text": delegated_question.group(1)}
-                continue
-            if pending_question and re.search(r"\b(?:i['’]?ll|i\s+will|yes|yeah|sure|i\s+can|i['’]?ll\s+do\s+that)\b", lowered):
-                candidates.append({"speaker": turn["speaker"], "text": pending_question["text"]})
-                pending_question = None
-                continue
-            if re.fullmatch(r"(?:today|tonight|tomorrow|before lunch|by lunch|before noon|by noon|this afternoon|this evening|monday|tuesday|wednesday|thursday|friday)\.?", lowered.strip()):
-                previous = last_candidate_by_speaker.get(turn["speaker"])
-                if previous and not re.search(r"\b(?:today|tonight|tomorrow|before lunch|by lunch|before noon|by noon|monday|tuesday|wednesday|thursday|friday)\b", previous["text"], re.I):
-                    previous["text"] = previous["text"].rstrip(".") + " " + sentence.strip().rstrip(".") + "."
-                continue
-            if re.search(r"\b(?:we|i)\s+should\b", lowered) and not re.search(r"\b(?:we|i)\s+should\s+probably\b", lowered):
-                continue
-            if re.search(r"\bif\s+we\b", lowered):
-                continue
-            if re.search(
-                r"\b(?:i|we|you|he|she|they|[A-Z][a-z]+)\s+(?:will|need to|needs to|have to|has to|going to)\b",
-                sentence,
-            ) or re.search(
-                r"\bwe\s+need\s+(?!to\b)(?:separate|split|add|remove|monitor|review|set up|create|prepare|update|request|confirm|follow up)\b",
-                sentence,
-                flags=re.IGNORECASE,
-            ) or re.search(
-                r"\bi\s+can\s+(?:send|share|follow up|review|confirm|update|prepare|schedule|add|get|bring|request|set up|create|monitor)\b",
-                sentence,
-                flags=re.IGNORECASE,
-            ) or re.search(
-                r"\bwe\s+should\s+probably\s+(?:monitor|review|separate|split|set up|create|update|follow up)\b",
-                sentence,
-                flags=re.IGNORECASE,
-            ) or re.search(
-                r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s+to\s+(?:patch|notify|replay|follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reschedule|reproduce|capture|remove|redline|separate|monitor|set up|complete|trace|outline|generate|incorporate)\b",
-                sentence,
-            ) or re.search(r"^(?:patch|notify|replay|follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reschedule|remove|redline|separate|monitor|set up|complete|trace|outline|generate|incorporate)\b", lowered):
-                candidate = {"speaker": turn["speaker"], "text": sentence}
-                candidates.append(candidate)
-                last_candidate_by_speaker[turn["speaker"]] = candidate
 
     seen_sources: set[str] = set()
     for index, candidate in enumerate(candidates, start=1):
@@ -2207,17 +2278,24 @@ def _raw_action_entries(
         if anchor in blocked or anchor in seen_sources:
             continue
         source = _raw_source(anchor, candidate["speaker"], text, "raw_action")
-        owner = _infer_action_owner(original_text, {})
+        recap_context = _infer_recap_action_context(transcript, text, candidate["speaker"]) if candidate.get("deadline_context") else {}
+        owner = recap_context.get("owner", "Owner not specified")
+        if owner == "Owner not specified":
+            owner = _infer_action_owner(original_text, {})
         if owner == "Owner not specified":
             owner = _infer_action_owner(f"{candidate['speaker']} {original_text}", {})
         if owner == "Owner not specified" and _looks_like_person_label(candidate["speaker"]):
             owner = candidate["speaker"]
+        deadline_context = candidate.get("deadline_context") or ""
+        deadline = recap_context.get("deadline", "Not specified")
+        if deadline == "Not specified":
+            deadline = _infer_action_deadline(f"{original_text} {deadline_context}")
         entry = {
             "text": text,
             "sources": [source],
             "source_anchors": [anchor],
             "owner": owner,
-            "deadline": _infer_action_deadline(original_text),
+            "deadline": deadline,
         }
         entries.append(entry)
         existing_action_texts.add(key)
@@ -2234,7 +2312,8 @@ def _named_assignment_action_entries(
 ) -> list[dict[str, Any]]:
     verbs = (
         "review|share|schedule|follow up|followup|confirm|complete|trace|update|"
-        "generate|incorporate|outline|add|get|send|prepare|compare|assess|investigate"
+        "generate|incorporate|outline|add|get|send|prepare|compare|assess|investigate|"
+        "reproduce|capture"
     )
     compact = re.sub(r"\s+", " ", transcript)
     pattern = re.compile(
@@ -2300,6 +2379,7 @@ def _normalise_decision_text(text: str) -> str:
     text = re.sub(r"^decision\s*:\s*", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^(?:agreed|we agreed|the team agreed)\.?\s+", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^(?:then|so)\s+we\s+", "We ", text, flags=re.IGNORECASE)
+    text = re.sub(r"^no\s+release\s+decision\s+until\s+(.+)$", r"Defer the release decision until \1", text, flags=re.IGNORECASE)
     text = re.sub(r"\s+and\s+keep\s+[^.?!]*?\bunchanged\b", "", text, flags=re.IGNORECASE)
     text = text.strip(" ,.;:")
     if text and text[-1] not in ".?!":
@@ -2314,8 +2394,10 @@ def _is_weak_decision_text(text: str) -> bool:
 
 def _is_decision_sentence(text: str) -> bool:
     lowered = text.lower()
-    if re.search(r"\bno\s+(?:decision|decisions)\b", lowered):
+    if re.match(r"\s*if\s+", lowered):
         return False
+    if re.search(r"\bno\s+(?:decision|decisions)\b", lowered):
+        return bool(re.search(r"\bno\s+release\s+decision\s+until\b", lowered))
     if re.search(r"\b(?:maybe|may be|might|could|it may be|probably)\b", lowered):
         return False
     if re.search(r"\bonly\s+if\s+we\s+accept\b", lowered):
@@ -2324,8 +2406,9 @@ def _is_decision_sentence(text: str) -> bool:
         re.search(r"\bdecision\s+(?:confirmed|is|was|then|:)\b", lowered)
         or re.search(r"\b(?:decided|agreed|rejected)\b", lowered)
         or re.search(r"\b(?:approved|approval)\s+(?:to|for)\b", lowered)
-        or re.search(r"\b(?:we|the team)\s+(?:will|are going to|agreed to)\s+(?:start|keep|defer|delay|include|exclude|use|proceed|pause|add|remove|approve|reject|move|focus|sign|refund|invite|onboard|hold|assign)\b", lowered)
-        or re.search(r"\bwe\s+(?:keep|defer|delay|include|exclude|use|proceed|pause|add|remove|approve|reject|move|focus|sign|refund|invite|onboard|hold|assign)\b", lowered)
+        or re.search(r"\b(?:we|the team)\s+(?:will|are going to|agreed to)\s+(?:start|begin|keep|defer|delay|include|exclude|use|proceed|pause|add|remove|approve|reject|move|focus|sign|refund|invite|onboard|hold|assign)\b", lowered)
+        or re.search(r"\bwe\s+(?:start|begin|keep|defer|delay|include|exclude|use|proceed|pause|add|remove|approve|reject|move|focus|sign|refund|invite|onboard|hold|assign)\b", lowered)
+        or re.search(r"\b\w+\s+stays\s+out\s+of\s+(?:phase|scope|release|rollout)\b", lowered)
         or re.search(r"^(?:keep|include|defer|delay|start|begin|use|proceed|pause|approve|reject|move|focus|sign|refund|invite|onboard|hold|assign)\b", lowered)
         or re.search(r"\b(?:recommendation|recommend)\s+is\s+to\b", lowered)
     )
@@ -2337,6 +2420,43 @@ def _is_negative_decision_context(text: str) -> bool:
         re.search(r"\bno\s+(?:action|actions|decision|decisions)\b", lowered)
         or re.search(r"\bjust\s+(?:an\s+)?information\s+briefing\b", lowered)
     )
+
+
+def _split_compound_decision_text(text: str) -> list[str]:
+    cleaned = text.strip()
+    lowered = cleaned.lower()
+    if " and " not in lowered and " with additional " not in lowered:
+        return [cleaned]
+    splits: list[str] = []
+    match = re.match(
+        r"^(keep\s+.+?)\s+and\s+(include|add|delay|defer|keep|start|begin)\s+(.+)$",
+        cleaned,
+        flags=re.IGNORECASE,
+    )
+    if match:
+        splits = [match.group(1), f"{match.group(2)} {match.group(3)}"]
+    match = match or re.match(
+        r"^(start|begin)\s+(.+?)\s+and\s+(delay|defer|keep|include|add)\s+(.+)$",
+        cleaned,
+        flags=re.IGNORECASE,
+    )
+    if match and not splits:
+        splits = [f"{match.group(1)} {match.group(2)}", f"{match.group(3)} {match.group(4)}"]
+    match = match or re.match(r"^(keep\s+.+?)\s+with\s+additional\s+(.+)$", cleaned, flags=re.IGNORECASE)
+    if match and not splits:
+        splits = [match.group(1), f"Add additional {match.group(2)}"]
+    match = match or re.match(r"^(.+?\b(?:launch|rollout|go-live))\s+and\s+(.+?\b(?:read-only|unchanged|paused|deferred|delayed)\b.*)$", cleaned, flags=re.IGNORECASE)
+    if match and not splits:
+        splits = [match.group(1), match.group(2)]
+    if not splits:
+        return [cleaned]
+    normalised = []
+    for item in splits:
+        item = item.strip(" ,.;:")
+        if item and item[-1] not in ".?!":
+            item += "."
+        normalised.append(item[0].upper() + item[1:] if item else item)
+    return normalised
 
 
 def _decision_entries(
@@ -2370,13 +2490,17 @@ def _decision_entries(
             or re.search(r"\b(?:move|use|keep|defer|delay|include|exclude|approve|reject|sign|focus)\s+it\b", text, flags=re.IGNORECASE)
             or re.search(r"\bonly\s+if\s+we\s+accept\b", text, flags=re.IGNORECASE)
             or key in seen
-            or overlaps_existing(text)
+            or (overlaps_existing(text) and len(_split_compound_decision_text(text)) == 1)
         ):
             continue
-        entries.append({"text": text, "sources": [source], "source_anchors": [source["anchor"]]})
-        seen.add(key)
-        if len(entries) >= limit:
-            return entries
+        for decision_text in _split_compound_decision_text(text):
+            decision_key = decision_text.lower()
+            if decision_key in seen or overlaps_existing(decision_text):
+                continue
+            entries.append({"text": decision_text, "sources": [source], "source_anchors": [source["anchor"]]})
+            seen.add(decision_key)
+            if len(entries) >= limit:
+                return entries
 
     raw_index = 1
     pending_decision: tuple[str, str] | None = None
@@ -2389,15 +2513,19 @@ def _decision_entries(
                     pending_text, pending_speaker = pending_decision
                     text = _normalise_decision_text(pending_text)
                     key = text.lower()
-                    if text and key not in seen and not overlaps_existing(text):
+                    if text and key not in seen and (not overlaps_existing(text) or len(_split_compound_decision_text(text)) > 1):
                         anchor = f"raw_decision#{raw_index}"
                         raw_index += 1
                         source = _raw_source(anchor, pending_speaker, pending_text, "raw_decision")
                         source["text"] = text
-                        entries.append({"text": text, "sources": [source], "source_anchors": [anchor]})
-                        seen.add(key)
-                        if len(entries) >= limit:
-                            return entries
+                        for decision_text in _split_compound_decision_text(text):
+                            decision_key = decision_text.lower()
+                            if decision_key in seen or overlaps_existing(decision_text):
+                                continue
+                            entries.append({"text": decision_text, "sources": [source], "source_anchors": [anchor]})
+                            seen.add(decision_key)
+                            if len(entries) >= limit:
+                                return entries
                     pending_decision = None
                 previous_was_agreement = True
                 continue
@@ -2413,15 +2541,19 @@ def _decision_entries(
                 decision_speaker = pending_speaker if decision_source_text == pending_text else turn["speaker"]
                 text = _normalise_decision_text(decision_source_text)
                 key = text.lower()
-                if text and key not in seen and not overlaps_existing(text):
+                if text and key not in seen and (not overlaps_existing(text) or len(_split_compound_decision_text(text)) > 1):
                     anchor = f"raw_decision#{raw_index}"
                     raw_index += 1
                     source = _raw_source(anchor, decision_speaker, decision_source_text, "raw_decision")
                     source["text"] = text
-                    entries.append({"text": text, "sources": [source], "source_anchors": [anchor]})
-                    seen.add(key)
-                    if len(entries) >= limit:
-                        return entries
+                    for decision_text in _split_compound_decision_text(text):
+                        decision_key = decision_text.lower()
+                        if decision_key in seen or overlaps_existing(decision_text):
+                            continue
+                        entries.append({"text": decision_text, "sources": [source], "source_anchors": [anchor]})
+                        seen.add(decision_key)
+                        if len(entries) >= limit:
+                            return entries
                 pending_decision = None
                 continue
             decision_like = _is_decision_sentence(sentence) or (
@@ -2438,17 +2570,21 @@ def _decision_entries(
                 not text
                 or _is_weak_decision_text(text)
                 or key in seen
-                or (overlaps_existing(text) and not explicit_confirmation)
+                or (overlaps_existing(text) and not explicit_confirmation and len(_split_compound_decision_text(text)) == 1)
             ):
                 continue
             anchor = f"raw_decision#{raw_index}"
             raw_index += 1
             source = _raw_source(anchor, turn["speaker"], sentence, "raw_decision")
             source["text"] = text
-            entries.append({"text": text, "sources": [source], "source_anchors": [anchor]})
-            seen.add(key)
-            if len(entries) >= limit:
-                return entries
+            for decision_text in _split_compound_decision_text(text):
+                decision_key = decision_text.lower()
+                if decision_key in seen or overlaps_existing(decision_text):
+                    continue
+                entries.append({"text": decision_text, "sources": [source], "source_anchors": [anchor]})
+                seen.add(decision_key)
+                if len(entries) >= limit:
+                    return entries
     return entries
 
 
@@ -2517,8 +2653,17 @@ def _apply_raw_transcript_fallback(topic_groups: dict[str, Any], report: dict[st
         if anchor.startswith("action#") or anchor.startswith("raw_action#")
     }
     explicit_actions = _explicit_action_lines(transcript)
+    explicit_recap_is_authoritative = (
+        bool(explicit_actions)
+        and len(explicit_actions) >= 3
+        and not _is_detailed_regulatory_project_transcript(transcript)
+    )
+    if explicit_recap_is_authoritative:
+        topic_groups["actions"] = []
+        seen_action_texts = set()
+        used_action_anchors = set()
     if not _is_explicitly_low_substance_transcript(transcript) and (len(topic_groups["actions"]) < 3 or explicit_actions):
-        named_actions = _named_assignment_action_entries(
+        named_actions = [] if explicit_recap_is_authoritative else _named_assignment_action_entries(
             transcript,
             seen_action_texts,
             limit=12 - len(topic_groups["actions"]),
@@ -2533,6 +2678,7 @@ def _apply_raw_transcript_fallback(topic_groups: dict[str, Any], report: dict[st
                 seen_action_texts,
                 used_action_anchors,
                 limit=12 - len(topic_groups["actions"]),
+                explicit_only=explicit_recap_is_authoritative,
             )
         )
     _enrich_actions_from_transcript(topic_groups["actions"], transcript)
