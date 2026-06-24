@@ -267,7 +267,7 @@ def _case_notes(
 
 def _markdown_report(report: dict[str, Any]) -> str:
     lines = [
-        "# Microsoft Teams Fixture Baseline",
+        "# Microsoft Teams Fixture Evaluation",
         "",
         f"- Generated at: {report['generatedAt']}",
         f"- Runner: `{report['runnerLabel']}`",

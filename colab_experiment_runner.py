@@ -1068,6 +1068,12 @@ def _infer_action_owner(source_text: str, action: dict[str, Any]) -> str:
     explicit_owner = action.get("owner")
     if explicit_owner:
         return explicit_owner
+    speaker_first_person = re.match(
+        r"\s*([A-Z][A-Za-z'’.-]+(?:\s+[A-Z][A-Za-z'’.-]+){0,3})\s+\bI\s+(?:will|can|should|need|have to|am going to)\b",
+        source_text,
+    )
+    if speaker_first_person:
+        return speaker_first_person.group(1)
     lowered = source_text.lower()
     owners: list[str] = []
     for owner, pattern in OWNER_PATTERNS:
@@ -1104,7 +1110,8 @@ def _infer_action_deadline(source_text: str) -> str:
         (r"\bthis week\b", "This week"),
         (r"\bnext week\b", "Next week"),
         (r"\bweekly\b", "Weekly"),
-        (r"\b(?:done|completed|closed|share|send|get that)\s+(?:for|by)\s+(?:monday|tuesday|wednesday|thursday|friday)\b", None),
+        (r"\b(?:by|on|for)\s+(?:monday|tuesday|wednesday|thursday|friday)\b", None),
+        (r"\bthis afternoon\b", "This afternoon"),
     ]
     for pattern, label in relative_patterns:
         match = re.search(pattern, lowered)
@@ -1112,6 +1119,8 @@ def _infer_action_deadline(source_text: str) -> str:
             if label:
                 return label
             value = match.group(0)
+            if value.startswith(("by ", "on ", "for ")):
+                return value.title()
             if "wednesday" in value:
                 return "Done for Wednesday"
             if value.startswith(("early ", "mid ")):
@@ -1618,6 +1627,7 @@ def _profile_topic(
 
 def _normalise_action_text(text: str) -> str:
     text = _clean_source_text(text)
+    text = re.sub(r"^.*?\b(?:actions?|next steps?|to dos?)(?:\s+before\s+[^:]+)?\s*:\s*", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^(?:so|yeah|okay|and|but|then|maybe|i suppose|i think)\s+", "", text, flags=re.IGNORECASE)
     text = text.strip(" ,.;:")
     if text and text[-1] not in ".?!":
@@ -1627,7 +1637,8 @@ def _normalise_action_text(text: str) -> str:
 
 def _is_useful_generic_action(text: str) -> bool:
     lowered = text.lower()
-    if len(text.split()) < 6:
+    action_start = re.match(r"^(?:review|confirm|draft|follow up|validate|send|share|update|publish|rerun|call|prepare|pull|request|rewrite|schedule|split|add|reduce|refine|simplify|incorporate|practice|practise)\b", lowered)
+    if len(text.split()) < (3 if action_start else 6):
         return False
     if lowered.endswith("?"):
         return False
@@ -1648,12 +1659,19 @@ def _is_useful_generic_action(text: str) -> bool:
     ]
     if any(fragment in lowered for fragment in weak_fragments):
         return False
+    if _is_negative_decision_context(text) or _is_decision_sentence(text):
+        return False
+    if re.search(r"\b(?:update|recommendation|decision)\s+is\b", lowered):
+        return False
+    if re.search(r"\b(?:could|might|may)\s+(?:keep|include|defer|delay|start|use|go with|proceed)\b", lowered):
+        return False
     return bool(
         re.search(
             r"\b(i|we|you|he|she|they|team|jack|ciara|conor|colm|orla|jacqui|andrew|rebecca|david|kevin|mark)\s+(?:can|will|should|need|needs|have to|has to|going to|want to|could)\b",
             lowered,
         )
-        or re.search(r"\b(?:follow up|review|send|share|add|remove|update|practi[cs]e|prepare|schedule|bring|explain|keep|make sure|figure out)\b", lowered)
+        or re.search(r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s+to\s+\w+", text)
+        or re.search(r"\b(?:follow up|review|confirm|draft|validate|send|share|add|remove|update|publish|rerun|call|pull|request|rewrite|split|reduce|refine|simplify|incorporate|practi[cs]e|prepare|schedule|bring|explain|keep|make sure|figure out)\b", lowered)
     )
 
 
@@ -1688,7 +1706,343 @@ def _extractive_action_entries(
     return entries
 
 
-def _polished_minutes_topic_groups(report: dict[str, Any]) -> dict[str, Any]:
+def _parse_raw_transcript_turns(transcript: str) -> list[dict[str, str]]:
+    turns: list[dict[str, str]] = []
+    current_speaker = ""
+    current_lines: list[str] = []
+    speaker_pattern = re.compile(
+        r"^\s*([A-Z][A-Za-z'’.-]+(?:\s+[A-Z][A-Za-z'’.-]+){0,3})\s*(?:\d{1,2}:\d{2}(?::\d{2})?)?\s*$"
+    )
+    inline_pattern = re.compile(
+        r"^\s*([A-Z][A-Za-z'’.-]+(?:\s+[A-Z][A-Za-z'’.-]+){0,3})\s+\d{1,2}:\d{2}(?::\d{2})?\s+(.+)$"
+    )
+
+    def flush() -> None:
+        nonlocal current_lines
+        text = " ".join(line.strip() for line in current_lines if line.strip())
+        text = re.sub(r"\s+", " ", text).strip()
+        if text:
+            turns.append({"speaker": current_speaker, "text": text})
+        current_lines = []
+
+    for raw_line in transcript.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if re.match(r"^(date|location)\s*:", line, flags=re.IGNORECASE):
+            continue
+        if "started transcription" in line.lower() or "stopped transcription" in line.lower():
+            continue
+        inline_match = inline_pattern.match(line)
+        if inline_match:
+            flush()
+            current_speaker = inline_match.group(1).strip()
+            current_lines.append(inline_match.group(2).strip())
+            continue
+        speaker_match = speaker_pattern.match(line)
+        if speaker_match and len(line.split()) <= 4 and not re.search(r"[.!?]$", line):
+            flush()
+            current_speaker = speaker_match.group(1).strip()
+            continue
+        if current_speaker:
+            current_lines.append(line)
+    flush()
+    return turns
+
+
+def _split_raw_sentences(text: str) -> list[str]:
+    text = re.sub(r"\s+", " ", text).strip()
+    if not text:
+        return []
+    parts = re.split(r"(?<=[.!?])\s+|(?:\s+-\s+)", text)
+    if len(parts) == 1:
+        parts = re.split(r"\s{2,}", text)
+    return [part.strip(" -") for part in parts if len(part.strip(" -").split()) >= 4]
+
+
+def _raw_source(anchor: str, speaker: str, text: str, bucket: str = "raw") -> dict[str, Any]:
+    return {
+        "anchor": anchor,
+        "bucket": bucket,
+        "index": int(re.sub(r"\D+", "", anchor) or 0),
+        "speaker": speaker,
+        "text": _normalise_action_text(text) if bucket == "raw_action" else _clean_source_text(text),
+    }
+
+
+def _is_low_substance_sentence(text: str) -> bool:
+    lowered = text.lower().strip()
+    if len(lowered.split()) < 5:
+        return True
+    low_value = [
+        "started transcription",
+        "stopped transcription",
+        "stop recording",
+        "anything else",
+        "perfect",
+        "okay thanks",
+        "no.",
+        "yeah.",
+        "right.",
+    ]
+    return any(fragment in lowered for fragment in low_value)
+
+
+def _raw_discussion_entries(transcript: str, used_anchors: set[str], limit: int = 6) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    raw_index = 1
+    for turn in _parse_raw_transcript_turns(transcript):
+        for sentence in _split_raw_sentences(turn["text"]):
+            lowered = sentence.lower()
+            if _is_low_substance_sentence(sentence):
+                continue
+            if re.search(r"\b(i|we|you|he|she|they)\s+(?:will|can|should|need|needs|have to|has to)\b", lowered):
+                continue
+            if re.search(r"\b(?:decided|decision|agreed|approved|rejected|go with|proceed with)\b", lowered):
+                continue
+            key = norm_key = re.sub(r"[^a-z0-9]+", " ", lowered).strip()
+            if not key or norm_key in seen:
+                continue
+            seen.add(norm_key)
+            anchor = f"raw#{raw_index}"
+            raw_index += 1
+            if anchor in used_anchors:
+                continue
+            entries.append(
+                {
+                    "text": _clean_source_text(sentence),
+                    "sources": [_raw_source(anchor, turn["speaker"], sentence)],
+                    "source_anchors": [anchor],
+                }
+            )
+            if len(entries) >= limit:
+                return entries
+    return entries
+
+
+def _explicit_action_lines(transcript: str) -> list[dict[str, str]]:
+    actions: list[dict[str, str]] = []
+    collecting = False
+    speaker = "Unknown"
+    for line in transcript.splitlines():
+        stripped = line.strip().strip("-•* ")
+        if not stripped:
+            continue
+        speaker_match = re.match(r"^([A-Z][A-Za-z'’.-]+(?:\s+[A-Z][A-Za-z'’.-]+){0,3})\s+\d{1,2}:\d{2}", stripped)
+        if speaker_match:
+            speaker = speaker_match.group(1)
+            if re.fullmatch(r"[A-Z][A-Za-z'’.-]+(?:\s+[A-Z][A-Za-z'’.-]+){0,3}\s+\d{1,2}:\d{2}(?::\d{2})?", stripped):
+                continue
+        lowered = stripped.lower()
+        inline_header = re.match(r"^(?:actions?|next steps?|to dos?)(?:\s+before\s+[^:]+)?\s*:\s*(.+)$", stripped, flags=re.IGNORECASE)
+        if inline_header:
+            collecting = True
+            inline_text = inline_header.group(1)
+            parts = _split_raw_sentences(inline_text)
+            if len(parts) == 1:
+                parts = re.split(r",\s+|\s+and\s+(?=\w+\b)", inline_text)
+            for part in parts:
+                if len(part.split()) < 2:
+                    continue
+                actions.append({"speaker": speaker, "text": part.rstrip(".") + "."})
+            continue
+        if re.search(r"\b(actions?|next steps?|to dos?)\b.*:$", lowered) or lowered in {"actions before next week:", "actions:"}:
+            collecting = True
+            continue
+        if collecting and re.search(r"\b(anything else|stop recording|thanks|thank you)\b", lowered):
+            collecting = False
+        if collecting and len(stripped.split()) >= 3:
+            actions.append({"speaker": speaker, "text": stripped.rstrip(".") + "."})
+    return actions
+
+
+def _raw_action_entries(
+    transcript: str,
+    existing_action_texts: set[str],
+    used_action_anchors: set[str] | None = None,
+    limit: int = 12,
+) -> list[dict[str, Any]]:
+    blocked = used_action_anchors or set()
+    entries: list[dict[str, Any]] = []
+    candidates: list[dict[str, str]] = _explicit_action_lines(transcript)
+    for turn in _parse_raw_transcript_turns(transcript):
+        for sentence in _split_raw_sentences(turn["text"]):
+            lowered = sentence.lower()
+            if re.search(
+                r"\b(?:i|we|you|he|she|they|[A-Z][a-z]+)\s+(?:will|can|should|need to|needs to|have to|has to|going to)\b",
+                sentence,
+            ) or re.search(
+                r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s+to\s+(?:follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reproduce|capture)\b",
+                sentence,
+            ) or re.search(r"\b(?:follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule)\b", lowered):
+                candidates.append({"speaker": turn["speaker"], "text": sentence})
+
+    seen_sources: set[str] = set()
+    for index, candidate in enumerate(candidates, start=1):
+        text = _normalise_action_text(candidate["text"])
+        key = text.lower()
+        if key in existing_action_texts or not _is_useful_generic_action(text):
+            continue
+        if re.search(r"\b(?:we will keep|we will run|we will sign|we will submit|we will use|decision|decided|agreed)\b", key):
+            continue
+        anchor = f"raw_action#{index}"
+        if anchor in blocked or anchor in seen_sources:
+            continue
+        source = _raw_source(anchor, candidate["speaker"], text, "raw_action")
+        entry = {
+            "text": text,
+            "sources": [source],
+            "source_anchors": [anchor],
+            "owner": _infer_action_owner(f"{candidate['speaker']} {text}", {}),
+            "deadline": _infer_action_deadline(text),
+        }
+        entries.append(entry)
+        existing_action_texts.add(key)
+        seen_sources.add(anchor)
+        if len(entries) >= limit:
+            break
+    return entries
+
+
+def _normalise_decision_text(text: str) -> str:
+    text = _clean_source_text(text)
+    text = re.sub(r"^(?:that is|that's)\s+the\s+decision\s+then\s*:\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"^decision\s+is\s+to\s+", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"^decision\s*:\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"^(?:agreed|we agreed|the team agreed)\.?\s+", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"^(?:then|so)\s+we\s+", "We ", text, flags=re.IGNORECASE)
+    text = text.strip(" ,.;:")
+    if text and text[-1] not in ".?!":
+        text += "."
+    return text
+
+
+def _is_weak_decision_text(text: str) -> bool:
+    lowered = text.lower().strip(" .")
+    return lowered in {"agreed", "agree", "yes", "okay", "ok", "confirmed"}
+
+
+def _is_decision_sentence(text: str) -> bool:
+    lowered = text.lower()
+    if re.search(r"\bno\s+(?:decision|decisions)\b", lowered):
+        return False
+    return bool(
+        re.search(r"\bdecision\s+(?:is|was|then|:)\b", lowered)
+        or re.search(r"\b(?:decided|agreed|approved|rejected)\b", lowered)
+        or re.search(r"\b(?:we|the team)\s+(?:will|should|are going to|agreed to)\s+(?:start|keep|defer|delay|include|exclude|use|proceed|pause|add|remove|approve|reject)\b", lowered)
+        or re.search(r"\bwe\s+(?:start|begin|keep|defer|delay|include|exclude|use|proceed|pause|add|remove|approve|reject)\b", lowered)
+        or re.search(r"^(?:keep|include|defer|delay|start|begin|use|proceed|pause|approve|reject)\b", lowered)
+        or re.search(r"\b(?:recommendation|recommend)\s+is\s+to\b", lowered)
+    )
+
+
+def _is_negative_decision_context(text: str) -> bool:
+    lowered = text.lower()
+    return bool(
+        re.search(r"\bno\s+(?:action|actions|decision|decisions)\b", lowered)
+        or re.search(r"\bjust\s+(?:an\s+)?information\s+briefing\b", lowered)
+    )
+
+
+def _decision_entries(
+    report: dict[str, Any],
+    transcript: str,
+    limit: int = 8,
+) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    seen: set[str] = set()
+
+    def overlaps_existing(text: str) -> bool:
+        words = {word for word in re.findall(r"[a-z0-9]+", text.lower()) if len(word) > 3}
+        if not words:
+            return False
+        for existing in seen:
+            existing_words = {word for word in re.findall(r"[a-z0-9]+", existing) if len(word) > 3}
+            if not existing_words:
+                continue
+            if len(words & existing_words) / max(1, min(len(words), len(existing_words))) >= 0.6:
+                return True
+        return False
+
+    for source in _indexed_bucket(report, "decision"):
+        text = _normalise_decision_text(source["text"])
+        key = text.lower()
+        if not text or _is_weak_decision_text(text) or _is_negative_decision_context(text) or key in seen or overlaps_existing(text):
+            continue
+        entries.append({"text": text, "sources": [source], "source_anchors": [source["anchor"]]})
+        seen.add(key)
+        if len(entries) >= limit:
+            return entries
+
+    raw_index = 1
+    for turn in _parse_raw_transcript_turns(transcript):
+        previous_was_agreement = False
+        for sentence in _split_raw_sentences(turn["text"]):
+            sentence_is_agreement = _is_weak_decision_text(sentence)
+            if sentence_is_agreement:
+                previous_was_agreement = True
+                continue
+            decision_like = _is_decision_sentence(sentence) or (
+                previous_was_agreement
+                and re.search(r"^(?:keep|include|defer|delay|start|begin|use|proceed|pause|approve|reject)\b", sentence, flags=re.IGNORECASE)
+            )
+            previous_was_agreement = False
+            if not decision_like or _is_negative_decision_context(sentence):
+                continue
+            text = _normalise_decision_text(sentence)
+            key = text.lower()
+            if not text or _is_weak_decision_text(text) or key in seen or overlaps_existing(text):
+                continue
+            anchor = f"raw_decision#{raw_index}"
+            raw_index += 1
+            source = _raw_source(anchor, turn["speaker"], sentence, "raw_decision")
+            source["text"] = text
+            entries.append({"text": text, "sources": [source], "source_anchors": [anchor]})
+            seen.add(key)
+            if len(entries) >= limit:
+                return entries
+    return entries
+
+
+def _apply_raw_transcript_fallback(topic_groups: dict[str, Any], report: dict[str, Any], transcript: str) -> None:
+    used_topic_anchors = {
+        anchor
+        for topic in topic_groups["topics"]
+        for entries in topic["sections"].values()
+        for entry in entries
+        for anchor in entry["source_anchors"]
+    }
+    if len(topic_groups["topics"]) < 2:
+        raw_entries = _raw_discussion_entries(transcript, used_topic_anchors, limit=6)
+        if raw_entries:
+            topic_groups["topics"].append(
+                {
+                    "topic": "Additional transcript-supported discussion points",
+                    "sections": {"Discussion points": raw_entries},
+                }
+            )
+
+    seen_action_texts = {entry["text"].lower() for entry in topic_groups["actions"]}
+    used_action_anchors = {
+        anchor
+        for entry in topic_groups["actions"]
+        for anchor in entry.get("source_anchors", [])
+        if anchor.startswith("action#") or anchor.startswith("raw_action#")
+    }
+    explicit_actions = _explicit_action_lines(transcript)
+    if len(topic_groups["actions"]) < 3 or explicit_actions:
+        topic_groups["actions"].extend(
+            _raw_action_entries(
+                transcript,
+                seen_action_texts,
+                used_action_anchors,
+                limit=12 - len(topic_groups["actions"]),
+            )
+        )
+
+
+def _polished_minutes_topic_groups(report: dict[str, Any], transcript: str | None = None) -> dict[str, Any]:
     """Build polished minutes from profile matches plus transfer-friendly generic topics."""
 
     topics: list[dict[str, Any]] = []
@@ -1738,26 +2092,51 @@ def _polished_minutes_topic_groups(report: dict[str, Any]) -> dict[str, Any]:
         used_action_anchors,
         limit=max(0, 12 - len(profile_actions)),
     )
-    return {"topics": topics, "actions": actions}
+    decisions = _decision_entries(report, transcript or "")
+    topic_groups = {"topics": topics, "actions": actions, "decisions": decisions}
+    if transcript:
+        _apply_raw_transcript_fallback(topic_groups, report, transcript)
+    return topic_groups
 
 def _iter_topic_entries(topic_groups: dict[str, Any]) -> list[dict[str, Any]]:
     entries: list[dict[str, Any]] = []
     for topic in topic_groups["topics"]:
         for section_entries in topic["sections"].values():
             entries.extend(section_entries)
+    entries.extend(topic_groups.get("decisions", []))
     entries.extend(topic_groups["actions"])
     return entries
 
 
 def _render_topic_grouped_minutes(topic_groups: dict[str, Any]) -> str:
     lines = [
-        "# Polished generated minutes",
+        "# Microsoft Teams-style generated minutes",
         "",
-        "_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._",
+        "_Generated from transcript-supported evidence. Each substantive line keeps source anchors back to bucketed or raw transcript lines._",
         "",
-        "## Discussion points",
+        "## Summary",
         "",
     ]
+
+    summary_entries: list[str] = []
+    for topic in topic_groups["topics"][:3]:
+        for section in ["Discussion points", "Responsibilities", "Evidence required", "Risks"]:
+            entries = topic["sections"].get(section, [])
+            if entries:
+                summary_entries.append(entries[0]["text"])
+                break
+    if summary_entries:
+        for entry in summary_entries[:3]:
+            lines.append(f"- {entry}")
+    else:
+        lines.append("- No substantive discussion points detected.")
+    lines.extend(
+        [
+            "",
+            "## Discussion Points",
+            "",
+        ]
+    )
 
     section_order = [
         "Discussion points",
@@ -1778,12 +2157,20 @@ def _render_topic_grouped_minutes(topic_groups: dict[str, Any]) -> str:
                 lines.append(f"- {entry['text']} _(Sources: {_anchor_list(entry['sources'])})_")
             lines.append("")
 
-    lines.extend(["## Actions", ""])
+    lines.extend(["## Decisions", ""])
+    if topic_groups.get("decisions"):
+        for entry in topic_groups["decisions"]:
+            lines.append(f"- {entry['text']} _(Sources: {_anchor_list(entry['sources'])})_")
+    else:
+        lines.append("- No decisions detected.")
+    lines.append("")
+
+    lines.extend(["## Action Items", ""])
     if topic_groups["actions"]:
-        lines.append("| Action | Owner | Deadline/status | Sources |")
+        lines.append("| Action | Owner | Due / Status | Sources |")
         lines.append("|---|---|---|---|")
     else:
-        lines.append("No actions detected from the allowed buckets.")
+        lines.append("No action items were recorded.")
     for entry in topic_groups["actions"]:
         lines.append(
             "| "
@@ -1797,6 +2184,16 @@ def _render_topic_grouped_minutes(topic_groups: dict[str, Any]) -> str:
             )
             + " |"
         )
+    lines.append("")
+
+    lines.extend(["## Follow-up / Open Questions", ""])
+    open_question_count = 0
+    for topic in topic_groups["topics"]:
+        for entry in topic["sections"].get("Open questions", []):
+            lines.append(f"- {entry['text']} _(Sources: {_anchor_list(entry['sources'])})_")
+            open_question_count += 1
+    if open_question_count == 0:
+        lines.append("- None recorded.")
     lines.append("")
 
     lines.extend(["## Source excerpts", ""])
@@ -1897,7 +2294,7 @@ def generate_polished_minutes_pass(
         _apply_options(classifier, TRIAL4_BEST_OPTIONS)
         items = classifier.extract_items(transcript)
         report = classifier.build_report(items)
-        sections = _polished_minutes_topic_groups(report)
+        sections = _polished_minutes_topic_groups(report, transcript)
         minutes = _render_topic_grouped_minutes(sections)
         evaluation = _evaluate_polished_minutes(report, sections, transcript)
         return {
