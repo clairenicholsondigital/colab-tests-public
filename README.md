@@ -13,6 +13,12 @@ Runner URL:
 https://raw.githubusercontent.com/clairenicholsondigital/colab-tests-public/main/colab_experiment_runner.py
 ```
 
+Pinned tested runner URL:
+
+```text
+https://raw.githubusercontent.com/clairenicholsondigital/colab-tests-public/325f5db/colab_experiment_runner.py
+```
+
 Classifier dependency URL:
 
 ```text
@@ -26,7 +32,7 @@ Example `/process` payload:
   "task": "execute_python_url",
   "text": "",
   "options": {
-    "url": "https://raw.githubusercontent.com/clairenicholsondigital/colab-tests-public/main/colab_experiment_runner.py",
+    "url": "https://raw.githubusercontent.com/clairenicholsondigital/colab-tests-public/325f5db/colab_experiment_runner.py",
     "function": "run_analysis",
     "args": [],
     "kwargs": {
