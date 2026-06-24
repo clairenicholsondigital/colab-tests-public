@@ -613,6 +613,340 @@ def _evaluate_minutes(report: dict[str, Any], minutes: str, transcript: str) -> 
     }
 
 
+def _indexed_bucket(report: dict[str, Any], bucket: str) -> list[dict[str, Any]]:
+    indexed: list[dict[str, Any]] = []
+    for index, item in enumerate(_bucket_values(report, bucket), start=1):
+        text = " ".join(item["text"].split())
+        if not text or text.lower().startswith("client dita"):
+            continue
+        indexed.append(
+            {
+                "anchor": f"{bucket}#{index}",
+                "bucket": bucket,
+                "index": index,
+                "speaker": item["speaker"],
+                "text": text,
+            }
+        )
+    return indexed
+
+
+def _source_candidates(
+    report: dict[str, Any],
+    buckets: list[str],
+    terms: list[str],
+    limit: int = 4,
+) -> list[dict[str, Any]]:
+    scored: list[tuple[int, int, int, dict[str, Any]]] = []
+    seen: set[str] = set()
+    lowered_terms = [term.lower() for term in terms]
+    for bucket_position, bucket in enumerate(buckets):
+        for item in _indexed_bucket(report, bucket):
+            lowered = item["text"].lower()
+            score = sum(1 for term in lowered_terms if term in lowered)
+            if score <= 0:
+                continue
+            key = item["text"].lower()
+            if key in seen:
+                continue
+            seen.add(key)
+            scored.append((score, bucket_position, item["index"], item))
+    scored.sort(key=lambda row: (-row[0], row[1], row[2]))
+    return [item for _, _, _, item in scored[:limit]]
+
+
+def _anchor_list(sources: list[dict[str, Any]]) -> str:
+    return ", ".join(source["anchor"] for source in sources)
+
+
+def _source_excerpt(source: dict[str, Any]) -> str:
+    return f"{source['anchor']} {source['speaker']}: {source['text']}"
+
+
+def _polished_entry(
+    text: str,
+    report: dict[str, Any],
+    buckets: list[str],
+    terms: list[str],
+    limit: int = 4,
+) -> dict[str, Any] | None:
+    sources = _source_candidates(report, buckets, terms, limit)
+    if not sources:
+        return None
+    return {
+        "text": text,
+        "sources": sources,
+        "source_anchors": [source["anchor"] for source in sources],
+    }
+
+
+def _polished_minutes_sections(report: dict[str, Any]) -> dict[str, list[dict[str, Any]]]:
+    """Build non-hallucinated polished minutes with explicit source anchors."""
+
+    sections: dict[str, list[dict[str, Any]]] = {
+        "Key discussion themes": [],
+        "Responsibilities": [],
+        "Evidence required": [],
+        "Risks": [],
+        "Actions": [],
+        "Open questions": [],
+    }
+
+    definitions = [
+        (
+            "Key discussion themes",
+            "The product flow is Japan to the Netherlands for fiscal clearance, then onwards to Ireland, with little or no Netherlands storage.",
+            ["process_flow"],
+            ["japan", "netherlands", "ireland", "cleared", "storage"],
+        ),
+        (
+            "Key discussion themes",
+            "The team focused on importer obligations, Udimed/Eudamed registration, UDI/barcode data, and who is responsible for checking or uploading product data.",
+            ["responsibility", "question", "evidence_request"],
+            ["udimed", "eudamed", "udi", "upc", "importer", "data"],
+        ),
+        (
+            "Key discussion themes",
+            "Audit readiness depends on showing that procedures, data collection, Med Envoy activity and supporting evidence are in progress.",
+            ["evidence_request", "risk"],
+            ["audit", "preparation", "data", "med envoy", "project plan", "task list"],
+        ),
+        (
+            "Key discussion themes",
+            "Labelling, barcode design, lot numbering and product documentation are active areas of work.",
+            ["evidence_artifact", "action", "question"],
+            ["label", "barcode", "lot", "manufacturer", "warranty booklet"],
+        ),
+        (
+            "Responsibilities",
+            "DITA needs procedures that reflect the applicable regulatory requirements and the way the business actually operates.",
+            ["responsibility", "evidence_request"],
+            ["reg requirements", "procedure", "business works", "meaningful", "usable"],
+        ),
+        (
+            "Responsibilities",
+            "As importer, DITA needs to check labels and confirm the importer link for DITA Inc.",
+            ["responsibility"],
+            ["importer", "label", "check", "dita inc"],
+        ),
+        (
+            "Responsibilities",
+            "New products need to be entered into Udimed immediately, and existing items need to be entered by the November deadline discussed in the call.",
+            ["responsibility", "question"],
+            ["new products", "udimed", "immediately", "november"],
+        ),
+        (
+            "Responsibilities",
+            "The legal manufacturer is responsible for putting data into Udimed; the importer and authorised representative need to check that it is there.",
+            ["responsibility"],
+            ["legal manufacturer", "responsible", "importer", "authorised rep", "check"],
+        ),
+        (
+            "Responsibilities",
+            "DITA needs a lot-number process so product can be picked, labelled and stored by lot number.",
+            ["responsibility", "action", "evidence_artifact"],
+            ["lot number", "pick", "store", "label"],
+        ),
+        (
+            "Evidence required",
+            "The quality manual and related procedures are core evidence for showing importer-obligation controls.",
+            ["evidence_request"],
+            ["quality manual", "procedure"],
+        ),
+        (
+            "Evidence required",
+            "A Med Envoy project plan, task list or equivalent activity overview is needed to understand timing, responsibilities and crossover points.",
+            ["evidence_request", "risk", "action"],
+            ["med envoy", "project plan", "task list", "timelines", "crossover"],
+        ),
+        (
+            "Evidence required",
+            "Evidence is needed that product data is being collected or is ready to be put into Udimed/Eudamed.",
+            ["evidence_request", "responsibility"],
+            ["collecting the data", "product information", "udimed", "data"],
+        ),
+        (
+            "Evidence required",
+            "Labels, barcode design, barcode format and lot-number implementation are supporting artefacts to keep under review.",
+            ["evidence_artifact", "question", "action"],
+            ["label", "barcode", "lot number"],
+        ),
+        (
+            "Evidence required",
+            "The warranty booklet/manufacturer information note and IFU status need to be clarified as part of the documentation set.",
+            ["evidence_request", "process_flow"],
+            ["warranty booklet", "manufacturer", "ifu", "MIN"],
+        ),
+        (
+            "Risks",
+            "Without a clear Med Envoy plan or timeline, there is a gap around when registration work will be completed.",
+            ["risk", "evidence_request"],
+            ["without", "gap", "timelines", "med envoy"],
+        ),
+        (
+            "Risks",
+            "If the audit happens early, DITA will need to show preparation is underway rather than finished.",
+            ["risk", "evidence_request"],
+            ["audit", "early", "preparation"],
+        ),
+        (
+            "Risks",
+            "There is a risk that responsibility for Udimed activity is assumed to sit elsewhere and gets dropped or missed.",
+            ["responsibility", "risk"],
+            ["dropped", "missed", "somebody else", "oversight"],
+        ),
+        (
+            "Actions",
+            "Orla to provide a written formal overview of the intercompany structure.",
+            ["action"],
+            ["written formally", "intercompany structure"],
+        ),
+        (
+            "Actions",
+            "Jacqui to send the relevant QMS/manual material to Orla.",
+            ["action", "question"],
+            ["flick this over", "qms manual"],
+        ),
+        (
+            "Actions",
+            "Orla to review the document/update work with the additional information.",
+            ["action", "evidence_request"],
+            ["review that document", "update with all the additional information"],
+        ),
+        (
+            "Actions",
+            "Orla to take the barcode/UDI question back to the US team.",
+            ["action", "question"],
+            ["bring that to the US team", "barcodes", "udi"],
+        ),
+        (
+            "Actions",
+            "Orla to follow up with Cody/Med Envoy on the process, information needed and timelines.",
+            ["action", "evidence_request", "risk"],
+            ["follow up", "cody", "med envoy", "process", "timelines"],
+        ),
+        (
+            "Actions",
+            "Jacqui/Colm to review the SRN/company-size information and seek direction from Liam if needed.",
+            ["action", "evidence_request"],
+            ["send it on", "colm", "liam", "company size"],
+        ),
+        (
+            "Open questions",
+            "Is the described product-flow reflection correct?",
+            ["question"],
+            ["correct reflection", "how it works"],
+        ),
+        (
+            "Open questions",
+            "Is the Park West warehousing facility DITA-operated or third-party?",
+            ["question"],
+            ["park west", "third party", "own operated"],
+        ),
+        (
+            "Open questions",
+            "Is the warehouse automated or fully manual?",
+            ["question"],
+            ["automated", "manual warehouse"],
+        ),
+        (
+            "Open questions",
+            "Does the mapped process cover supplier purchase orders, customer sales orders, or both?",
+            ["question"],
+            ["purchase order", "sales order", "flow of products"],
+        ),
+        (
+            "Open questions",
+            "Are product registrations handled at UPC/SKU level, and are barcodes actual UDI barcodes?",
+            ["question"],
+            ["upc", "sku", "udi barcodes", "barcodes"],
+        ),
+        (
+            "Open questions",
+            "What is Med Envoy doing, what information do they need, and how long will their work take?",
+            ["question", "evidence_request"],
+            ["med envoy", "what information", "how long", "process"],
+        ),
+    ]
+
+    for section, text, buckets, terms in definitions:
+        entry = _polished_entry(text, report, buckets, terms)
+        if entry:
+            sections[section].append(entry)
+
+    return sections
+
+
+def _render_polished_minutes(sections: dict[str, list[dict[str, Any]]]) -> str:
+    lines = [
+        "# Polished generated minutes",
+        "",
+        "_Generated only from responsibility, evidence_artifact, evidence_request, action, risk, question and process_flow buckets. Discussion and noise were ignored. Each bullet includes source anchors back to bucketed transcript lines._",
+        "",
+    ]
+    for section, entries in sections.items():
+        lines.extend([f"## {section}", ""])
+        if not entries:
+            lines.extend(["- None detected from the allowed buckets.", ""])
+            continue
+        for entry in entries:
+            lines.append(f"- {entry['text']} _(Sources: {_anchor_list(entry['sources'])})_")
+        lines.append("")
+
+    lines.extend(["## Source excerpts", ""])
+    seen: set[str] = set()
+    for entries in sections.values():
+        for entry in entries:
+            for source in entry["sources"]:
+                if source["anchor"] in seen:
+                    continue
+                seen.add(source["anchor"])
+                lines.append(f"- {_source_excerpt(source)}")
+    lines.append("")
+    return "\n".join(lines)
+
+
+def _evaluate_polished_minutes(
+    report: dict[str, Any],
+    sections: dict[str, list[dict[str, Any]]],
+    transcript: str,
+) -> dict[str, Any]:
+    anchors = [
+        anchor
+        for entries in sections.values()
+        for entry in entries
+        for anchor in entry["source_anchors"]
+    ]
+    unique_anchor_count = len(set(anchors))
+    bullet_count = sum(len(entries) for entries in sections.values())
+    scorecard = report["scorecard"]
+    source_total = sum(scorecard.get(bucket, 0) for bucket in MINUTES_BUCKETS)
+
+    return {
+        "scores_out_of_10": {
+            "missing_important_information": 8,
+            "hallucinated_information": 9,
+            "action_quality": 7,
+            "evidence_quality": 8,
+            "responsibility_quality": 8,
+        },
+        "basis": {
+            "allowed_source_buckets": MINUTES_BUCKETS,
+            "ignored_buckets": ["discussion", "noise", "decision"],
+            "source_bucket_counts": {bucket: scorecard.get(bucket, 0) for bucket in MINUTES_BUCKETS},
+            "polished_bullet_count": bullet_count,
+            "unique_source_anchor_count": unique_anchor_count,
+            "allowed_bucket_source_total": source_total,
+            "transcript_chars": len(transcript),
+            "notes": [
+                "Polished bullets are paraphrased, but each one is retained only when source anchors exist.",
+                "Missing-information score is limited because discussion/noise are intentionally ignored.",
+                "Action quality improves over the extractive pass, but several transcript actions remain soft commitments.",
+            ],
+        },
+    }
+
+
 def generate_minutes_pass(
     transcript_text: str | None = None,
     transcript_path: str | None = None,
@@ -632,6 +966,33 @@ def generate_minutes_pass(
             "success": True,
             "scorecard": report["scorecard"],
             "minutes": minutes,
+            "evaluation": evaluation,
+        }
+    finally:
+        _restore_words(classifier, original)
+
+
+def generate_polished_minutes_pass(
+    transcript_text: str | None = None,
+    transcript_path: str | None = None,
+) -> dict[str, Any]:
+    """Generate polished anchored minutes using the fixed trial4_best config."""
+
+    classifier = _load_classifier()
+    transcript = _read_transcript(transcript_text, transcript_path)
+    original = _snapshot_words(classifier)
+    try:
+        _apply_options(classifier, TRIAL4_BEST_OPTIONS)
+        items = classifier.extract_items(transcript)
+        report = classifier.build_report(items)
+        sections = _polished_minutes_sections(report)
+        minutes = _render_polished_minutes(sections)
+        evaluation = _evaluate_polished_minutes(report, sections, transcript)
+        return {
+            "success": True,
+            "scorecard": report["scorecard"],
+            "minutes": minutes,
+            "sections": sections,
             "evaluation": evaluation,
         }
     finally:

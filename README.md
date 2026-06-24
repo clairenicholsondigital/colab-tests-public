@@ -58,3 +58,23 @@ layer based on audited examples:
 - stricter `action`
 
 Responsibilities still take priority over action/evidence wording.
+
+## Minutes passes
+
+Two callable minutes entry points are available:
+
+- `generate_minutes_pass` returns extractive minutes from the allowed buckets.
+- `generate_polished_minutes_pass` returns cleaner minutes with source anchors
+  for each bullet.
+
+Both minutes passes only use these buckets:
+
+- `responsibility`
+- `evidence_artifact`
+- `evidence_request`
+- `action`
+- `risk`
+- `question`
+- `process_flow`
+
+They deliberately ignore `discussion` and `noise`.
