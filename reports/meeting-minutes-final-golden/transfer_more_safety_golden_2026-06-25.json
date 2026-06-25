@@ -1,0 +1,380 @@
+{
+  "summary": {
+    "runner": "/root/.openclaw/workspace/colab-tests-public/colab_experiment_runner.py",
+    "packDir": "/root/.openclaw/workspace/trinzo-upload/scripts/meeting-minutes-final-golden",
+    "generatedAt": "2026-06-25T07:31:31.308209+00:00",
+    "caseCount": 20,
+    "passed": 20,
+    "failed": 0,
+    "averageScore": 1.0,
+    "categoryAverages": {
+      "abstention": 1.0,
+      "actions": 1.0,
+      "decisions": 1.0,
+      "hallucinations": 1.0
+    },
+    "failureThemes": []
+  },
+  "cases": [
+    {
+      "case": "001_decision_heavy_no_actions",
+      "score": 1.0,
+      "passThreshold": 0.9,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 3,
+        "actions": 0,
+        "discussionPoints": 5
+      }
+    },
+    {
+      "case": "002_incident_actions_decision",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 1,
+        "actions": 3,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "case": "003_low_substance_noise_abstention",
+      "score": 1.0,
+      "passThreshold": 1.0,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 0,
+        "actions": 0,
+        "discussionPoints": 0
+      }
+    },
+    {
+      "case": "004_action_free_information_briefing",
+      "score": 1.0,
+      "passThreshold": 0.9,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 0,
+        "actions": 0,
+        "discussionPoints": 5
+      }
+    },
+    {
+      "case": "005_project_status_pending_leadership",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 0,
+        "actions": 4,
+        "discussionPoints": 6
+      }
+    },
+    {
+      "case": "006_client_onboarding_split_rollout",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "case": "007_operations_review_internal_cover",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "case": "008_sales_pipeline_review",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "case": "009_board_launch_delay",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 2
+      }
+    },
+    {
+      "case": "010_webinar_rehearsal_trim",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 5
+      }
+    },
+    {
+      "case": "011_finance_budget_review",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "case": "012_hiring_interview_debrief",
+      "score": 1.0,
+      "passThreshold": 0.9,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 1,
+        "actions": 0,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "case": "013_messy_speaker_timestamp_formats",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 5
+      }
+    },
+    {
+      "case": "014_status_update_discussion_only",
+      "score": 1.0,
+      "passThreshold": 0.9,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 0,
+        "actions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "case": "015_hidden_decision_meeting",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 2,
+        "actions": 1,
+        "discussionPoints": 6
+      }
+    },
+    {
+      "case": "016_document_review_discussion_only",
+      "score": 1.0,
+      "passThreshold": 0.9,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 0,
+        "actions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "case": "017_dependency_risk_discussion_only",
+      "score": 1.0,
+      "passThreshold": 0.9,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 0,
+        "actions": 0,
+        "discussionPoints": 4
+      }
+    },
+    {
+      "case": "018_support_metrics_action_heavy",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 0,
+        "actions": 3,
+        "discussionPoints": 14
+      }
+    },
+    {
+      "case": "019_contract_negotiation_review",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 3
+      }
+    },
+    {
+      "case": "020_customer_complaint_review",
+      "score": 1.0,
+      "passThreshold": 0.85,
+      "passed": true,
+      "categoryScores": {
+        "decisions": 1.0,
+        "actions": 1.0,
+        "hallucinations": 1.0,
+        "abstention": 1.0
+      },
+      "failures": [],
+      "counts": {
+        "decisions": 1,
+        "actions": 1,
+        "discussionPoints": 3
+      }
+    }
+  ]
+}

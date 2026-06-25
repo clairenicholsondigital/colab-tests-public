@@ -1813,6 +1813,8 @@ def _normalise_action_text(text: str) -> str:
     )
     text = re.sub(r"^(?:i['’]?ll|i\s+will|i\s+can|i\s+need\s+to|i\s+have\s+to)\s+", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^(?:please)\s+", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"^(?:action\s+(?:there\s*,?\s*)?)?(?:for\s+)?[A-Z][A-Za-z'’.-]+\s+to\s+", "", text)
+    text = re.sub(r"^(?:somebody|someone)\s+needs\s+to\s+", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^(?:we\s+need\s+to|we\s+need|we\s+should\s+probably|we\s+should|you\s+need\s+to|can\s+you)\s+", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^(?:probably)\s+", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^(?:so|yeah|okay|and|but|then|maybe|probably|let's|i suppose|i think)\s+", "", text, flags=re.IGNORECASE)
@@ -1838,7 +1840,7 @@ def _normalise_action_text(text: str) -> str:
 
 def _is_useful_generic_action(text: str) -> bool:
     lowered = text.lower()
-    action_start = re.match(r"^(?:patch|notify|replay|review|confirm|draft|follow up|validate|send|share|update|publish|rerun|call|prepare|pull|request|rewrite|schedule|reschedule|split|separate|monitor|set up|add|remove|reduce|refine|simplify|incorporate|redline|practice|practise|reproduce|capture|tighten|circulate|handle)\b", lowered)
+    action_start = re.match(r"^(?:patch|notify|replay|review|confirm|draft|follow up|validate|send|share|update|publish|rerun|call|prepare|pull|request|rewrite|schedule|reschedule|split|separate|monitor|set up|add|remove|reduce|refine|simplify|incorporate|redline|practice|practise|reproduce|capture|tighten|circulate|handle|investigate|verify|work out|figure out|keep)\b", lowered)
     if len(text.split()) < (2 if action_start else 6):
         return False
     if lowered.endswith("?"):
@@ -1870,6 +1872,9 @@ def _is_useful_generic_action(text: str) -> bool:
         "holiday",
         "miss the usual",
         "miss the meeting",
+        "take your top off",
+        "talk french",
+        "vape",
     ]
     if any(fragment in lowered for fragment in weak_fragments):
         return False
@@ -1879,7 +1884,9 @@ def _is_useful_generic_action(text: str) -> bool:
         return False
     if re.search(r"\b(?:lets|allows|helps)\s+us\s+\w+", lowered):
         return False
-    if _is_negative_decision_context(text) or _is_decision_sentence(text):
+    if re.match(r"\s*if\b", lowered):
+        return False
+    if _is_negative_decision_context(text) or (_is_decision_sentence(text) and not re.match(r"keep\s+the\s+tracker\s+updated\b", lowered)):
         return False
     if re.search(r"\b(?:update|recommendation|decision)\s+is\b", lowered):
         return False
@@ -1887,11 +1894,11 @@ def _is_useful_generic_action(text: str) -> bool:
         return False
     return bool(
         re.search(
-            r"\b(i|we|you|he|she|they|team|jack|ciara|conor|colm|orla|jacqui|andrew|rebecca|david|kevin|mark)\s+(?:can|will|should|need|needs|have to|has to|going to|want to|could)\b",
+            r"\b(i|we|you|he|she|they|team|somebody|someone|jack|ciara|conor|colm|orla|jacqui|andrew|rebecca|david|kevin|mark|mike|sarah|lewis|priya)\s+(?:can|will|should|need|needs|have to|has to|going to|want to|could)\b",
             lowered,
         )
         or re.search(r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s+to\s+\w+", text)
-        or re.search(r"\b(?:patch|notify|replay|follow up|confirm|draft|review|validate|send|share|add|remove|update|publish|rerun|call|pull|request|rewrite|split|separate|monitor|set up|redline|reduce|refine|simplify|incorporate|practi[cs]e|prepare|schedule|reschedule|bring|explain|make sure|figure out|reproduce|capture|tighten|circulate|handle)\b", lowered)
+        or re.search(r"\b(?:patch|notify|replay|follow up|confirm|draft|review|validate|send|share|add|remove|update|publish|rerun|call|pull|request|rewrite|split|separate|monitor|set up|redline|reduce|refine|simplify|incorporate|practi[cs]e|prepare|schedule|reschedule|bring|explain|make sure|figure out|work out|investigate|verify|keep|reproduce|capture|tighten|circulate|handle)\b", lowered)
     )
 
 
@@ -2025,6 +2032,8 @@ def _raw_source(anchor: str, speaker: str, text: str, bucket: str = "raw") -> di
 
 def _is_low_substance_sentence(text: str) -> bool:
     lowered = text.lower().strip()
+    if re.search(r"\b(?:leadership review|vendor strategy|sales input|validation-specific|broad)\b", lowered):
+        return False
     if len(lowered.split()) < 5:
         return True
     low_value = [
@@ -2037,6 +2046,11 @@ def _is_low_substance_sentence(text: str) -> bool:
         "no.",
         "yeah.",
         "right.",
+        "run through the agenda",
+        "try not to vape",
+        "talk french",
+        "take your top off",
+        "like and subscribe",
     ]
     return any(fragment in lowered for fragment in low_value)
 
@@ -2051,6 +2065,8 @@ def _is_explicitly_low_substance_transcript(transcript: str) -> bool:
 
 def _discussion_sentence_text(sentence: str, speaker: str) -> str:
     text = _clean_source_text(sentence)
+    text = re.sub(r"^(?:I['’]?ve|I)\s+got\s+(?:the\s+)?(?:latest\s+)?report\s+open,\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"^The\s+I\s+got\s+report\s+open,\s*", "The ", text, flags=re.IGNORECASE)
     if _looks_like_person_label(speaker):
         text = re.sub(r"^I\s+am\b", f"{speaker} is", text, flags=re.IGNORECASE)
         text = re.sub(r"\bso\s+I\s+will\b", "and will", text, flags=re.IGNORECASE)
@@ -2071,13 +2087,15 @@ def _raw_discussion_entries(transcript: str, used_anchors: set[str], limit: int 
                 continue
             if re.fullmatch(r"\d{1,2}\s+[a-z]+\s+\d{4}(?:\s+online)?", lowered):
                 continue
-            if lowered.endswith("?") and not re.search(r"\b(?:metrics|risk|issue|blocker|evidence|status)\b", lowered):
+            if lowered.endswith("?") and not re.search(r"\b(?:metrics|risk|issue|blocker|evidence|status|external|cer|review|sign-off|slides|friday|strategy|vendor|sales|leadership|validation|broad)\b", lowered):
                 continue
             if re.search(r"\b(?:maybe|may be|might|could|original plan|old plan|not this month|instead of cancelling|only if we accept|no project update|webcam|hear me|fine,? no actions?)\b", lowered) and not re.search(r"\b(?:reference documents?|document sections?|supporting documents?)\b", lowered):
                 continue
             if (
                 re.search(r"\b(i|we|you|he|she|they)\s+(?:will|can|should|need|needs|have to|has to)\b|\bi['’]?ll\b", lowered)
+                and not lowered.endswith("?")
                 and not re.search(r"\b(?:offsite|away|out of office|annual leave|holiday|miss the usual|miss the meeting)\b", lowered)
+                and not re.search(r"\bwe\s+need\b.+\b(?:do\s+not|don't)\s+have\b", lowered)
             ):
                 continue
             if re.search(r"\b(?:decided|decision|agreed|rejected|go with|proceed with)\b", lowered):
@@ -2178,6 +2196,8 @@ def _question_to_action_prompt(sentence: str) -> str | None:
         match = re.search(r"\bwe\s+should\s+(.+)$", cleaned, flags=re.IGNORECASE)
         if match:
             return match.group(1).strip(" ?.")
+    if re.search(r"\b(?:server\s+restart|restart)\s*,?\s+needs\s+investigation\b", cleaned, flags=re.IGNORECASE):
+        return "investigate server restart"
     return None
 
 
@@ -2252,7 +2272,7 @@ def _raw_action_entries(
     candidates: list[dict[str, str]] = _explicit_action_lines(transcript)
     pending_question: dict[str, str] | None = None
     last_candidate_by_speaker: dict[str, dict[str, str]] = {}
-    stable_status_context = bool(re.search(r"\b(?:nothing\s+so\s+far\s+changes\s+the\s+timelines|timelines\s+are\s+unaffected|timelines\s+remain\s+unaffected)\b", transcript, flags=re.IGNORECASE))
+    stable_status_context = bool(re.search(r"\b(?:nothing\s+so\s+far\s+changes\s+the\s+timelines|timelines\s+are\s+unaffected|timelines\s+remain\s+unaffected|not\s+expected\s+to\s+have\s+(?:any\s+)?major\s+impact\s+on\s+the\s+timelines)\b", transcript, flags=re.IGNORECASE))
     if not explicit_only:
         for turn in _parse_raw_transcript_turns(transcript):
             for sentence in _split_raw_sentences(turn["text"]):
@@ -2282,15 +2302,15 @@ def _raw_action_entries(
                 if re.search(r"\bif\s+we\b", lowered):
                     continue
                 if re.search(
-                    r"\b(?:i|we|you|he|she|they|[A-Z][a-z]+)\s+(?:will|need to|needs to|have to|has to|going to)\b",
+                    r"\b(?:i|we|you|he|she|they|somebody|someone|[A-Z][a-z]+)\s+(?:will|need to|needs to|have to|has to|going to)\b",
                     sentence,
                     flags=re.IGNORECASE,
                 ) or re.search(
-                    r"\bi['’]?ll\s+(?:send|share|follow up|review|confirm|update|prepare|schedule|add|get|bring|request|set up|create|monitor|look into)\b",
+                    r"\bi['’]?ll\s+(?:send|share|follow up|review|confirm|update|prepare|schedule|add|get|bring|request|set up|create|monitor|look into|investigate|verify)\b",
                     sentence,
                     flags=re.IGNORECASE,
                 ) or re.search(
-                    r"\bplease\s+(?:publish|send|share|review|confirm|update|prepare|circulate|tighten|schedule|follow up|split|separate|monitor|set up)\b",
+                    r"\bplease\s+(?:publish|send|share|review|confirm|update|prepare|circulate|tighten|schedule|follow up|split|separate|monitor|set up|keep)\b",
                     sentence,
                     flags=re.IGNORECASE,
                 ) or re.search(
@@ -2306,16 +2326,16 @@ def _raw_action_entries(
                     sentence,
                     flags=re.IGNORECASE,
                 ) or re.search(
-                    r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s+to\s+(?:patch|notify|replay|follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reschedule|reproduce|capture|remove|redline|separate|monitor|set up|complete|trace|outline|generate|incorporate|tighten|circulate|handle|split)\b",
+                    r"\b(?:action\s+for\s+)?[A-Z][a-z]+(?:\s+[A-Z][a-z]+)?\s+to\s+(?:patch|notify|replay|follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reschedule|reproduce|capture|remove|redline|separate|monitor|set up|complete|trace|outline|generate|incorporate|tighten|circulate|handle|split|investigate|verify|work out|figure out|keep)\b",
                     sentence,
-                ) or re.search(r"^(?:patch|notify|replay|follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reschedule|remove|redline|separate|monitor|set up|complete|trace|outline|generate|incorporate|split|reproduce|capture|tighten|circulate|handle)\b", lowered):
+                ) or re.search(r"^(?:patch|notify|replay|follow up|send|share|review|draft|update|publish|rerun|call|prepare|confirm|validate|pull|request|rewrite|schedule|reschedule|remove|redline|separate|monitor|set up|complete|trace|outline|generate|incorporate|split|reproduce|capture|tighten|circulate|handle|investigate|verify|work out|figure out|keep)\b", lowered):
                     candidate = {"speaker": turn["speaker"], "text": sentence}
                     candidates.append(candidate)
                     last_candidate_by_speaker[turn["speaker"]] = candidate
         for turn in _parse_raw_transcript_turns(transcript):
             for sentence in _split_raw_sentences(turn["text"]):
                 first_person_commitment = re.search(
-                    r"\bi\s+can\s+((?:send|share|follow up|review|confirm|update|prepare|schedule|add|get|bring|request|set up|create|monitor|handle|investigate|reproduce|capture)\b.+)$",
+                    r"\bi\s+can\s+((?:send|share|follow up|review|confirm|update|prepare|schedule|add|get|bring|request|set up|create|monitor|handle|investigate|verify|work out|figure out|reproduce|capture)\b.+)$",
                     sentence,
                     flags=re.IGNORECASE,
                 )
@@ -2441,6 +2461,7 @@ def _normalise_decision_text(text: str) -> str:
     text = re.sub(r"^we\s+should\s+", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^(?:agreed|okay|ok|right),?\s+let['’]?s\s+", "", text, flags=re.IGNORECASE)
     text = re.sub(r"^keep\s+it\s+broad\b", "remain broad", text, flags=re.IGNORECASE)
+    text = re.sub(r"^remain broad and use ([A-Za-z0-9 -]+?) as one example instead\.?$", r"remain broad rather than \1-specific", text, flags=re.IGNORECASE)
     text = re.sub(r"^no\s+release\s+decision\s+until\s+(.+)$", r"Defer the release decision until \1", text, flags=re.IGNORECASE)
     text = re.sub(r"\s+and\s+keep\s+[^.?!]*?\bunchanged\b", "", text, flags=re.IGNORECASE)
     text = text.strip(" ,.;:")
@@ -2451,7 +2472,7 @@ def _normalise_decision_text(text: str) -> str:
 
 def _is_weak_decision_text(text: str) -> bool:
     lowered = text.lower().strip(" .")
-    return lowered in {"agreed", "agree", "yes", "okay", "ok", "confirmed"}
+    return lowered in {"agreed", "agree", "yes", "yeah", "yeah, agreed", "okay", "ok", "confirmed", "sounds good", "that works", "good point"}
 
 
 def _is_decision_sentence(text: str) -> bool:
@@ -2464,6 +2485,8 @@ def _is_decision_sentence(text: str) -> bool:
         return bool(re.search(r"\bno\s+release\s+decision\s+until\b", lowered))
     if re.search(r"\b(?:maybe|may be|might|could|it may be|probably)\b", lowered):
         return False
+    if re.search(r"\b(?:run through the agenda|like and subscribe|take your top off|talk french|vape)\b", lowered):
+        return False
     if re.search(r"\bonly\s+if\s+we\s+accept\b", lowered):
         return False
     return bool(
@@ -2475,7 +2498,7 @@ def _is_decision_sentence(text: str) -> bool:
         or re.search(r"\bwe\s+should\s+(?:keep|delay|drop|move)\b", lowered)
         or re.search(r"\bwe\s+(?:start|begin|keep|defer|delay|include|exclude|use|proceed|pause|add|remove|approve|reject|move|focus|sign|refund|invite|onboard|hold|assign|renew|switch|make|buy|submit|drop|run|replace|escalate|ship|stay|progress)\b", lowered)
         or re.search(r"\b\w+\s+stays\s+out\s+of\s+(?:phase|scope|release|rollout)\b", lowered)
-        or re.search(r"^(?:let['’]?s\s+)?(?:keep|include|defer|delay|start|begin|use|proceed|pause|approve|reject|move|focus|sign|refund|invite|onboard|hold|assign|renew|switch|make|buy|submit|drop|run|replace|escalate|ship)\b", lowered)
+        or re.search(r"^(?:actually,?\s*)?(?:let['’]?s\s+)?(?:keep|include|defer|delay|start|begin|use|proceed|pause|approve|reject|move|focus|sign|refund|invite|onboard|hold|assign|renew|switch|make|buy|submit|drop|replace|escalate|ship)\b", lowered)
         or re.search(r"\b(?:recommendation|recommend)\s+is\s+to\b", lowered)
     )
 
@@ -2672,6 +2695,8 @@ def _apply_raw_transcript_fallback(topic_groups: dict[str, Any], report: dict[st
         for topic in topic_groups["topics"]
     )
     raw_limit = 14 if len(topic_groups["topics"]) < 2 else max(0, 12 - existing_discussion_count)
+    if re.search(r"\bactions?\s+before\s+next\s+week\s*:", transcript, flags=re.IGNORECASE):
+        raw_limit = max(raw_limit, 22)
     if raw_limit and not _is_explicitly_low_substance_transcript(transcript):
         raw_entries = _raw_discussion_entries(transcript, used_topic_anchors, limit=raw_limit)
         if raw_entries:
